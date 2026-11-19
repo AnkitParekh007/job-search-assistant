@@ -1,12 +1,12 @@
-name: Deploy website
+name: Deploy market site
 
 on:
   push:
     branches:
       - main
     paths:
-      - "website/**"
-      - ".github/workflows/deploy-website.yml"
+      - "market-site/**"
+      - ".github/workflows/deploy-market-site.yml"
   workflow_dispatch:
 
 permissions:
@@ -34,7 +34,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: website
+          path: market-site
 
       - name: Deploy to GitHub Pages
         id: deployment

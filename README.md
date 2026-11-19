@@ -1,36 +1,44 @@
 # job-search-assitant
 
-Marketing site and docs for **AI Job Search** — a local-first macOS desktop app that drives an `ai-job-search` workspace through Claude Code.
+**AI Job Search** — local-first job search clients plus a public marketing site.
 
-## Live site
+## Live marketing site
 
 **https://ankitparekh007.github.io/job-search-assitant/**
 
-Deployed with GitHub Pages. Any push that changes `website/**` (or the deploy workflow) updates the site automatically.
+Deployed with GitHub Pages from [`market-site/`](./market-site/). Pushes that change `market-site/**` update the site automatically.
 
-## Website
+## Repository layout
 
-Static site in [`website/`](./website/):
+```text
+apps/
+  macos-apple-silicon/   # macOS desktop (Apple Silicon / arm64)
+  macos-intel/           # macOS desktop (Intel / x86_64)
+  windows/               # Windows desktop
+  web/                   # Browser app
+market-site/             # Marketing + docs (GitHub Pages)
+```
+
+### Apps
+
+See [`apps/README.md`](./apps/README.md). Each platform folder is the home for that client’s code and releases.
+
+### Market site
+
+Static site in [`market-site/`](./market-site/):
 
 | Page | Path |
 |------|------|
-| About | `website/index.html` |
-| Features | `website/features.html` |
-| Download | `website/download.html` |
-| Docs | `website/docs/` |
+| About | `market-site/index.html` |
+| Features | `market-site/features.html` |
+| Download | `market-site/download.html` |
+| Docs | `market-site/docs/` |
 
-### Preview locally
+Preview locally:
 
 ```bash
-cd website
+cd market-site
 python3 -m http.server 5177
 ```
 
-Open [http://127.0.0.1:5177](http://127.0.0.1:5177).
-
-### Deploy
-
-GitHub Actions workflow: [`.github/workflows/deploy-website.yml`](./.github/workflows/deploy-website.yml)
-
-- Triggers on `main` when `website/**` changes
-- Also supports manual **Run workflow** from the Actions tab
+Deploy workflow: [`.github/workflows/deploy-market-site.yml`](./.github/workflows/deploy-market-site.yml)
