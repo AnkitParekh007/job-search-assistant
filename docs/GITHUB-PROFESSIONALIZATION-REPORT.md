@@ -62,13 +62,14 @@ Unrelated local WIP (`packages/` monorepo extraction) was **stashed** and not in
 
 | Action | Status |
 |--------|--------|
-| Description / homepage / topics | **Prepared but requires authorization** — `gh` token invalid (`gh auth refresh`) |
+| Description / homepage / topics | **Applied and verified** via `gh repo edit` (public API confirms description, homepage, 18 topics) |
 | Social preview upload | **Prepared but requires authorization** — admin Settings upload of `docs/assets/social/github-social-preview.png` |
-| Labels script | **Prepared** — `scripts/apply-github-labels.sh` |
+| Labels | **Applied and verified** — taxonomy present (`bug`, `enhancement`, `security`, `macos`, `windows`, `web`, etc.) |
 | Private vulnerability reporting | **Prepared but requires authorization** |
 | Discussions enable + starter posts | **Prepared but requires authorization** — drafts in `docs/wiki-staging/discussion-*.md` |
 | Wiki publish | **Prepared** — staging + clone/push steps; not published |
 | Pages site reachability | **Verified** — HTTP 200 for homepage |
+| Pull request | **Applied** — https://github.com/AnkitParekh007/job-search-assitant/pull/2 |
 | Repository rename | **Not applicable** — intentionally unchanged |
 | Force-push / visibility | **Not applicable** — not performed |
 
@@ -85,7 +86,7 @@ Unrelated local WIP (`packages/` monorepo extraction) was **stashed** and not in
 | Frontend build | `npm run build` | **Succeeded** (`tsc && vite build`) |
 | Pages URL | `curl` homepage | **HTTP 200** |
 | GitHub API metadata | Public API | description/homepage/topics empty; license null; discussions false; wiki true |
-| `gh` authenticated edits | `gh repo view` / GraphQL | **Blocked** — invalid keyring token |
+| `gh` authenticated edits | `gh repo edit` / labels / `gh pr create` | **Succeeded** for metadata, labels, and PR #2 |
 | Product screenshots | Visual capture | **Not run** — checklist only; no fabricated shots |
 | Full Tauri `.app` release build | `npm run tauri build` | **Not run** in this pass (time/signing); install docs still match prior verified paths |
 | Secrets scan (spot) | Manual review of new docs | No credentials added |
@@ -112,14 +113,13 @@ Unrelated local WIP (`packages/` monorepo extraction) was **stashed** and not in
 
 ## G. Manual actions for the owner
 
-1. `gh auth refresh -h github.com` then run commands in `docs/github-metadata.md`
-2. Upload social preview PNG in repo Settings
-3. Enable Private Vulnerability Reporting
-4. Enable Discussions; optionally post the four draft intros
-5. Publish Wiki from `docs/wiki-staging/` if desired
-6. Confirm LICENSE copyright attribution
-7. Review and merge this PR (do not mix with stashed packages WIP)
-8. Restore local stash when ready: `git stash list` → `git stash pop` (two entries)
+1. Upload social preview PNG in repo Settings (`docs/assets/social/github-social-preview.png`)
+2. Enable Private Vulnerability Reporting
+3. Enable Discussions; optionally post the four draft intros
+4. Publish Wiki from `docs/wiki-staging/` if desired
+5. Confirm LICENSE copyright attribution (`docs/LICENSE-DECISION.md`)
+6. Review and merge PR #2 (keep separate from `feat/shared-packages` monorepo work)
+7. Local stashes may remain from an interrupted packages refactor — inspect with `git stash list` before popping
 
 ---
 
