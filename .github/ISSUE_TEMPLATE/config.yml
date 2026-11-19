@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/AnkitParekh007/job-search-assitant/blob/main/docs/getting-started.md
+    about: Install, first run, and FAQ
+  - name: Upstream ai-job-search
+    url: https://github.com/ai-job-search-dev/ai-job-search
+    about: Issues in slash commands, portals, or LaTeX templates may belong upstream
+  - name: Security vulnerability
+    url: https://github.com/AnkitParekh007/job-search-assitant/blob/main/SECURITY.md
+    about: Do not file public issues for security reports

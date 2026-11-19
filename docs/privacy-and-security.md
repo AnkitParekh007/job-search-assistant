@@ -1,0 +1,29 @@
+# Privacy and security
+
+Summary of [`apps/macos-apple-silicon/docs/SECURITY-MODEL.md`](../apps/macos-apple-silicon/docs/SECURITY-MODEL.md). Report vulnerabilities per [SECURITY.md](../SECURITY.md).
+
+## Principles
+
+- **Local-first:** jobs, applications, and profile live in your upstream workspace files.
+- **No product telemetry** and no remote app backend.
+- **No credential storage** in the app; Claude / Gmail / Notion auth stay in Claude Code.
+- **Human approvals** for write and exec tools; no permission bypass flags.
+- **Applications are never marked applied** merely because documents were generated.
+
+## Notable controls
+
+| Risk | Mitigation |
+|------|------------|
+| Prompt injection in postings | Upstream posting guard + human approvals |
+| UI XSS | Markdown → React elements; strict CSP |
+| Shell injection | `Command` argv only — never `sh -c` |
+| Path traversal | `safe_join`; scoped asset protocol |
+| Concurrent tracker writes | Atomic rename + expected-status check |
+
+## Data leaving the machine
+
+Network use is Claude Code (Anthropic under your account) and whatever upstream workflows fetch. Profile and posting content processed by Claude are subject to Anthropic’s terms and **are not free**.
+
+## Public forks
+
+Do not push personal tracker CSVs, tailored CVs, or archives to a public fork. Upstream gitignores cover many of these paths — verify before publishing.

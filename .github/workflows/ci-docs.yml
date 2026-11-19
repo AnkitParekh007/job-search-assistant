@@ -1,0 +1,25 @@
+name: CI — documentation links
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "*.md"
+      - "scripts/check-doc-links.py"
+      - ".github/workflows/ci-docs.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "*.md"
+      - "scripts/check-doc-links.py"
+      - ".github/workflows/ci-docs.yml"
+  workflow_dispatch:
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Markdown relative links
+        run: python3 scripts/check-doc-links.py

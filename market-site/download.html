@@ -16,11 +16,24 @@
         }
       })();
     </script>
-    <title>Download — AI Job Search</title>
+    <title>Install — AI Job Search (build from source)</title>
     <meta
       name="description"
-      content="Download AI Job Search for macOS. Local-first desktop app powered by Claude Code for discovering, ranking, and applying to jobs."
+      content="Build AI Job Search for macOS Apple Silicon from source. Claude Code required. No published release binary yet."
     />
+    <link rel="canonical" href="https://ankitparekh007.github.io/job-search-assitant/download.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Install AI Job Search" />
+    <meta
+      property="og:description"
+      content="Build the local-first macOS app from source. Claude Code required for AI workflows."
+    />
+    <meta property="og:url" content="https://ankitparekh007.github.io/job-search-assitant/download.html" />
+    <meta
+      property="og:image"
+      content="https://ankitparekh007.github.io/job-search-assitant/assets/img/og-social.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://api.fontshare.com" />
     <link
       href="https://api.fontshare.com/v2/css?f[]=satoshi@500,600,700&display=swap"
@@ -101,48 +114,58 @@
           </div>
 
           <div class="stack reveal reveal-delay-1">
-            <h1>Download AI Job Search</h1>
+            <h1>Install AI Job Search</h1>
             <p class="lede">
-              Bring the full job-search pipeline to your desktop or browser — discover, rank, apply,
-              and track with Claude Code, plus context from the files already on your machine.
+              Build the local-first macOS Apple Silicon app from source. Discover, rank, prepare
+              tailored documents, and track outcomes with Claude Code — without auto-submitting
+              applications to employers.
             </p>
             <p class="lede">
-              Clients live under <code>apps/</code> in this repo: Apple Silicon, Intel Mac, Windows, and Web.
-              macOS builds are unsigned — first launch may need right-click → Open.
+              <strong>No published GitHub Release binary yet.</strong> Clone the repo, build the
+              Apple Silicon client, and point it at your upstream workspace. Unsigned personal
+              builds may need right-click → Open the first time.
             </p>
             <div class="cta-row">
               <a
                 class="btn btn-primary btn-lg btn-icon"
-                href="https://github.com/AnkitParekh007/job-search-assitant/releases"
+                href="https://github.com/AnkitParekh007/job-search-assitant#installation-macos-apple-silicon"
                 rel="noopener"
               >
                 <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                   <path d="M8.1 1.2a.75.75 0 0 0-1.2 0L3.2 6.1a.75.75 0 0 0 .6 1.2h1.7v5.2c0 .4.3.75.75.75h3.5c.4 0 .75-.35.75-.75V7.3h1.7a.75.75 0 0 0 .6-1.2L8.1 1.2Z"/>
                   <path d="M2.5 14.25c0-.4.35-.75.75-.75h9.5c.4 0 .75.35.75.75s-.35.75-.75.75H3.25a.75.75 0 0 1-.75-.75Z"/>
                 </svg>
-                View releases
+                Build from source
+              </a>
+              <a
+                class="btn btn-soft btn-lg"
+                href="docs/install.html"
+              >
+                Install docs
               </a>
             </div>
             <div class="platform-row">
               <div class="platform-card">
                 <strong>Apple Silicon</strong>
-                <span>apps/macos-apple-silicon · M1–M4</span>
+                <span>Developed client · apps/macos-apple-silicon</span>
               </div>
               <div class="platform-card">
                 <strong>Intel Mac</strong>
-                <span>apps/macos-intel · macOS 13+</span>
+                <span>Source port · no release artifact</span>
               </div>
               <div class="platform-card">
                 <strong>Windows</strong>
-                <span>apps/windows</span>
+                <span>Source port · no release artifact</span>
               </div>
               <div class="platform-card">
                 <strong>Web</strong>
-                <span>apps/web</span>
+                <span>UI demo only · localStorage</span>
               </div>
             </div>
             <p class="fine-print">
-              Release artifacts publish to GitHub Releases when available. Platform source scaffolds are in the repo under <code>apps/</code>.
+              When release binaries exist they will appear on
+              <a href="https://github.com/AnkitParekh007/job-search-assitant/releases" rel="noopener">GitHub Releases</a>.
+              Until then, install by building from source.
             </p>
           </div>
         </div>
