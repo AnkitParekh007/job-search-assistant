@@ -272,7 +272,7 @@ Starter ideas: [contributor backlog](./docs/contributor-backlog.md) · [CONTRIBU
 - Bugs → [GitHub Issues](https://github.com/AnkitParekh007/job-search-assistant/issues) (use the bug form)  
 - Features → Feature request form  
 - Security → [SECURITY.md](./SECURITY.md) (do not file public issues for vulnerabilities)  
-- Discussions → enable steps in [docs/discussions-setup.md](./docs/discussions-setup.md) (not live until repo setting is on)
+- Discussions → [Join the community conversation](https://github.com/AnkitParekh007/job-search-assistant/discussions)
 
 Roadmap: [docs/roadmap.md](./docs/roadmap.md)
 
