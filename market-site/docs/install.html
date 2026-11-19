@@ -78,13 +78,15 @@
           </div>
 
           <h2>App install</h2>
-          <p>Open the <code>.app</code> from Releases or your local Tauri build. Drag it to <code>/Applications</code> if you want it to stay. The build is unsigned.</p>
+          <p>There is no published GitHub Release binary yet. Build locally with Tauri, then open the <code>.app</code>. Drag it to <code>/Applications</code> if you want it to stay. Personal builds are typically unsigned — first launch may need right-click → Open.</p>
 
           <h2>Build from source</h2>
-          <pre class="docs-pre">npm install
+          <pre class="docs-pre">cd apps/macos-apple-silicon
+npm install
 npm test
-npm run tauri build</pre>
-          <p>The bundle lands under <code>src-tauri/target/release/bundle/macos/</code>.</p>
+npm run tauri build
+open "src-tauri/target/release/bundle/macos/AI Job Search.app"</pre>
+          <p>The bundle lands under <code>src-tauri/target/release/bundle/macos/</code>. Full guide: repository <code>docs/installation.md</code>.</p>
         </article>
         <nav class="docs-pager" aria-label="Pagination">
           <a href="quickstart.html"><span>Previous</span><strong>← Quickstart</strong></a>

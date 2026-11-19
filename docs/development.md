@@ -1,0 +1,61 @@
+# Development
+
+## Layout
+
+```text
+apps/
+  macos-apple-silicon/   # primary client
+  macos-intel/
+  windows/
+  web/
+market-site/             # GitHub Pages
+docs/                    # Markdown docs (this tree)
+.github/                 # workflows + templates
+```
+
+Agent contracts: `apps/*/AGENTS.md` and `docs/agent/*` inside each desktop app.
+
+## Apple Silicon loop
+
+```bash
+cd apps/macos-apple-silicon
+npm install
+npm test
+(cd src-tauri && cargo test)
+npm run tauri dev
+```
+
+Frontend production build (no native bundle):
+
+```bash
+npm run build   # tsc && vite build
+```
+
+## Conventions
+
+- Drive unmodified upstream; do not reimplement slash commands.
+- Prefer existing bridge + workspace adapters.
+- Smallest correct change; match existing TypeScript / Rust style.
+- Never commit secrets, personal trackers, or tailored CVs.
+
+## Tests
+
+| Layer | Command |
+|-------|---------|
+| Frontend unit/component | `npm test` (Vitest) |
+| Rust unit | `cargo test` in `src-tauri` |
+
+CI: `.github/workflows/ci-macos-apple-silicon.yml` (when enabled on the default branch).
+
+## Marketing site
+
+```bash
+cd market-site
+python3 -m http.server 5177
+```
+
+Deployed by `.github/workflows/deploy-market-site.yml` on pushes to `market-site/**`.
+
+## PR expectations
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md) and `.github/pull_request_template.md`.

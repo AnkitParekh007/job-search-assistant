@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a product or DX improvement
+title: "[feat] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What pain are you solving?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope checks
+      options:
+        - label: This does not require auto-submitting applications to employers
+        - label: I understand Claude Code may remain required for AI workflows
+        - label: I have checked docs/roadmap.md for overlap

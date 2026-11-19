@@ -1,0 +1,27 @@
+name: Integration request
+description: Gmail, Notion, portals, or other connectors
+title: "[integration] "
+labels: ["integration", "enhancement"]
+body:
+  - type: input
+    id: integration
+    attributes:
+      label: Integration name
+      placeholder: "e.g. Gmail proposal UI, new job portal"
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Must stay local-first? Claude Code connector available?
+  - type: markdown
+    attributes:
+      value: |
+        Gmail/Notion already have upstream workflows that need Claude connectors. Prefer improving those entry points before adding parallel systems.
