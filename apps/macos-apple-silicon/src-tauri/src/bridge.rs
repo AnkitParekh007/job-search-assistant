@@ -203,8 +203,8 @@ impl Bridge {
                 cmd.args(["--session-id", &session_id]);
             }
         }
-        if let Some(m) = model.filter(|m| !m.is_empty()) {
-            cmd.args(["--model", &m]);
+        if let Some(m) = model.as_ref().filter(|m| !m.is_empty()) {
+            cmd.args(["--model", m]);
         }
         cmd.stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -227,6 +227,8 @@ impl Bridge {
             cost_usd: None,
             summary: None,
             error: None,
+            provider: Some("claude".into()),
+            model: model.clone(),
         };
         db.insert_run(&summary, &workspace.to_string_lossy())
             .map_err(|e| e.to_string())?;

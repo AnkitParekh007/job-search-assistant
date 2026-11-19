@@ -33,7 +33,7 @@ fn version_of(bin: &str, args: &[&str]) -> Option<(String, String)> {
 pub fn check(ws: &Path) -> Vec<Dep> {
     let mut v = vec![];
     let claude = version_of("claude", &["--version"]);
-    v.push(Dep { id: "claude".into(), name: "Claude Code CLI".into(), ok: claude.is_some(), required: true,
+    v.push(Dep { id: "claude".into(), name: "Claude Code CLI".into(), ok: claude.is_some(), required: false,
         detail: claude.as_ref().map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found".into()),
         fix: "Install Claude Code (brew install --cask claude-code) and run `claude` once to sign in. Runs use your Claude subscription or API credits; they are not free.".into() });
     let auth = env::which("claude")
@@ -54,7 +54,7 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         id: "claude_auth".into(),
         name: "Claude sign-in".into(),
         ok: logged,
-        required: true,
+        required: false,
         detail: auth
             .map(|a| {
                 format!(
@@ -65,6 +65,44 @@ pub fn check(ws: &Path) -> Vec<Dep> {
             })
             .unwrap_or("unknown".into()),
         fix: "Run `claude` in Terminal once and complete sign-in.".into(),
+    });
+    let codex = version_of("codex", &["--version"]);
+    let codex_cfg = env::home().join(".codex").is_dir();
+    v.push(Dep {
+        id: "codex".into(),
+        name: "OpenAI Codex CLI".into(),
+        ok: codex.is_some(),
+        required: false,
+        detail: codex
+            .as_ref()
+            .map(|(p, s)| format!("{} ({})", s, p))
+            .unwrap_or("not found".into()),
+        fix: "Install the Codex CLI (see https://learn.chatgpt.com/docs/codex), then connect ChatGPT from Settings → AI Providers.".into(),
+    });
+    v.push(Dep {
+        id: "codex_auth".into(),
+        name: "Codex config".into(),
+        ok: codex.is_some() && codex_cfg,
+        required: false,
+        detail: if codex_cfg {
+            "Codex home present — verify sign-in from Settings → AI Providers".into()
+        } else {
+            "not signed in yet".into()
+        },
+        fix: "Use Connect in Settings to start ChatGPT sign-in for Codex.".into(),
+    });
+    let any_ai = claude.is_some() || codex.is_some();
+    v.push(Dep {
+        id: "ai_provider".into(),
+        name: "At least one AI provider".into(),
+        ok: any_ai,
+        required: true,
+        detail: if any_ai {
+            "Claude Code and/or Codex CLI detected".into()
+        } else {
+            "neither Claude Code nor Codex CLI found".into()
+        },
+        fix: "Install Claude Code and/or the Codex CLI, then choose a default provider in Settings.".into(),
     });
     let py = env::python();
     v.push(Dep {

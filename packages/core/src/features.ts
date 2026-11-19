@@ -15,7 +15,7 @@ export const PRODUCT_FEATURES: FeatureCard[] = [
   { id: "documents", title: "Documents", blurb: "Real CV and cover-letter sources from your workspace.", group: "Apply" },
   { id: "pipeline", title: "Pipeline & outcomes", blurb: "Track statuses, archive what was sent, draft follow-ups (never auto-send).", group: "Track" },
   { id: "interview", title: "Interview prep", blurb: "Stage-specific packs from archived postings and your docs.", group: "Track" },
-  { id: "activity", title: "Agent activity", blurb: "Watch live Claude Code runs, approvals, and workflow stages.", group: "Automate" },
+  { id: "activity", title: "Agent activity", blurb: "Watch live provider runs (Claude Code or Codex), approvals, and workflow stages.", group: "Automate" },
   { id: "local-first", title: "Local-first", blurb: "Tracker, archives, and profile stay on disk you own.", group: "Platform" },
 ];
 

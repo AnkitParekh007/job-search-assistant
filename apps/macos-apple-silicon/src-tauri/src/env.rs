@@ -34,6 +34,10 @@ fn candidate_dirs() -> Vec<PathBuf> {
         h.join(".claude/local"),
         h.join(".bun/bin"),
         h.join(".cargo/bin"),
+        h.join(".npm-global/bin"),
+        h.join("n/bin"),
+        // Common npm/nvm global bin locations for `codex`.
+        h.join(".nvm/current/bin"),
         PathBuf::from("/Library/TeX/texbin"),
     ];
     // TeX Live / BasicTeX installs without the /Library/TeX symlink.

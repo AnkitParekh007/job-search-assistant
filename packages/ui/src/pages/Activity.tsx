@@ -59,10 +59,11 @@ export default function ActivityPage() {
             runs.map((r) => (
               <button key={r.id} onClick={() => { setSel(r.id); setFocusRun(r.id); }} className={clsx("w-full text-left px-4 py-3 border-b border-line", sel === r.id ? "bg-accent-soft/60" : "hover:bg-surface-2")}>
                 <div className="flex items-center gap-2"><span className="font-mono text-[12px] font-medium truncate flex-1">{r.prompt.split("\n")[0].slice(0, 42)}</span><RunStatusPill status={live[r.id] || r.status} /></div>
-                <div className="text-[11.5px] text-ink-3 mt-1 flex gap-2">
+                <div className="text-[11.5px] text-ink-3 mt-1 flex gap-2 flex-wrap">
+                  {r.provider && <span className="chip bg-sunken text-ink-3">{r.provider}</span>}
                   <span>{new Date(r.started_at).toLocaleString()}</span>
                   {r.finished_at && <span>{Math.max(1, Math.round((r.finished_at - r.started_at) / 1000))}s</span>}
-                  {r.cost_usd != null && <span title="Usage-equivalent cost reported by Claude Code">${r.cost_usd.toFixed(3)}</span>}
+                  {r.cost_usd != null && <span title="Usage-equivalent cost reported by the provider">${r.cost_usd.toFixed(3)}</span>}
                 </div>
                 {r.error && <div className="text-[11.5px] text-bad mt-1 line-clamp-2">{r.error}</div>}
               </button>))}

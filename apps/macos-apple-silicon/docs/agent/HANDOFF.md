@@ -1,23 +1,22 @@
-# Handoff — UX audit pass (2026-11-19)
+# Handoff — Multi-provider runtime (2026-11-19)
 
 ## Done
-Ruthless visual UX audit of the live macOS app (light + dark, empty + populated, failed automation). Implemented highest-impact fixes; rebuilt release bundle.
+Provider-agnostic AI runtime on Apple Silicon: Claude Code preserved; OpenAI Codex via `codex app-server`; Settings AI Providers UI; engine-neutral Codex prompts; workflow gating.
 
 ## Changed paths
-- `src-tauri/src/bridge.rs` — `live_ids` excludes terminal statuses (zombie live)
-- `src/lib/store.tsx` — live map hygiene; softer preview-mode copy
-- `src/components/RunConsole.tsx` — sticky fail banner + Retry/Resume; no Stop/composer on dead runs
-- `src/pages/Studio.tsx`, `PdfView.tsx`, `Dashboard.tsx`, `Jobs.tsx`, `Pipeline.tsx`, `Activity.tsx`, `Settings.tsx`, `App.tsx`, `ui.tsx`, `styles.css`
+- `src-tauri/src/providers/` — types, registry, codex, openai_api stub, Runtime facade
+- `src-tauri/src/{bridge,db,deps,env,lib}.rs` — provider routing, DB columns, optional Claude + Codex deps
+- `packages/core/src/{providers,workflows,types,features}.ts` + tests
+- `packages/ui/src/{store,pages/Settings,pages/Automations,pages/Activity,components/RunConsole}.tsx`
+- `apps/*/src/runtime/api.ts` — provider-aware `startRun` + stubs on web/intel/windows
+- `docs/MULTI-PROVIDER-IMPLEMENTATION.md`, `docs/architecture.md`
 
 ## Tests
-- `npm test` — 9/9 pass
-- `cargo test` — 11/11 pass
-- Visual: Today (populated light), Jobs (populated), Studio (failed apply), Activity (failed + awaiting scrape)
-
-## Open / not fully re-verified after last micro-tweaks
-- Studio “Stopped before finishing” checklist row and Activity 4-card strip need the **latest** rebuild (in progress / just finished).
-- Interview Prep, Documents, Onboarding, command palette, dark-mode native Settings toggle, and a live `awaiting_approval` approval card were not re-captured after rebuild.
-- Canonical app path: `src-tauri/target/release/bundle/macos/AI Job Search.app` (copy synced from nested `src-tauri/src-tauri/target/...` when CARGO_TARGET_DIR was set relative).
+- `npm run test:core` — 9/9 pass
+- `(cd apps/macos-apple-silicon/src-tauri && cargo test)` — 13/13 pass
+- Live Codex E2E: **not run** here (`codex` CLI absent). Install Codex and smoke Discover/Rank locally.
 
 ## Next
-Reopen the rebuilt app and spot-check Studio checklist row + Activity Discover/Rank/Apply/Outcome strip; then pick the next product slice if desired.
+1. Install Codex CLI, Connect in Settings, smoke a Codex rank/scrape run with approvals.
+2. Port `providers/` Rust module to macos-intel + windows.
+3. Optional: per-workflow provider picker; OpenAI Responses API adapter.

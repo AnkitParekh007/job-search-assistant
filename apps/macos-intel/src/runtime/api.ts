@@ -22,8 +22,10 @@ export const api = {
   compile: (rel: string) => invoke<{ ok: boolean; log: string; pdf: string; pages: number | null }>("compile_doc", { rel }),
   verifyPdf: (rel: string) => invoke<{ code: number; stdout: string; stderr: string }>("verify_pdf", { rel }),
   postingGuard: (text: string) => invoke<{ code: number; stdout: string; stderr: string }>("posting_guard", { text }),
-  startRun: (workflow: string, prompt: string, model?: string, resume?: string) =>
-    invoke<import("@ai-job-search/core").RunSummary>("start_run", { workflow, prompt, model: model || null, resume: resume || null }),
+  startRun: (workflow: string, prompt: string, model?: string, resume?: string, provider?: string) =>
+    invoke<import("@ai-job-search/core").RunSummary>("start_run", {
+      workflow, prompt, model: model || null, resume: resume || null, provider: provider || null,
+    }),
   respond: (runId: string, requestId: string, allow: boolean, updatedInput?: any, message?: string, remember?: boolean) =>
     invoke<void>("respond_permission", { runId, requestId, allow, updatedInput: updatedInput ?? null, message: message ?? null, remember: remember ?? false }),
   send: (runId: string, text: string) => invoke<void>("send_message", { runId, text }),
@@ -33,6 +35,10 @@ export const api = {
   runEvents: (runId: string) => invoke<{ events: import("@ai-job-search/core").RunEvent[]; pending: import("@ai-job-search/core").Pending[] }>("run_events", { runId }),
   getSetting: (key: string) => invoke<string | null>("get_setting", { key }),
   setSetting: (key: string, value: string) => invoke<void>("set_setting", { key, value }),
+  providers: async () => [] as import("@ai-job-search/core").ProviderStatus[],
+  providerAccount: async (_provider: string) => ({ unsupported: true }),
+  providerLogin: async (_provider: string, _mode?: string) => { throw new Error("Multi-provider runtime is on the Apple Silicon app first; rebuild the Intel app from the same sources to enable Codex."); },
+  providerModels: async (_provider: string) => ({ data: [] }),
 };
 
 export const fileUrl = (abs: string) => convertFileSrc(abs);

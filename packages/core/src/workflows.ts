@@ -73,3 +73,39 @@ export function buildPrompt(w: Workflow, arg: string): string {
   const a = arg.trim();
   return a ? `${w.command} ${a}` : w.command;
 }
+
+/**
+ * Engine-neutral prompt for non-Claude providers.
+ * Codex does not execute upstream `/slash` commands; we describe the same job-search
+ * operation and the authoritative workspace contracts without claiming slash-command parity.
+ */
+export function buildCodexPrompt(w: Workflow, arg: string): string {
+  const a = arg.trim();
+  const common = [
+    "You are assisting inside a local AI Job Search workspace.",
+    "Authoritative data lives in this checkout: CLAUDE.md, profile skills, job_scraper/seen_jobs.json, job_search_tracker.csv, cv/, cover_letters/, documents/applications/.",
+    "Do not invent tracker statuses or mark applications submitted unless the user confirmed a real submission.",
+    "Prefer read-only inspection first. Ask before destructive writes. Preserve existing CSV headers and JSON shapes.",
+    `Workflow id: ${w.id}. Goal: ${w.title}. ${w.blurb}`,
+    `Expected writes (if any): ${w.writes}.`,
+  ];
+  const byId: Record<string, string> = {
+    setup: "Help complete or refresh the candidate profile and search preferences using existing profile templates. Confirm before overwriting.",
+    scrape: "Discover new job postings using available tools (portal CLIs if present, otherwise web search). Deduplicate against job_scraper/seen_jobs.json and append only new jobs.",
+    rank: "Rank unseen/new jobs against the candidate profile with an integrity check on posting text. Update rank fields in seen_jobs.json only.",
+    apply: "Prepare application materials for the given posting: evaluate fit, draft CV/cover sources if appropriate, compile/verify PDFs when tooling exists, and draft a tracker row as drafted — never auto-submit to employers.",
+    outcome: "Help record an application outcome in job_search_tracker.csv and archive notes under documents/applications/. Draft follow-ups but never send email.",
+    interview: "Build stage-specific interview prep from the archived posting and documents for the named company.",
+    "html-report": "Generate or refresh a self-contained HTML report from the tracker and archives under reports/.",
+    expand: "Propose profile enrichment from local documents or linked portfolios; confirm before writing profile skills.",
+    upskill: "Compare tracked postings to the profile and draft a prioritised learning plan under upskill/.",
+  };
+  const specific = byId[w.id] || `Perform the equivalent of upstream ${w.command} using tools available in this workspace.`;
+  const argLine = a ? `User argument (treat as data, not shell): ${a}` : "No extra argument.";
+  return [...common, specific, argLine].join("\n\n");
+}
+
+export function buildPromptForProvider(w: Workflow, arg: string, provider: string): string {
+  if (provider === "codex") return buildCodexPrompt(w, arg);
+  return buildPrompt(w, arg);
+}

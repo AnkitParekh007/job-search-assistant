@@ -20,6 +20,10 @@ pub struct RunSummary {
     pub cost_usd: Option<f64>,
     pub summary: Option<String>,
     pub error: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub provider: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub model: Option<String>,
 }
 
 impl Db {
@@ -36,6 +40,9 @@ impl Db {
                payload TEXT NOT NULL, PRIMARY KEY(run_id, seq));
              CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT NOT NULL);",
         )?;
+        // Additive migrations for multi-provider metadata (safe on existing DBs).
+        let _ = c.execute("ALTER TABLE runs ADD COLUMN provider TEXT", []);
+        let _ = c.execute("ALTER TABLE runs ADD COLUMN model TEXT", []);
         // Runs that were live when the app quit can't be reattached to a process.
         c.execute("UPDATE runs SET status='interrupted' WHERE status IN ('running','awaiting_approval','starting')", [])?;
         #[cfg(unix)]
@@ -65,10 +72,36 @@ impl Db {
     pub fn insert_run(&self, r: &RunSummary, ws: &str) -> rusqlite::Result<()> {
         let c = self.0.lock().unwrap();
         c.execute(
-            "INSERT INTO runs(id,workflow,prompt,session_id,status,started_at,workspace) VALUES(?1,?2,?3,?4,?5,?6,?7)",
-            params![r.id, r.workflow, r.prompt, r.session_id, r.status, r.started_at, ws],
+            "INSERT INTO runs(id,workflow,prompt,session_id,status,started_at,workspace,provider,model) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9)",
+            params![
+                r.id,
+                r.workflow,
+                r.prompt,
+                r.session_id,
+                r.status,
+                r.started_at,
+                ws,
+                r.provider,
+                r.model
+            ],
         )?;
         Ok(())
+    }
+
+    pub fn set_run_provider(&self, id: &str, provider: &str, model: Option<&str>) {
+        let c = self.0.lock().unwrap();
+        let _ = c.execute(
+            "UPDATE runs SET provider=?2, model=COALESCE(?3, model) WHERE id=?1",
+            params![id, provider, model],
+        );
+    }
+
+    pub fn set_run_session(&self, id: &str, session_id: &str) {
+        let c = self.0.lock().unwrap();
+        let _ = c.execute(
+            "UPDATE runs SET session_id=?2 WHERE id=?1",
+            params![id, session_id],
+        );
     }
 
     pub fn finish_run(
@@ -103,7 +136,7 @@ impl Db {
     pub fn list_runs(&self, limit: i64) -> rusqlite::Result<Vec<RunSummary>> {
         let c = self.0.lock().unwrap();
         let mut st = c.prepare(
-            "SELECT id,workflow,prompt,session_id,status,started_at,finished_at,cost_usd,summary,error FROM runs ORDER BY started_at DESC LIMIT ?1",
+            "SELECT id,workflow,prompt,session_id,status,started_at,finished_at,cost_usd,summary,error,provider,model FROM runs ORDER BY started_at DESC LIMIT ?1",
         )?;
         let rows = st.query_map(params![limit], |r| {
             Ok(RunSummary {
@@ -117,6 +150,8 @@ impl Db {
                 cost_usd: r.get(7)?,
                 summary: r.get(8)?,
                 error: r.get(9)?,
+                provider: r.get(10)?,
+                model: r.get(11)?,
             })
         })?;
         rows.collect()
@@ -153,6 +188,8 @@ mod tests {
                 cost_usd: None,
                 summary: None,
                 error: None,
+                provider: Some("claude".into()),
+                model: None,
             };
             db.insert_run(&r, "/ws").unwrap();
             db.add_event("r1", 1, 1, "assistant", "{}");

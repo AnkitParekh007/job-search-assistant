@@ -42,6 +42,20 @@ flowchart TB
 
 Authoritative detail: [`apps/macos-apple-silicon/docs/ARCHITECTURE.md`](../apps/macos-apple-silicon/docs/ARCHITECTURE.md).
 
+## Multi-provider runtime
+
+The Apple Silicon desktop host routes workflows through a provider-agnostic runtime (`apps/macos-apple-silicon/src-tauri/src/providers/`):
+
+| Provider | Status | Transport |
+|----------|--------|-----------|
+| Claude Code | Production | Existing `bridge.rs` stream-json |
+| OpenAI Codex | Production (first additional) | `codex app-server` JSON-RPC over stdio |
+| OpenAI Responses API | Planned stub | — |
+| Google Gemini | Planned stub | — |
+| Ollama | Planned stub | — |
+
+Upstream slash commands (`/rank`, `/apply`, …) remain Claude-oriented. Codex runs use engine-neutral instructions that preserve workspace data contracts without claiming slash-command parity. See [`docs/MULTI-PROVIDER-IMPLEMENTATION.md`](./MULTI-PROVIDER-IMPLEMENTATION.md).
+
 ## Local LLM
 
-This product **does not** provide an independent local-LLM backend. AI workflows require Claude Code.
+Ollama is a **planned** local option for lightweight tasks. Today, production workflows require Claude Code or OpenAI Codex.

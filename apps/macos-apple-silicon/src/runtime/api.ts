@@ -22,8 +22,10 @@ export const api = {
   compile: (rel: string) => invoke<{ ok: boolean; log: string; pdf: string; pages: number | null }>("compile_doc", { rel }),
   verifyPdf: (rel: string) => invoke<{ code: number; stdout: string; stderr: string }>("verify_pdf", { rel }),
   postingGuard: (text: string) => invoke<{ code: number; stdout: string; stderr: string }>("posting_guard", { text }),
-  startRun: (workflow: string, prompt: string, model?: string, resume?: string) =>
-    invoke<import("@ai-job-search/core").RunSummary>("start_run", { workflow, prompt, model: model || null, resume: resume || null }),
+  startRun: (workflow: string, prompt: string, model?: string, resume?: string, provider?: string) =>
+    invoke<import("@ai-job-search/core").RunSummary>("start_run", {
+      workflow, prompt, model: model || null, resume: resume || null, provider: provider || null,
+    }),
   respond: (runId: string, requestId: string, allow: boolean, updatedInput?: any, message?: string, remember?: boolean) =>
     invoke<void>("respond_permission", { runId, requestId, allow, updatedInput: updatedInput ?? null, message: message ?? null, remember: remember ?? false }),
   send: (runId: string, text: string) => invoke<void>("send_message", { runId, text }),
@@ -33,6 +35,10 @@ export const api = {
   runEvents: (runId: string) => invoke<{ events: import("@ai-job-search/core").RunEvent[]; pending: import("@ai-job-search/core").Pending[] }>("run_events", { runId }),
   getSetting: (key: string) => invoke<string | null>("get_setting", { key }),
   setSetting: (key: string, value: string) => invoke<void>("set_setting", { key, value }),
+  providers: () => invoke<import("@ai-job-search/core").ProviderStatus[]>("list_providers"),
+  providerAccount: (provider: string) => invoke<any>("provider_account", { provider }),
+  providerLogin: (provider: string, mode?: string) => invoke<any>("provider_login", { provider, mode: mode || null }),
+  providerModels: (provider: string) => invoke<any>("provider_models", { provider }),
 };
 
 export const fileUrl = (abs: string) => convertFileSrc(abs);
@@ -49,8 +55,8 @@ export async function notifyStatus(status: string) {
     if (!ok) ok = (await n.requestPermission()) === "granted";
     if (!ok) return;
     const body = {
-      awaiting_approval: "Claude needs your approval to continue.",
-      awaiting_input: "Claude is waiting for your reply.",
+      awaiting_approval: "Your AI provider needs approval to continue.",
+      awaiting_input: "A workflow is waiting for your reply.",
       completed: "A workflow finished.",
       failed: "A workflow failed. Open Agent Activity for details.",
     }[status] || status;

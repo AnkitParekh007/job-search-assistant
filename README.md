@@ -27,9 +27,11 @@ Independent desktop companion built around [the original AI Job Search framework
 
 | Layer | What it is |
 |-------|------------|
-| **Upstream AI engine** | Unmodified [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) workspace + Claude Code slash commands |
-| **Desktop command center** | This project — Tauri 2 + React + Rust UI, approvals, native views |
+| **Upstream AI engine** | Unmodified [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) workspace (Claude slash commands; Codex uses equivalent instructions) |
+| **Desktop command center** | This project — Tauri 2 + React + Rust UI, multi-provider runtime (Claude Code + OpenAI Codex), approvals, native views |
 | **Reviewable applications** | Drafts and tracker updates you control; you submit outside the app |
+
+Multi-provider details: [`docs/MULTI-PROVIDER-IMPLEMENTATION.md`](./docs/MULTI-PROVIDER-IMPLEMENTATION.md).
 
 **Product screenshots** (Today, Jobs, Ranking, Studio, Pipeline, Activity, Onboarding) belong in [`docs/assets/screenshots/`](./docs/assets/screenshots/). Captures are not checked in yet — see that folder’s checklist, or help by filing a PR with sanitized PNGs.
 
