@@ -11,6 +11,7 @@ export type SeenJob = {
 export type RunSummary = {
   id: string; workflow: string; prompt: string; session_id: string; status: string; started_at: number;
   finished_at: number | null; cost_usd: number | null; summary: string | null; error: string | null;
+  provider?: string | null; model?: string | null;
 };
 export type RunEvent = { run_id: string; seq: number; ts: number; kind: string; data: any };
 export type Pending = { request_id: string; request: { tool_name: string; input: any; display_name?: string; [k: string]: any } };

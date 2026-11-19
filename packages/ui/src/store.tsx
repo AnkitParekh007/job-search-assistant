@@ -1,5 +1,8 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
+  byId, buildPromptForProvider, providerSupportsWorkflow, unsupportedReason,
+} from "@ai-job-search/core";
+import {
   api, inTauri, isWebApp, notifyStatus, on,
   type Dep, type Pending, type RunEvent, type RunSummary, type SeenJob, type Tracker, type Workspace,
 } from "@ai-job-search/runtime";
@@ -102,19 +105,41 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const startWorkflow = useCallback(async (workflow: string, prompt: string, resume?: string) => {
     try {
-      const model = (await api.getSetting("model")) || undefined;
-      const r = await api.startRun(workflow, prompt, model, resume);
+      const provider = ((await api.getSetting("ai_provider")) || "claude").trim();
+      if (!resume && !providerSupportsWorkflow(provider, workflow)) {
+        toast(unsupportedReason(provider, workflow) || "Unsupported workflow for this provider", "bad");
+        return null;
+      }
+      // Prefer the session's original provider when resuming — never silent-switch engines.
+      const resumeProvider = resume
+        ? (runs.find((x) => x.session_id === resume)?.provider || undefined)
+        : undefined;
+      const effectiveProvider = resumeProvider || provider;
+
+      let finalPrompt = prompt;
+      const w = byId(workflow);
+      if (w && !resume) {
+        const arg = prompt.startsWith(w.command)
+          ? prompt.slice(w.command.length).trim()
+          : (prompt.startsWith("/") ? "" : prompt);
+        finalPrompt = buildPromptForProvider(w, arg, effectiveProvider);
+      }
+
+      const modelKey = effectiveProvider === "codex" ? "codex_model" : "model";
+      const model = (await api.getSetting(modelKey)) || undefined;
+      const r = await api.startRun(workflow, finalPrompt, model || undefined, resume, effectiveProvider);
       setRuns((rs) => [r, ...rs]);
       if (["running", "starting"].includes(r.status)) setLive((l) => ({ ...l, [r.id]: r.status }));
       setEvents((e) => ({ ...e, [r.id]: [] }));
       setFocusRun(r.id);
-      toast(r.error || `Started ${prompt.split(" ")[0]}`, "info");
+      const label = w?.command || prompt.split(" ")[0] || workflow;
+      toast(r.error || `Started ${label} · ${effectiveProvider}`, "info");
       return r;
     } catch (e) {
       toast(String(e), "bad");
       return null;
     }
-  }, [toast]);
+  }, [toast, runs]);
 
   useEffect(() => {
     reload();

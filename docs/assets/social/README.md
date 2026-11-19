@@ -3,7 +3,9 @@
 | File | Size | Use |
 |------|------|-----|
 | `github-social-preview.png` | 1280×640 | GitHub repository **Social preview** upload |
-| `social-preview.svg` | vector | Lightweight README / docs fallback |
+| `social-preview.svg` | vector | Lightweight README / docs fallback (Scout + full product name) |
+
+Re-export `github-social-preview.png` from `social-preview.svg` when the SVG changes, then re-upload in repo settings.
 
 ## Manual GitHub step
 

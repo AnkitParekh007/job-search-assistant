@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="220" viewBox="0 0 960 220" role="img" aria-label="Upstream AI engine, desktop command center, reviewable applications">
+  <rect width="960" height="220" rx="16" fill="#f7f7f8"/>
+
+  <g font-family="Helvetica, Arial, sans-serif" text-anchor="middle">
+    <g transform="translate(40, 48)">
+      <rect width="260" height="124" rx="18" fill="#ffffff" stroke="#e6e6eb"/>
+      <text x="130" y="48" fill="#8b8b96" font-size="12" font-weight="600" letter-spacing="0.06em">UPSTREAM</text>
+      <text x="130" y="78" fill="#17171c" font-size="18" font-weight="700">AI engine</text>
+      <text x="130" y="104" fill="#5b5b66" font-size="13">Claude Code workflows</text>
+      <text x="130" y="124" fill="#5b5b66" font-size="13">&amp; local workspace files</text>
+    </g>
+
+    <g transform="translate(350, 48)">
+      <rect width="260" height="124" rx="18" fill="#6d5ef0"/>
+      <text x="130" y="48" fill="#d7d2ff" font-size="12" font-weight="600" letter-spacing="0.06em">THIS PROJECT</text>
+      <text x="130" y="78" fill="#ffffff" font-size="18" font-weight="700">Desktop command center</text>
+      <text x="130" y="104" fill="#e8e4ff" font-size="13">Visual UI · approvals</text>
+      <text x="130" y="124" fill="#e8e4ff" font-size="13">Native views · run control</text>
+    </g>
+
+    <g transform="translate(660, 48)">
+      <rect width="260" height="124" rx="18" fill="#ffffff" stroke="#e6e6eb"/>
+      <text x="130" y="48" fill="#8b8b96" font-size="12" font-weight="600" letter-spacing="0.06em">YOUR OUTCOME</text>
+      <text x="130" y="78" fill="#17171c" font-size="18" font-weight="700">Reviewable applications</text>
+      <text x="130" y="104" fill="#5b5b66" font-size="13">You submit · you track</text>
+      <text x="130" y="124" fill="#5b5b66" font-size="13">Nothing auto-sent</text>
+    </g>
+  </g>
+
+  <!-- Arrows -->
+  <g fill="#8b8b96">
+    <path d="M310 110 l28 -8 v16 z"/>
+    <path d="M620 110 l28 -8 v16 z"/>
+  </g>
+</svg>

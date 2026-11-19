@@ -160,7 +160,7 @@ export const api = {
   compile: async (_rel: string) => ({ ok: false, log: "PDF compile requires the desktop app (LaTeX).", pdf: "", pages: null }),
   verifyPdf: async (_rel: string) => ({ code: 1, stdout: "", stderr: "PDF verify requires the desktop app." }),
   postingGuard: async (text: string) => ({ code: 0, stdout: `web-demo: ${text.slice(0, 80)}`, stderr: "" }),
-  startRun: async (workflow: string, prompt: string, _model?: string, _resume?: string) => {
+  startRun: async (workflow: string, prompt: string, _model?: string, _resume?: string, provider?: string) => {
     const id = crypto.randomUUID();
     const now = Date.now() / 1000;
     const run: RunSummary = {
@@ -173,7 +173,9 @@ export const api = {
       finished_at: now,
       cost_usd: null,
       summary: null,
-      error: "Claude workflows run in the desktop apps (macOS / Windows). This web build keeps demo tracker data only.",
+      error: "AI workflows run in the desktop apps (macOS / Windows). This web build keeps demo tracker data only.",
+      provider: provider || "claude",
+      model: null,
     };
     const runs = load<RunSummary[]>(KEY.runs, []);
     runs.unshift(run);
@@ -214,6 +216,12 @@ export const api = {
     s[key] = value;
     save(KEY.settings, s);
   },
+  providers: async () => [] as import("@ai-job-search/core").ProviderStatus[],
+  providerAccount: async (_provider: string) => ({ unsupported: true }),
+  providerLogin: async (_provider: string, _mode?: string) => {
+    throw new Error("Provider sign-in requires the desktop app.");
+  },
+  providerModels: async (_provider: string) => ({ data: [] }),
 };
 
 export const fileUrl = (abs: string) => abs;

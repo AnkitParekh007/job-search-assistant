@@ -23,4 +23,4 @@ Real application screenshots are **not** checked in yet. Do not fabricate UI cap
 | 7 | Agent Activity | `07-activity.png` | Agent activity timeline with approvals | Missing |
 | 8 | Onboarding with Scout | `08-onboarding.png` | Onboarding workspace picker | Missing |
 
-When adding files, embed at least `01-today.png` in the root `README.md` visual section.
+When adding files, embed at least `01-today.png` (and ideally `04-studio.png` + `07-activity.png`) in the root `README.md` **See the desktop workspace** section, replacing the placeholder note.

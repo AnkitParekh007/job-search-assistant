@@ -2,11 +2,13 @@ mod bridge;
 mod db;
 mod deps;
 mod env;
+mod providers;
 mod workspace;
 
-use bridge::Bridge;
 use db::Db;
 use notify::{RecursiveMode, Watcher};
+use providers::types::ProviderId;
+use providers::Runtime;
 use serde_json::{json, Value};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
@@ -14,7 +16,7 @@ use tauri::{AppHandle, Emitter, Manager, State};
 
 struct AppState {
     db: Arc<Db>,
-    bridge: Bridge,
+    runtime: Runtime,
     watcher: Mutex<Option<notify::RecommendedWatcher>>,
 }
 
@@ -225,15 +227,48 @@ fn start_run(
     prompt: String,
     model: Option<String>,
     resume: Option<String>,
+    provider: Option<String>,
 ) -> Result<db::RunSummary, String> {
-    state.bridge.start(
+    // Never silently switch providers when resuming a session.
+    let provider = if let Some(r) = resume.as_ref() {
+        // Look up provider from the most recent run with this session id.
+        let runs = state.db.list_runs(200).unwrap_or_default();
+        let from_session = runs
+            .iter()
+            .find(|x| x.session_id == *r)
+            .and_then(|x| x.provider.as_deref())
+            .and_then(ProviderId::parse);
+        from_session
+            .or_else(|| provider.as_deref().and_then(ProviderId::parse))
+            .unwrap_or_else(|| {
+                providers::registry::resolve_default(
+                    state.db.get_setting("ai_provider").as_deref(),
+                )
+            })
+    } else {
+        provider
+            .as_deref()
+            .and_then(ProviderId::parse)
+            .unwrap_or_else(|| {
+                providers::registry::resolve_default(
+                    state.db.get_setting("ai_provider").as_deref(),
+                )
+            })
+    };
+
+    let model = model.or_else(|| {
+        match provider {
+            ProviderId::Claude => state.db.get_setting("model"),
+            ProviderId::Codex => state.db.get_setting("codex_model"),
+            _ => None,
+        }
+        .filter(|s| !s.is_empty())
+    });
+
+    state.runtime.start(
         app,
         state.db.clone(),
-        ws(&state),
-        workflow,
-        prompt,
-        model,
-        resume,
+        providers::start_opts(ws(&state), workflow, prompt, model, resume, provider),
     )
 }
 
@@ -248,7 +283,7 @@ fn respond_permission(
     message: Option<String>,
     remember: Option<bool>,
 ) -> Result<(), String> {
-    state.bridge.respond(
+    state.runtime.respond(
         app,
         state.db.clone(),
         run_id,
@@ -267,24 +302,24 @@ fn send_message(
     run_id: String,
     text: String,
 ) -> Result<(), String> {
-    state.bridge.send(app, state.db.clone(), run_id, text)
+    state.runtime.send(app, state.db.clone(), run_id, text)
 }
 
 #[tauri::command]
 fn finish_run(state: State<AppState>, run_id: String) -> Result<(), String> {
-    state.bridge.finish(&run_id)
+    state.runtime.finish(&run_id)
 }
 
 #[tauri::command]
 fn cancel_run(app: AppHandle, state: State<AppState>, run_id: String) -> Result<(), String> {
-    state.bridge.cancel(app, state.db.clone(), run_id)
+    state.runtime.cancel(app, state.db.clone(), run_id)
 }
 
 #[tauri::command]
 fn list_runs(state: State<AppState>) -> Result<Value, String> {
     let runs = state.db.list_runs(200).map_err(|e| e.to_string())?;
     let live: std::collections::HashMap<String, String> =
-        state.bridge.live_ids().into_iter().collect();
+        state.runtime.live_ids().into_iter().collect();
     Ok(json!({"runs": runs, "live": live}))
 }
 
@@ -292,7 +327,80 @@ fn list_runs(state: State<AppState>) -> Result<Value, String> {
 fn run_events(state: State<AppState>, run_id: String) -> Result<Value, String> {
     let ev = state.db.run_events(&run_id).map_err(|e| e.to_string())?;
     let items: Vec<Value> = ev.into_iter().map(|(seq, ts, kind, payload)| json!({"run_id": run_id, "seq": seq, "ts": ts, "kind": kind, "data": serde_json::from_str::<Value>(&payload).unwrap_or(Value::Null)})).collect();
-    Ok(json!({"events": items, "pending": state.bridge.pending(&run_id)}))
+    Ok(json!({"events": items, "pending": state.runtime.pending(&run_id)}))
+}
+
+#[tauri::command]
+fn list_providers() -> Vec<providers::types::ProviderStatus> {
+    providers::registry::list_providers()
+}
+
+#[tauri::command]
+fn provider_account(provider: String) -> Result<Value, String> {
+    match ProviderId::parse(&provider) {
+        Some(ProviderId::Codex) => {
+            let result = providers::codex::oneshot_rpc(
+                "account/read",
+                json!({"refreshToken": false}),
+                15_000,
+            )?;
+            Ok(result)
+        }
+        Some(ProviderId::Claude) => {
+            let claude = env::which("claude").ok_or("Claude Code CLI not found")?;
+            let out = std::process::Command::new(claude)
+                .args(["auth", "status"])
+                .env("PATH", env::child_path())
+                .output()
+                .map_err(|e| e.to_string())?;
+            let v: Value = serde_json::from_slice(&out.stdout).unwrap_or(json!({
+                "raw": String::from_utf8_lossy(&out.stdout),
+                "stderr": String::from_utf8_lossy(&out.stderr),
+            }));
+            Ok(v)
+        }
+        _ => Err("Provider does not support account status yet".into()),
+    }
+}
+
+#[tauri::command]
+fn provider_login(provider: String, mode: Option<String>) -> Result<Value, String> {
+    match ProviderId::parse(&provider) {
+        Some(ProviderId::Codex) => {
+            let login_type = mode.unwrap_or_else(|| "chatgpt".into());
+            let params = if login_type == "chatgpt" {
+                json!({
+                    "type": "chatgpt",
+                    "useHostedLoginSuccessPage": true,
+                    "appBrand": "chatgpt"
+                })
+            } else {
+                json!({"type": login_type})
+            };
+            providers::codex::oneshot_rpc("account/login/start", params, 120_000)
+        }
+        Some(ProviderId::Claude) => Err(
+            "Sign in to Claude Code from Terminal: run `claude` and complete the login flow.".into(),
+        ),
+        _ => Err("Login is not available for this provider yet".into()),
+    }
+}
+
+#[tauri::command]
+fn provider_models(provider: String) -> Result<Value, String> {
+    match ProviderId::parse(&provider) {
+        Some(ProviderId::Codex) => {
+            providers::codex::oneshot_rpc("model/list", json!({"limit": 50, "includeHidden": false}), 20_000)
+        }
+        Some(ProviderId::Claude) => Ok(json!({
+            "data": [
+                {"id": "opus", "name": "Opus"},
+                {"id": "sonnet", "name": "Sonnet"},
+                {"id": "haiku", "name": "Haiku"}
+            ]
+        })),
+        _ => Err("Model discovery is not available for this provider yet".into()),
+    }
 }
 
 #[tauri::command]
@@ -321,7 +429,7 @@ pub fn run() {
             let db = Arc::new(Db::open(&env::app_data_dir().join("app.db"))?);
             let state = AppState {
                 db,
-                bridge: Bridge::default(),
+                runtime: Runtime::default(),
                 watcher: Mutex::new(None),
             };
             let w = state
@@ -357,13 +465,17 @@ pub fn run() {
             list_runs,
             run_events,
             get_setting,
-            set_setting
+            set_setting,
+            list_providers,
+            provider_account,
+            provider_login,
+            provider_models
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, ev| {
             if let tauri::RunEvent::Exit = ev {
-                app.state::<AppState>().bridge.shutdown();
+                app.state::<AppState>().runtime.shutdown();
             }
         });
 }

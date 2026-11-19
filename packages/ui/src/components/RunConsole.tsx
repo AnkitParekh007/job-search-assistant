@@ -75,7 +75,13 @@ export function buildItems(events: RunEvent[]): Item[] {
     } else if (ev.kind.startsWith("result:")) {
       items.push({ t: "result", key: `r${ev.seq}`, ok: ev.kind === "result:success" && !d.is_error, text: d.result || "", cost: d.total_cost_usd, turns: d.num_turns, ms: d.duration_ms });
     } else if (ev.kind === "bridge:exit" && d.status === "failed") {
-      items.push({ t: "err", key: `e${ev.seq}`, text: "Claude Code exited without a result." });
+      items.push({ t: "err", key: `e${ev.seq}`, text: "AI provider process exited without a result." });
+    } else if (ev.kind === "agent.message" && d.message?.content) {
+      for (const b of d.message.content) {
+        if (b.type === "text" && b.text?.trim()) items.push({ t: "text", key: `am${ev.seq}-${items.length}`, text: b.text });
+      }
+    } else if (ev.kind === "execution.failed" && d.message) {
+      items.push({ t: "err", key: `ef${ev.seq}`, text: String(d.message) });
     }
   }
   return items;
@@ -208,6 +214,7 @@ export function RunConsole({ runId, compact }: { runId: string; compact?: boolea
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-line">
         <Bot size={15} className="text-ai" />
         <div className="font-medium truncate">{run?.prompt.split("\n")[0].slice(0, 80) || "Run"}</div>
+        {run?.provider && <span className="chip bg-sunken text-ink-3">{run.provider}{run.model ? ` · ${run.model}` : ""}</span>}
         <RunStatusPill status={status} />
         <div className="flex-1" />
         <button className="btn btn-ghost h-7 text-[12px]" onClick={() => setShowRaw(!showRaw)}>{showRaw ? "Timeline" : "Raw log"}</button>
@@ -267,7 +274,7 @@ export function RunConsole({ runId, compact }: { runId: string; compact?: boolea
       </div>
       {isActive && (
         <div className="border-t border-line p-3 flex gap-2">
-          <textarea rows={1} className="input flex-1 resize-none" placeholder={status === "awaiting_input" ? "Reply to Claude (e.g. yes, proceed)… ⌘↩ to send" : "Send a message to this session… ⌘↩"} value={msg}
+          <textarea rows={1} className="input flex-1 resize-none" placeholder={status === "awaiting_input" ? "Reply to the agent (e.g. yes, proceed)… ⌘↩ to send" : "Send a message to this session… ⌘↩"} value={msg}
             onChange={(e) => setMsg(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) send(); }} />
           <button className="btn btn-primary" onClick={send} disabled={!msg.trim()}>Send</button>
         </div>

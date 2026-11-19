@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { canTransition, computeMetrics, lastContact } from "./metrics";
-import { buildPrompt, WORKFLOWS } from "./workflows";
+import { buildCodexPrompt, buildPrompt, buildPromptForProvider, WORKFLOWS } from "./workflows";
 import { PRODUCT_FEATURES, WORKFLOW_FEATURES } from "./features";
+import { providerSupportsWorkflow, unsupportedReason } from "./providers";
 import type { TrackerRow, SeenJob } from "./types";
 
 const row = (i: number, f: Partial<Record<string, string>>): TrackerRow => ({
@@ -62,5 +63,20 @@ describe("workflow catalog", () => {
   it("exposes marketing feature projections", () => {
     expect(PRODUCT_FEATURES.length).toBeGreaterThan(5);
     expect(WORKFLOW_FEATURES.map((w) => w.command).sort()).toEqual(WORKFLOWS.map((w) => w.command).sort());
+  });
+  it("builds Codex prompts without assuming slash-command execution", () => {
+    const apply = WORKFLOWS.find((w) => w.id === "apply")!;
+    const p = buildCodexPrompt(apply, "https://x.test/j");
+    expect(p).not.toMatch(/^\/apply/);
+    expect(p).toContain("never auto-submit");
+    expect(p).toContain("https://x.test/j");
+    expect(buildPromptForProvider(apply, "u", "claude")).toBe("/apply u");
+    expect(buildPromptForProvider(apply, "u", "codex")).toContain("Workflow id: apply");
+  });
+  it("gates provider-supported workflows", () => {
+    expect(providerSupportsWorkflow("claude", "gmail-sync")).toBe(true);
+    expect(providerSupportsWorkflow("codex", "gmail-sync")).toBe(false);
+    expect(providerSupportsWorkflow("codex", "rank")).toBe(true);
+    expect(unsupportedReason("codex", "gmail-sync")).toMatch(/Claude Code/);
   });
 });

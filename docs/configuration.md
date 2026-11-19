@@ -14,15 +14,23 @@ Preferences and run history live in the macOS app data directory:
 
 Directory mode `0700`, database mode `0600` (see security model). Windows port uses `%AppData%\dev.local.aijobsearch.windows` when built from `apps/windows`.
 
-## Claude Code
+## AI Providers
 
-- Authentication is entirely inside Claude Code — the app does not store API keys.
-- Upstream `.claude/settings.json` allow/ask/deny rules still apply; remaining prompts appear in the app.
-- Model selection follows Claude Code / run options exposed by the bridge.
+**Settings → AI Providers** (Apple Silicon app) selects the default engine:
+
+| Setting key | Purpose |
+|-------------|---------|
+| `ai_provider` | `claude` (default) or `codex` |
+| `model` | Claude model override (opus/sonnet/haiku or empty) |
+| `codex_model` | Codex model id override (empty = Codex default) |
+
+- **Claude Code:** auth stays in the Claude CLI; upstream `.claude/settings.json` still applies; remaining prompts appear in the app.
+- **OpenAI Codex:** auth via ChatGPT Connect in Settings (Codex CLI / app-server). Runs use `workspace-write` + `on-request` approvals. Does not execute Claude slash commands — see [MULTI-PROVIDER-IMPLEMENTATION.md](./MULTI-PROVIDER-IMPLEMENTATION.md).
+- The app does not store API keys in SQLite or the UI bundle.
 
 ## Dependencies
 
-**Settings → Dependencies** checks Claude CLI presence and sign-in, Python ≥ 3.10, LaTeX engines, `pdftotext`, and related tools, and shows official fix hints.
+**Settings → Dependencies** checks that at least one AI provider CLI is present, plus Python ≥ 3.10, LaTeX engines, `pdftotext`, and related tools, and shows official fix hints.
 
 ## Environment / PATH
 
