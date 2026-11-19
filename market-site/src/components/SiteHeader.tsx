@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
+import { BrandLockup } from "./BrandMark";
 
 type Props = {
   active?: "about" | "features" | "docs" | "download";
@@ -32,10 +33,7 @@ export function SiteHeader({
     <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
       <div className="nav-inner">
         <Link className="brand" to="/" aria-label="AI Job Search home">
-          <span className="brand-mark" aria-hidden="true">
-            AJ
-          </span>
-          <span>AI Job Search</span>
+          <BrandLockup />
         </Link>
         <nav className={`nav-links${menuOpen ? " is-open" : ""}`} aria-label="Primary">
           <NavLink to="/" end className={({ isActive }) => (isActive || active === "about" ? "is-active" : undefined)}>

@@ -1,10 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, type PointerEvent } from "react";
 import { Link } from "react-router-dom";
-import { AppChrome } from "../components/AppChrome";
+import featuresData from "../../public/assets/data/features.json";
+import { BrandMark } from "../components/BrandMark";
+import { SignalField } from "../components/SignalField";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { StoryScroller } from "../components/StoryScroller";
 import { PAGE_SEO } from "../lib/pages";
 import { applySeo } from "../lib/seo";
+
+const workflows = (featuresData.workflows ?? []) as { command: string; title: string }[];
+const workflowCount = featuresData.count ?? workflows.length;
+
+const WORKSPACE_FILES = ["tracker.csv", "profile.md", "cv_northwind.tex", "seen_jobs.json", "interview-pack.md"];
+
+function Arrow() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Moves the bento spotlight with the pointer (purely decorative). */
+function trackSpotlight(e: PointerEvent<HTMLElement>) {
+  const card = (e.target as HTMLElement).closest<HTMLElement>(".bento-card");
+  if (!card) return;
+  const r = card.getBoundingClientRect();
+  card.style.setProperty("--mx", `${e.clientX - r.left}px`);
+  card.style.setProperty("--my", `${e.clientY - r.top}px`);
+}
 
 export function HomePage() {
   useEffect(() => {
@@ -15,119 +40,156 @@ export function HomePage() {
     <>
       <SiteHeader active="about" ghostCta={{ to: "/features", label: "Explore features" }} />
       <main>
-        <section className="band band-hero">
-          <div className="split">
-            <div className="panel reveal" data-tone="sky" aria-hidden="true">
-              <div className="panel-inner">
-                <div className="quote-bubble">
-                  Find roles that fit, draft tailored applications, and keep every outcome on your Mac —
-                  not in someone else’s cloud.
-                </div>
-                <AppChrome />
-              </div>
+        <section className="hero">
+          <div className="hero-copy">
+            <p className="eyebrow load-in" style={{ ["--d" as string]: 0 }}>
+              <span className="eyebrow-dot" /> Local-first · macOS · Multi-provider AI
+            </p>
+            <h1 className="hero-title load-in" style={{ ["--d" as string]: 1 }}>
+              Hundreds of postings.
+              <br />
+              One shortlist. <em>Your call.</em>
+            </h1>
+            <p className="lede load-in" style={{ ["--d" as string]: 2 }}>
+              AI Job Search is a native desktop command center for your <em>ai-job-search</em> workspace.
+              Claude Code or OpenAI Codex runs the real workflows (discover, rank, draft, track) on files you
+              own, and nothing is sent without your approval.
+            </p>
+            <div className="cta-row load-in" style={{ ["--d" as string]: 3 }}>
+              <Link className="btn btn-primary btn-lg" to="/download">
+                Download for macOS
+              </Link>
+              <Link className="text-link" to="/docs">
+                Read the docs
+                <Arrow />
+              </Link>
             </div>
-
-            <div className="stack wide reveal reveal-delay-1">
-              <p className="kicker">Product</p>
-              <h1>A desktop command center for your job search</h1>
-              <p className="lede">
-                AI Job Search is a local-first macOS app that drives your existing <em>ai-job-search</em>{" "}
-                workspace with <strong>multi-provider AI support</strong> (Claude Code or OpenAI Codex) — so
-                discovery, ranking, applications, and tracking stay on files you own.
-              </p>
-              <p className="lede">
-                No reimplemented agents in the cloud. Your chosen provider CLI runs the real upstream
-                workflows. The app is the native shell.
-              </p>
-              <div className="cta-row">
-                <Link className="btn btn-primary btn-lg" to="/download">
-                  Download for macOS
-                </Link>
-                <Link className="text-link" to="/docs">
-                  Read the docs
-                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path
-                      d="M3 8h10M9 4l4 4-4 4"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </Link>
-              </div>
-            </div>
+          </div>
+          <div className="hero-visual load-in" style={{ ["--d" as string]: 2 }}>
+            <SignalField />
           </div>
         </section>
 
-        <section className="story-strip">
-          <div className="stats">
-            <div className="stat reveal">
-              <strong>Local-first</strong>
-              <span>
-                Tracker, archives, and documents live in your workspace — the app never becomes the source
-                of truth.
-              </span>
-            </div>
-            <div className="stat reveal reveal-delay-1">
-              <strong>14 workflows</strong>
-              <span>
-                From scrape and rank to apply, interview prep, Gmail sync, and HTML reports — all upstream
-                commands.
-              </span>
-            </div>
-            <div className="stat reveal reveal-delay-2">
-              <strong>macOS native</strong>
-              <span>
-                Built with Tauri 2: a focused React UI over a Rust bridge that supervises multi-provider AI
-                runs.
-              </span>
-            </div>
+        <section className="ticker" aria-label={`${workflowCount} built-in workflows`}>
+          <div className="ticker-track">
+            {[0, 1].map((dup) => (
+              <ul key={dup} aria-hidden={dup === 1 ? true : undefined}>
+                {workflows.map((w) => (
+                  <li key={w.command}>
+                    <code>{w.command}</code>
+                    <span>{w.title}</span>
+                  </li>
+                ))}
+              </ul>
+            ))}
           </div>
+        </section>
+
+        <section className="band story-band">
+          <div className="section-head reveal">
+            <p className="kicker">How a search runs</p>
+            <h2>
+              Four stages, one loop, <em>zero black boxes.</em>
+            </h2>
+            <p className="lede">
+              Point the app at your workspace and pick a provider in Settings. Each stage is a real upstream
+              slash command you can watch, pause, or stop.
+            </p>
+          </div>
+          <StoryScroller />
         </section>
 
         <section className="band">
-          <div className="split reverse">
-            <div className="panel reveal" data-tone="mint" aria-hidden="true">
-              <div className="panel-inner">
-                <div className="quote-bubble">
-                  “Draft a CV and cover letter for this posting, compile the PDFs, and queue the tracker when
-                  I approve.”
-                </div>
-                <AppChrome chips={["Studio", "Awaiting approval"]} sideStrongIndex={1} sideCount={3} />
-              </div>
-            </div>
+          <div className="section-head reveal">
+            <p className="kicker">Built on principles</p>
+            <h2>
+              Your search, your machine, <em>your rules.</em>
+            </h2>
+          </div>
 
-            <div className="stack reveal reveal-delay-1">
-              <p className="kicker">How it works</p>
-              <h2>You stay in control. Your AI provider does the heavy lifting.</h2>
-              <p className="lede">
-                Point the app at your workspace, pick Claude Code or Codex in Settings, and launch workflows
-                from a clear pipeline: discover → rank → apply → outcome.
+          <div className="bento" onPointerMove={trackSpotlight}>
+            <article className="bento-card b-local reveal">
+              <p className="kicker">Local-first</p>
+              <h3>The workspace is the source of truth.</h3>
+              <p>
+                The tracker, archives, and documents live in plain files on your Mac. The app reads and writes
+                them, and never replaces them.
               </p>
-              <p className="lede">
-                Sensitive actions ask for approval. Write and exec tools are never auto-approved.
-                Credentials stay with your provider CLI — not inside the app.
-              </p>
-              <div className="cta-row">
-                <Link className="btn btn-soft btn-lg" to="/features">
-                  Browse features
-                </Link>
+              <div className="rings" aria-hidden="true">
+                <span className="ring r1" />
+                <span className="ring r2" />
+                <span className="ring r3" />
+                <span className="rings-core mono">~/ai-job-search</span>
+                {WORKSPACE_FILES.map((f, i) => (
+                  <span key={f} className="file-chip mono" style={{ ["--i" as string]: i }}>
+                    {f}
+                  </span>
+                ))}
               </div>
-            </div>
+            </article>
+
+            <article className="bento-card b-gate reveal reveal-delay-1">
+              <p className="kicker">Approval gate</p>
+              <h3>Never auto-submits.</h3>
+              <p>Write and exec tools always ask first. You approve, you send.</p>
+              <div className="mini-gate" aria-hidden="true">
+                <span className="mono">exec · latexmk cv.tex</span>
+                <span className="switch" />
+              </div>
+            </article>
+
+            <article className="bento-card b-provider reveal reveal-delay-2">
+              <p className="kicker">Multi-provider</p>
+              <h3>Bring your own AI.</h3>
+              <p>
+                Switch between Claude Code and OpenAI Codex. Credentials stay with the provider CLI, never inside
+                the app.
+              </p>
+              <div className="provider-pair" aria-hidden="true">
+                <span>Claude Code</span>
+                <i />
+                <span>OpenAI Codex</span>
+              </div>
+            </article>
+
+            <article className="bento-card b-count reveal">
+              <p className="big-num">
+                {workflowCount}
+                <span>workflows</span>
+              </p>
+              <p>From setup and scrape to Gmail sync, Notion sync, interview prep, and offline HTML reports.</p>
+            </article>
+
+            <article className="bento-card b-native reveal reveal-delay-1">
+              <p className="kicker">Native shell</p>
+              <h3>Tauri 2 + Rust.</h3>
+              <p>A focused React UI over a Rust bridge that supervises every provider run and shows its live activity.</p>
+              <div className="eq" aria-hidden="true">
+                {Array.from({ length: 12 }, (_, i) => (
+                  <i key={i} style={{ ["--i" as string]: i }} />
+                ))}
+              </div>
+            </article>
           </div>
         </section>
 
-        <section className="prose-block reveal">
-          <h2>Built for people who already take the search seriously</h2>
+        <section className="finale reveal">
+          <div className="finale-glow" aria-hidden="true" />
+          <BrandMark size={72} animated className="finale-mark" />
+          <h2>
+            Built for people who already take <em>the search seriously.</em>
+          </h2>
           <p className="lede">
-            If you want a pretty chatbot that “applies for you” in a black box, this isn’t it. If you want a
-            native shell over a real job-search system — with PDF CVs, a tracker CSV, interview packs, and
-            agent activity you can see — you’re home.
+            If you want a chatbot that applies for you in a black box, this isn’t it. If you want a native shell
+            over a real job-search system, with PDF CVs, a tracker CSV, interview packs, and agent activity you
+            can see, you’re home.
           </p>
-          <div className="cta-row" style={{ justifyContent: "center", marginTop: 28 }}>
+          <div className="cta-row">
             <Link className="btn btn-primary btn-lg" to="/download">
-              Build the macOS app
+              Download for macOS
+            </Link>
+            <Link className="btn btn-ghost btn-lg" to="/features">
+              Browse features
             </Link>
           </div>
         </section>
