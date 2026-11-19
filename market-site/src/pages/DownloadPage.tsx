@@ -4,16 +4,63 @@ import { AppChrome } from "../components/AppChrome";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { applySeo } from "../lib/seo";
+import {
+  PLATFORM_DOWNLOADS,
+  RELEASE_TAG,
+  RELEASE_TAG_URL,
+  RELEASE_VERSION,
+  RELEASES_PAGE,
+  releaseAssetUrl,
+  type PlatformDownload,
+} from "../lib/releases";
 import { GITHUB_REPO } from "../lib/site";
+
+function PlatformIcon({ id }: { id: PlatformDownload["id"] }) {
+  if (id === "windows") {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M3 5.5 10.5 4.4v7.1H3V5.5Zm0 13 7.5 1.1v-7.2H3v6.1ZM11.7 4.2 21 3v8.5h-9.3V4.2Zm0 16.6L21 21.9V12.5h-9.3v8.3Z" />
+      </svg>
+    );
+  }
+  if (id === "web") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+        <path
+          d="M3.5 12h17M12 3.5c2.4 2.6 3.6 5.5 3.6 8.5S14.4 17.9 12 20.5C9.6 17.9 8.4 15 8.4 12S9.6 6.1 12 3.5Z"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M16.5 3.2c-.9.1-2 .7-2.6 1.5-.6.7-1.1 1.9-.9 3 .9.1 2-.5 2.6-1.3.6-.8 1.1-1.9.9-3.2ZM19.2 20.8c-1.1 1.1-2.2 1.7-3.2 1.7-1 0-1.4-.4-2.8-.4s-1.8.4-2.8.4c-1.1 0-2.3-.7-3.4-1.9-1.6-1.8-2.8-5.1-1.8-7.9.7-1.9 2.3-3.1 4-3.1 1.1 0 2.1.7 2.8.7.7 0 1.9-.8 3.2-.7 1.3.1 2.4.7 3.1 1.8-2.7 1.5-2.3 5.5.5 6.7-.5 1.3-1.2 2.6-1.6 3.7Z" />
+    </svg>
+  );
+}
+
+function DownloadGlyph() {
+  return (
+    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M8.1 1.2a.75.75 0 0 0-1.2 0L3.2 6.1a.75.75 0 0 0 .6 1.2h1.7v5.2c0 .4.3.75.75.75h3.5c.4 0 .75-.35.75-.75V7.3h1.7a.75.75 0 0 0 .6-1.2L8.1 1.2Z" />
+      <path d="M2.5 14.25c0-.4.35-.75.75-.75h9.5c.4 0 .75.35.75.75s-.35.75-.75.75H3.25a.75.75 0 0 1-.75-.75Z" />
+    </svg>
+  );
+}
 
 export function DownloadPage() {
   const { hash } = useLocation();
+  const primary = PLATFORM_DOWNLOADS[0];
+  const primaryUrl = releaseAssetUrl(primary.asset);
 
   useEffect(() => {
     applySeo({
-      title: "Download — AI Job Search",
+      title: "Download — AI Job Search Assistant",
       description:
-        "Build the local-first macOS Apple Silicon app from source. Claude Code required. No published release binary yet.",
+        "Download AI Job Search Assistant for macOS Apple Silicon, Intel Mac, Windows, or the web demo. Claude Code required for AI workflows.",
       path: "/download",
     });
   }, []);
@@ -29,7 +76,7 @@ export function DownloadPage() {
     <>
       <SiteHeader active="download" ghostCta={{ to: "/features", label: "Features" }} />
       <main>
-        <section className="band band-hero" id="macos">
+        <section className="band band-hero download-hero" id="macos">
           <div className="split">
             <div className="panel reveal" data-tone="sky" aria-hidden="true">
               <div className="panel-inner">
@@ -40,59 +87,74 @@ export function DownloadPage() {
               </div>
             </div>
 
-            <div className="stack reveal reveal-delay-1">
-              <h1>Install AI Job Search</h1>
+            <div className="stack wide reveal reveal-delay-1">
+              <p className="kicker">Release {RELEASE_TAG}</p>
+              <h1>Install AI Job Search Assistant</h1>
               <p className="lede">
-                Build the local-first macOS Apple Silicon app from source. Discover, rank, prepare tailored
-                documents, and track outcomes with Claude Code — without auto-submitting applications to
-                employers.
-              </p>
-              <p className="lede">
-                <strong>No published GitHub Release binary yet.</strong> Clone the repo, build the Apple
-                Silicon client, and point it at your upstream workspace. Unsigned personal builds may need
-                right-click → Open the first time.
+                Download the desktop workspace for your platform. Discover, rank, prepare tailored documents,
+                and track outcomes with Claude Code — without auto-submitting applications to employers.
               </p>
               <div className="cta-row">
-                <a
-                  className="btn btn-primary btn-lg btn-icon"
-                  href={`${GITHUB_REPO}#installation-macos-apple-silicon`}
-                  rel="noopener"
-                >
-                  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M8.1 1.2a.75.75 0 0 0-1.2 0L3.2 6.1a.75.75 0 0 0 .6 1.2h1.7v5.2c0 .4.3.75.75.75h3.5c.4 0 .75-.35.75-.75V7.3h1.7a.75.75 0 0 0 .6-1.2L8.1 1.2Z" />
-                    <path d="M2.5 14.25c0-.4.35-.75.75-.75h9.5c.4 0 .75.35.75.75s-.35.75-.75.75H3.25a.75.75 0 0 1-.75-.75Z" />
-                  </svg>
-                  Build from source
+                <a className="btn btn-primary btn-lg btn-icon" href={primaryUrl} rel="noopener">
+                  <DownloadGlyph />
+                  Download for Apple Silicon
                 </a>
                 <Link className="btn btn-soft btn-lg" to="/docs/install">
                   Install docs
                 </Link>
               </div>
-              <div className="platform-row">
-                <div className="platform-card">
-                  <strong>Apple Silicon</strong>
-                  <span>Developed client · apps/macos-apple-silicon</span>
-                </div>
-                <div className="platform-card">
-                  <strong>Intel Mac</strong>
-                  <span>Source port · no release artifact</span>
-                </div>
-                <div className="platform-card">
-                  <strong>Windows</strong>
-                  <span>Source port · no release artifact</span>
-                </div>
-                <div className="platform-card">
-                  <strong>Web</strong>
-                  <span>UI demo only · localStorage</span>
-                </div>
-              </div>
               <p className="fine-print">
-                When release binaries exist they will appear on{" "}
-                <a href={`${GITHUB_REPO}/releases`} rel="noopener">
+                Current release{" "}
+                <a href={RELEASE_TAG_URL} rel="noopener">
+                  {RELEASE_TAG}
+                </a>{" "}
+                · assets on{" "}
+                <a href={RELEASES_PAGE} rel="noopener">
                   GitHub Releases
                 </a>
-                . Until then, install by building from source.
+                . Unsigned macOS builds may need right-click → Open the first time.
               </p>
+            </div>
+          </div>
+
+          <div className="platform-download reveal reveal-delay-2" id="platforms">
+            <div className="platform-download-head">
+              <h2 className="platform-download-title">Choose your platform</h2>
+              <p className="platform-download-copy">
+                Each card downloads the {RELEASE_VERSION} package for that client from GitHub Releases.
+              </p>
+            </div>
+            <div className="platform-grid" role="list">
+              {PLATFORM_DOWNLOADS.map((platform) => {
+                const href = releaseAssetUrl(platform.asset);
+                return (
+                  <a
+                    key={platform.id}
+                    className="platform-card"
+                    href={href}
+                    role="listitem"
+                    download
+                    rel="noopener"
+                    aria-label={`Download ${platform.title} (${platform.asset})`}
+                  >
+                    <div className="platform-card-top">
+                      <span className="platform-card-icon">
+                        <PlatformIcon id={platform.id} />
+                      </span>
+                      <span className="platform-card-badge">{platform.badge}</span>
+                    </div>
+                    <div className="platform-card-body">
+                      <strong>{platform.title}</strong>
+                      <span>{platform.subtitle}</span>
+                      {platform.note ? <em className="platform-card-note">{platform.note}</em> : null}
+                    </div>
+                    <span className="platform-card-cta">
+                      <DownloadGlyph />
+                      Download {RELEASE_TAG}
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -165,6 +227,9 @@ export function DownloadPage() {
               <div className="cta-row">
                 <a className="btn btn-soft btn-lg" href={GITHUB_REPO} rel="noopener">
                   View repository
+                </a>
+                <a className="btn btn-soft btn-lg" href={RELEASE_TAG_URL} rel="noopener">
+                  Release {RELEASE_TAG}
                 </a>
                 <Link className="text-link" to="/features">
                   Explore features

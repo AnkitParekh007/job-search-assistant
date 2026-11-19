@@ -10,3 +10,4 @@ apps/*/package-lock.json
 
 # market-site prerender (SSR bundle)
 dist-ssr/
+dist-release/

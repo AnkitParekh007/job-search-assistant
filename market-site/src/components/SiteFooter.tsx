@@ -32,7 +32,7 @@ export function SiteFooter({
         </div>
         <div className="footer-col">
           <h4>Platform</h4>
-          <Link to="/download#macos">macOS Apple Silicon</Link>
+          <Link to="/download#platforms">Platform downloads</Link>
           <Link to="/download#requirements">Requirements</Link>
           <Link to="/download#source">Build from source</Link>
         </div>

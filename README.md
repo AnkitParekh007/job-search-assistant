@@ -26,7 +26,7 @@
 <p align="center"><sub>Independent community desktop companion inspired by <a href="https://github.com/ai-job-search-dev/ai-job-search">ai-job-search</a> by <a href="https://github.com/MadsLorentzen">Mads Lorentzen</a> and contributors. Not an official upstream release.</sub></p>
 
 > [!NOTE]
-> **Public release status:** Package version `0.1.0`; a downloadable installer has **not** been published. Build from source for now. macOS Apple Silicon is the primary supported client. AI workflows require a configured Claude Code or compatible experimental Codex integration; provider usage may incur costs.
+> **Public release status:** Package version `0.1.0`. Platform download packages are on [GitHub Releases (`v0.1.0`)](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.0) and the [download page](https://ankitparekh007.github.io/job-search-assistant/download). Notarized installers are **not** published yet — unzip and follow each package README (unsigned macOS `.app` builds may need right-click → Open). macOS Apple Silicon is the primary supported client. AI workflows require a configured Claude Code or compatible experimental Codex integration; provider usage may incur costs.
 
 ---
 
@@ -251,7 +251,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 ### Key limitations
 
 - Primary support target is **macOS Apple Silicon**.
-- No published installer / GitHub Release binary yet.
+- GitHub Release `v0.1.0` ships platform client packages; notarized installers are not published yet.
 - Does **not** auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
 - Web client is a demo UI only.

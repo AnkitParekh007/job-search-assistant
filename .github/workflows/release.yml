@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to create or refresh (e.g. v0.1.0)"
+        required: true
+        default: "v0.1.0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Package release assets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: |
+          rm -rf node_modules apps/*/node_modules packages/*/node_modules
+          npm ci
+
+      - name: Resolve version
+        id: ver
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Build web demo
+        run: npx vite build
+        working-directory: apps/web
+
+      - name: Package assets
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: bash scripts/ci-package-release-assets.sh
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: AI Job Search Assistant ${{ steps.ver.outputs.tag }}
+          generate_release_notes: true
+          body: |
+            Desktop and web packages for **AI Job Search Assistant** `${{ steps.ver.outputs.tag }}`.
+
+            - **macOS Apple Silicon / Intel / Windows** archives contain the platform client (build locally if a signed binary is not included).
+            - **Web** is a static demo with sample data (no Claude Code bridge).
+            - The app does **not** submit applications automatically.
+            - Claude Code CLI is required for AI workflows.
+
+            Download page: https://ankitparekh007.github.io/job-search-assistant/download
+          files: |
+            dist-release/AI-Job-Search-${{ steps.ver.outputs.version }}-*.zip
+            dist-release/SHA256SUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
