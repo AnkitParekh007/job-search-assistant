@@ -36,8 +36,8 @@ export const api = {
   getSetting: (key: string) => invoke<string | null>("get_setting", { key }),
   setSetting: (key: string, value: string) => invoke<void>("set_setting", { key, value }),
   providers: () => invoke<import("@ai-job-search/core").ProviderStatus[]>("list_providers"),
-  providerAccount: (provider: string) => invoke<any>("provider_account", { provider }),
-  providerLogin: (provider: string, mode?: string) => invoke<any>("provider_login", { provider, mode: mode || null }),
+  providerAccount: (provider: string) => invoke<import("@ai-job-search/core").ProviderAccountResponse>("provider_account", { provider }),
+  providerLogin: (provider: string, mode?: string) => invoke<import("@ai-job-search/core").ProviderLoginResponse>("provider_login", { provider, mode: mode || null }),
   providerModels: (provider: string) => invoke<any>("provider_models", { provider }),
 };
 
