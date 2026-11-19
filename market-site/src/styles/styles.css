@@ -34,8 +34,8 @@ html[data-theme="light"] {
   --nav-h: 64px;
   --max: 1120px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --font: "Söhne", "Sohne", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
-  --font-display: "Söhne", "Sohne", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --font: "Satoshi", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Satoshi", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
 }
 
 html[data-theme="dark"] {

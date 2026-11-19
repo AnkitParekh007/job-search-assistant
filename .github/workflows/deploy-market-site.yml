@@ -37,15 +37,16 @@ jobs:
           node-version: "22"
           cache: npm
 
-      - name: Install and export features from core
+      - name: Install, export features, build SPA
         run: |
           npm install
           npm run build:features
+          npm run build:market
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: market-site
+          path: market-site/dist
 
       - name: Deploy to GitHub Pages
         id: deployment

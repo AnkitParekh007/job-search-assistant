@@ -7,7 +7,7 @@ body:
     id: location
     attributes:
       label: Doc location
-      placeholder: "e.g. docs/installation.md or market-site/download.html"
+      placeholder: "e.g. docs/installation.md or market-site /download route"
     validations:
       required: true
   - type: textarea
