@@ -3,9 +3,10 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum ProviderId {
+    #[default]
     Claude,
     Codex,
     OpenaiApi,
@@ -46,12 +47,6 @@ impl ProviderId {
     }
 }
 
-impl Default for ProviderId {
-    fn default() -> Self {
-        Self::Claude
-    }
-}
-
 #[derive(Debug, Clone, Serialize)]
 pub struct ProviderCapability {
     pub id: String,
@@ -86,6 +81,7 @@ pub struct StartOpts {
 /// Coarse normalized event kinds shared across providers.
 pub mod kind {
     pub const STARTED: &str = "execution.started";
+    pub const STREAMING: &str = "execution.streaming";
     pub const AGENT_MESSAGE: &str = "agent.message";
     pub const TOOL_STARTED: &str = "tool.started";
     pub const TOOL_OUTPUT: &str = "tool.output";
@@ -98,7 +94,6 @@ pub mod kind {
     pub const COMPLETED: &str = "execution.completed";
     pub const FAILED: &str = "execution.failed";
     pub const CANCELLED: &str = "execution.cancelled";
-    #[allow(dead_code)]
     pub const USAGE: &str = "usage.info";
 }
 

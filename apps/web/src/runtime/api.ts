@@ -222,6 +222,11 @@ export const api = {
     throw new Error("Provider sign-in requires the desktop app.");
   },
   providerModels: async (_provider: string) => ({ data: [] }),
+  providerSetCredential: async (_provider: string, _secret: string) => {
+    throw new Error("API keys are not stored in the web demo. Use the desktop app.");
+  },
+  providerClearCredential: async (_provider: string) => ({ ok: false }),
+  providerTest: async (_provider: string) => ({ ok: false, error: "Provider tests require the desktop app." }),
 };
 
 export const fileUrl = (abs: string) => abs;

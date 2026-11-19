@@ -78,5 +78,10 @@ describe("workflow catalog", () => {
     expect(providerSupportsWorkflow("codex", "gmail-sync")).toBe(false);
     expect(providerSupportsWorkflow("codex", "rank")).toBe(true);
     expect(unsupportedReason("codex", "gmail-sync")).toMatch(/Claude Code/);
+    expect(providerSupportsWorkflow("openai_api", "rank")).toBe(true);
+    expect(providerSupportsWorkflow("ollama", "scrape")).toBe(false);
+    expect(providerSupportsWorkflow("gemini", "interview")).toBe(true);
+    expect(unsupportedReason("ollama", "scrape")).toMatch(/structured analysis/);
+    expect(buildPromptForProvider(WORKFLOWS.find((w) => w.id === "rank")!, "", "openai_api")).toContain("structured inference");
   });
 });

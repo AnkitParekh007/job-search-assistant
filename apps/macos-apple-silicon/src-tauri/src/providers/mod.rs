@@ -1,9 +1,12 @@
 //! Multi-provider AI runtime facade.
 //!
-//! Routes workflow execution to Claude Code or OpenAI Codex while preserving
-//! a single invoke/event surface for the React UI.
+//! Routes workflow execution to Claude Code, OpenAI Codex, OpenAI API,
+//! Gemini, or Ollama while preserving a single invoke/event surface.
 
 pub mod codex;
+pub mod gemini;
+pub mod inference;
+pub mod ollama;
 pub mod openai_api;
 pub mod registry;
 pub mod types;
@@ -11,6 +14,7 @@ pub mod types;
 use crate::bridge::Bridge;
 use crate::db::{Db, RunSummary};
 use crate::providers::codex::CodexBridge;
+use crate::providers::inference::InferenceBridge;
 use crate::providers::types::{ProviderId, StartOpts};
 use serde_json::Value;
 use std::path::PathBuf;
@@ -21,6 +25,7 @@ use tauri::AppHandle;
 pub struct Runtime {
     pub claude: Bridge,
     pub codex: CodexBridge,
+    pub inference: InferenceBridge,
 }
 
 impl Runtime {
@@ -43,7 +48,6 @@ impl Runtime {
                 )?;
                 summary.provider = Some(ProviderId::Claude.as_str().into());
                 summary.model = opts.model;
-                // Persist provider on the row (insert already happened; keep columns in sync).
                 db.set_run_provider(
                     &summary.id,
                     ProviderId::Claude.as_str(),
@@ -60,11 +64,42 @@ impl Runtime {
                 opts.model,
                 opts.resume,
             ),
-            other => Err(format!(
-                "{} is not available yet. Choose Claude Code or OpenAI Codex.",
-                other.display_name()
-            )),
+            ProviderId::OpenaiApi => openai_api::start(
+                &self.inference,
+                app,
+                db,
+                opts.workspace,
+                opts.workflow,
+                opts.prompt,
+                opts.model,
+            ),
+            ProviderId::Gemini => gemini::start(
+                &self.inference,
+                app,
+                db,
+                opts.workspace,
+                opts.workflow,
+                opts.prompt,
+                opts.model,
+            ),
+            ProviderId::Ollama => {
+                let endpoint = db.get_setting("ollama_endpoint");
+                ollama::start(
+                    &self.inference,
+                    app,
+                    db,
+                    opts.workspace,
+                    opts.workflow,
+                    opts.prompt,
+                    opts.model,
+                    endpoint,
+                )
+            }
         }
+    }
+
+    fn route_inference(&self, run_id: &str) -> bool {
+        self.inference.owns(run_id)
     }
 
     pub fn respond(
@@ -89,6 +124,8 @@ impl Runtime {
                 message,
                 remember,
             )
+        } else if self.route_inference(&run_id) {
+            self.inference.respond(run_id, request_id, allow)
         } else {
             self.claude.respond(
                 app,
@@ -112,6 +149,8 @@ impl Runtime {
     ) -> Result<(), String> {
         if self.codex.owns(&run_id) {
             self.codex.send(app, db, run_id, text)
+        } else if self.route_inference(&run_id) {
+            self.inference.send(run_id, text)
         } else {
             self.claude.send(app, db, run_id, text)
         }
@@ -120,6 +159,8 @@ impl Runtime {
     pub fn finish(&self, run_id: &str) -> Result<(), String> {
         if self.codex.owns(run_id) {
             self.codex.finish(run_id)
+        } else if self.route_inference(run_id) {
+            self.inference.finish(run_id)
         } else {
             self.claude.finish(run_id)
         }
@@ -128,6 +169,8 @@ impl Runtime {
     pub fn cancel(&self, app: AppHandle, db: Arc<Db>, run_id: String) -> Result<(), String> {
         if self.codex.owns(&run_id) {
             self.codex.cancel(app, db, run_id)
+        } else if self.route_inference(&run_id) {
+            self.inference.cancel(app, db, run_id)
         } else {
             self.claude.cancel(app, db, run_id)
         }
@@ -136,12 +179,15 @@ impl Runtime {
     pub fn live_ids(&self) -> Vec<(String, String)> {
         let mut v = self.claude.live_ids();
         v.extend(self.codex.live_ids());
+        v.extend(self.inference.live_ids());
         v
     }
 
     pub fn pending(&self, run_id: &str) -> Vec<Value> {
         if self.codex.owns(run_id) {
             self.codex.pending(run_id)
+        } else if self.route_inference(run_id) {
+            self.inference.pending(run_id)
         } else {
             self.claude.pending(run_id)
         }
@@ -150,17 +196,7 @@ impl Runtime {
     pub fn shutdown(&self) {
         self.claude.shutdown();
         self.codex.shutdown();
-    }
-
-    #[allow(dead_code)]
-    pub fn provider_of_live(&self, run_id: &str) -> Option<&'static str> {
-        if self.codex.owns(run_id) {
-            Some(ProviderId::Codex.as_str())
-        } else if self.claude.live_ids().iter().any(|(id, _)| id == run_id) {
-            Some(ProviderId::Claude.as_str())
-        } else {
-            None
-        }
+        self.inference.shutdown();
     }
 }
 

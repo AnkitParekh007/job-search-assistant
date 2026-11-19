@@ -1,0 +1,2 @@
+# Tauri command and bridge surfaces intentionally take many parameters.
+too-many-arguments-threshold = 10

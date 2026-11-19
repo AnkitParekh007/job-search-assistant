@@ -49,12 +49,12 @@ The Apple Silicon desktop host routes workflows through a provider-agnostic runt
 | Provider | Status | Transport |
 |----------|--------|-----------|
 | Claude Code | Production | Existing `bridge.rs` stream-json |
-| OpenAI Codex | Production (first additional) | `codex app-server` JSON-RPC over stdio |
-| OpenAI Responses API | Planned stub | — |
-| Google Gemini | Planned stub | — |
-| Ollama | Planned stub | — |
+| OpenAI Codex | Production-candidate | `codex app-server` JSON-RPC over stdio |
+| OpenAI Responses API | Implemented (BYOK) | HTTPS Responses API + Keychain |
+| Google Gemini | Implemented | Gemini CLI headless and/or Developer API |
+| Ollama | Implemented | Local `127.0.0.1:11434` chat API |
 
-Upstream slash commands (`/rank`, `/apply`, …) remain Claude-oriented. Codex runs use engine-neutral instructions that preserve workspace data contracts without claiming slash-command parity. See [`docs/MULTI-PROVIDER-IMPLEMENTATION.md`](./MULTI-PROVIDER-IMPLEMENTATION.md).
+Upstream slash commands (`/rank`, `/apply`, …) remain Claude-oriented. Codex runs use engine-neutral instructions. OpenAI API / Gemini / Ollama run **structured inference** (advisory JSON) with capability gating — not full agentic parity. See [`docs/MULTI-PROVIDER-IMPLEMENTATION.md`](./MULTI-PROVIDER-IMPLEMENTATION.md) and [`docs/providers/`](./providers/).
 
 ## Local LLM
 
