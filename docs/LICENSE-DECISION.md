@@ -18,7 +18,7 @@ A root **MIT** `LICENSE` was added to match the Cargo crate declaration and upst
 ## What still needs the owner
 
 1. Confirm the copyright holder name/year are correct.
-2. Confirm MIT is the intended SPDX license for **all** first-party code in this repository (including marketing site and Windows/Intel/Web clients).
+2. Confirm MIT is the intended SPDX license for **all** first-party code in this repository (including marketing site and Windows/Intel clients).
 3. After push, verify GitHub detects the license on the repository page.
 4. Do **not** treat this file as legal advice.
 

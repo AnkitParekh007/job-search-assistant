@@ -47,8 +47,7 @@ npm run test:core          → 9 passed
 cargo test (apple-silicon) → 27 passed
 cargo fmt --check          → pass
 cargo clippy -D warnings   → pass
-npm test                   → core + apple-silicon + web vitest
-npm run build:web          → after Settings typing fix
+npm test                   → core + apple-silicon vitest
 ```
 
 ## 8. Live test evidence

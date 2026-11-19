@@ -2,7 +2,7 @@
 
 **Audited:** 2026-11-19  
 **Repository (at audit time):** https://github.com/AnkitParekh007/job-search-assitant  
-**Default branch tip inspected:** `a34bfca` (`Complete Intel Mac, Windows, and web clients.`)  
+**Default branch tip inspected:** `a34bfca` (historical commit; web client has since been removed)  
 **Marketing site (at audit time):** https://ankitparekh007.github.io/job-search-assitant/ (HTTP 200 verified)
 
 > **Historical note (2026-11-19):** After this audit, the GitHub repository was renamed to [`AnkitParekh007/job-search-assistant`](https://github.com/AnkitParekh007/job-search-assistant). The Pages site path is now `https://ankitparekh007.github.io/job-search-assistant/`. URLs below intentionally preserve the pre-rename slug as audited evidence.
@@ -59,9 +59,8 @@ Source of truth: `apps/macos-apple-silicon/docs/FEATURE-PARITY-MATRIX.md`, `IMPL
 | macOS Apple Silicon | `apps/macos-apple-silicon/` | **Developed client** — full Tauri/React/Rust bridge; primary README and docs |
 | macOS Intel | `apps/macos-intel/` | **Source-complete port** — `build:intel` / `x86_64-apple-darwin`; not evidenced as independently release-tested here |
 | Windows | `apps/windows/` | **Source-complete port** — NSIS/MSI targets in Tauri config; not evidenced as release-tested here |
-| Web | `apps/web/` | **UI demo** — `localStorage` backend; README states Claude / filesystem / PDF remain desktop-only |
 
-`apps/README.md` previously labeled Intel, Windows, and Web as “Complete”, which conflicts with missing release artifacts and the web demo limitation.
+`apps/README.md` previously overstated Intel/Windows completeness relative to missing release artifacts. A former web client was removed; product is desktop-only.
 
 ---
 

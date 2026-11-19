@@ -20,7 +20,7 @@ export const PAGE_SEO = {
   download: {
     title: "Download — AI Job Search Assistant",
     description:
-      "Download AI Job Search Assistant v0.1.0 for macOS Apple Silicon, Intel Mac, Windows, or the web demo. Multi-provider AI support (Claude Code or Codex) for workflows.",
+      "Download AI Job Search Assistant v0.1.0 for macOS Apple Silicon, Intel Mac, or Windows. Multi-provider AI support (Claude Code or Codex) for workflows.",
     path: "/download",
   },
 } satisfies Record<string, SeoMeta>;

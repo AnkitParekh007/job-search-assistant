@@ -44,15 +44,7 @@ Scoped starter ideas grounded in real gaps. Prefer filing these as GitHub issues
 **Files:** `apps/macos-intel/README.md`  
 **Tests:** N/A
 
-### 6. Web demo banner
-
-**Problem:** Visitors may think the web app talks to Claude.  
-**Expected:** Persistent banner: demo data only; desktop required for Claude.  
-**Acceptance:** Visible on all main routes in `apps/web`.  
-**Files:** `apps/web/src/App.tsx` (or shell layout)  
-**Tests:** Vitest asserts banner text
-
-### 7. Accessibility: focus ring on primary nav
+### 6. Accessibility: focus ring on primary nav
 
 **Problem:** Keyboard focus may be unclear on sidebar/nav.  
 **Expected:** Visible focus styles matching existing design tokens.  
@@ -60,7 +52,7 @@ Scoped starter ideas grounded in real gaps. Prefer filing these as GitHub issues
 **Files:** `apps/macos-apple-silicon/src/styles.css`, nav in `App.tsx`  
 **Tests:** Manual checklist in PR
 
-### 8. Troubleshooting: Claude interrupt timeout
+### 7. Troubleshooting: Claude interrupt timeout
 
 **Problem:** Users unsure what happens after Stop.  
 **Expected:** Docs note interrupt then kill after ~1.5s (from architecture docs).  
@@ -68,7 +60,7 @@ Scoped starter ideas grounded in real gaps. Prefer filing these as GitHub issues
 **Files:** `docs/troubleshooting.md`  
 **Tests:** N/A
 
-### 9. market-site canonical + OG image tags
+### 8. market-site canonical + OG image tags
 
 **Problem:** SEO/social tags incomplete on some HTML pages.  
 **Expected:** Consistent canonical URLs (Pages base path) and `og:image` pointing at social preview.  
@@ -76,7 +68,7 @@ Scoped starter ideas grounded in real gaps. Prefer filing these as GitHub issues
 **Files:** `market-site/**`  
 **Tests:** Manual HTML review
 
-### 10. Label hygiene issue template note
+### 9. Label hygiene issue template note
 
 **Problem:** New contributors mis-file bugs vs features.  
 **Expected:** Short SUPPORT blurb linking the correct issue forms (already added — extend if gaps remain).  

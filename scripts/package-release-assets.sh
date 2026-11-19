@@ -147,46 +147,6 @@ else
     "cd app && npm install && npm run tauri build"
 fi
 
-# --- Web demo ---
-WEB_ASSET="AI-Job-Search-${VERSION}-web.zip"
-WEB_DIST="$ROOT/apps/web/dist"
-rm -rf "$STAGE/web"
-mkdir -p "$STAGE/web"
-if [[ ! -d "$WEB_DIST" ]]; then
-  note "Building web demo (vite only)…"
-  (
-    cd "$ROOT/apps/web"
-    npx vite build
-  )
-fi
-if [[ -d "$WEB_DIST" ]]; then
-  rsync -a "$WEB_DIST/" "$STAGE/web/site/"
-  cat >"$STAGE/web/README.md" <<EOF
-# AI Job Search Assistant ${VERSION} — Web demo
-
-Static UI demo with sample data. It does **not** connect to an AI provider.
-
-Open \`site/index.html\` via any static file server, for example:
-
-  npx serve site
-
-For real workflows, download a desktop build instead.
-EOF
-else
-  rsync -a \
-    --exclude node_modules \
-    --exclude dist \
-    --exclude .DS_Store \
-    "$ROOT/apps/web/" "$STAGE/web/app/"
-  write_build_readme "$STAGE/web/README.md" "Web demo" "cd app && npm install && npx vite build && npx serve dist"
-fi
-printf '%s\n' "$VERSION" >"$STAGE/web/VERSION"
-(
-  cd "$STAGE"
-  ditto -c -k --sequesterRsrc --keepParent web "$OUT/$WEB_ASSET"
-)
-note "Wrote $WEB_ASSET"
-
 # Checksums
 (
   cd "$OUT"

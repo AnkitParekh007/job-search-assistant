@@ -1,7 +1,7 @@
 /** Multi-provider AI runtime contracts shared by desktop apps and UI. */
 
-/** Provider account/status payload returned by native bridges. Browser/demo shells can
- * report `unsupported` without inventing authentication state.
+/** Provider account/status payload returned by native bridges. Desktop shells that
+ * have not wired a provider yet can report `unsupported` without inventing auth state.
  */
 export type ProviderAccountResponse = {
   unsupported?: boolean;

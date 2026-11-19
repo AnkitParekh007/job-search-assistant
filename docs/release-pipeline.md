@@ -7,7 +7,7 @@ Downloadable packages are published as GitHub Release assets and linked from the
 | Item | Value |
 |------|-------|
 | Tag | `v0.1.0` |
-| Assets | `AI-Job-Search-0.1.0-macos-arm64.zip`, `…-macos-x64.zip`, `…-windows-x64.zip`, `…-web.zip`, `SHA256SUMS.txt` |
+| Assets | `AI-Job-Search-0.1.0-macos-arm64.zip`, `…-macos-x64.zip`, `…-windows-x64.zip`, `SHA256SUMS.txt` |
 | Site constant | `RELEASE_TAG` in `market-site/src/lib/releases.ts` |
 
 ## Local packaging (preferred for macOS `.app`)
@@ -22,11 +22,10 @@ gh release create v0.1.0 \
   dist-release/SHA256SUMS.txt \
   --title "AI Job Search Assistant v0.1.0" \
   --notes-file - <<'EOF'
-Desktop and web packages for AI Job Search Assistant.
+Desktop packages for AI Job Search Assistant.
 
 - macOS Apple Silicon zip includes the unsigned `.app` when built locally.
 - Intel / Windows zips include the platform client (build with Tauri if no installer is bundled).
-- Web zip is a static demo only.
 - Does not auto-submit applications. Multi-provider AI support (Claude Code or Codex) required for AI workflows.
 EOF
 ```
