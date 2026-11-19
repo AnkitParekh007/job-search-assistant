@@ -4,3 +4,6 @@ node_modules/
 dist/
 **/src-tauri/target/
 **/src-tauri/gen/
+
+# Workspace apps use the root lockfile only
+apps/*/package-lock.json

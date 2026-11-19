@@ -20,34 +20,58 @@ struct AppState {
 
 fn default_workspace() -> PathBuf {
     let guess = env::home().join("Desktop/Projects/Automations/Job-Automations/ai-job-search");
-    if guess.join("CLAUDE.md").exists() { guess } else { env::home().join("ai-job-search") }
+    if guess.join("CLAUDE.md").exists() {
+        guess
+    } else {
+        env::home().join("ai-job-search")
+    }
 }
 
 fn ws(state: &State<AppState>) -> PathBuf {
-    state.db.get_setting("workspace").map(PathBuf::from).unwrap_or_else(default_workspace)
+    state
+        .db
+        .get_setting("workspace")
+        .map(PathBuf::from)
+        .unwrap_or_else(default_workspace)
 }
 
 fn today() -> String {
-    let o = std::process::Command::new("/bin/date").arg("+%Y-%m-%d").output();
-    o.map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string()).unwrap_or_default()
+    let o = std::process::Command::new("/bin/date")
+        .arg("+%Y-%m-%d")
+        .output();
+    o.map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+        .unwrap_or_default()
 }
 
 fn watch(app: &AppHandle, state: &AppState, dir: PathBuf) {
     let _ = app.asset_protocol_scope().allow_directory(&dir, true);
     let app2 = app.clone();
-    let last = Arc::new(Mutex::new(std::time::Instant::now() - std::time::Duration::from_secs(5)));
+    let last = Arc::new(Mutex::new(
+        std::time::Instant::now() - std::time::Duration::from_secs(5),
+    ));
     let w = notify::recommended_watcher(move |res: notify::Result<notify::Event>| {
         if let Ok(ev) = res {
             let relevant = ev.paths.iter().any(|p| {
                 let s = p.to_string_lossy();
-                !s.contains("/.git/") && !s.ends_with(".aux") && !s.ends_with(".log") && !s.contains(".tmp-")
-                    && (s.ends_with(".csv") || s.ends_with(".json") || s.ends_with(".md") || s.ends_with(".pdf") || s.ends_with(".tex"))
+                !s.contains("/.git/")
+                    && !s.ends_with(".aux")
+                    && !s.ends_with(".log")
+                    && !s.contains(".tmp-")
+                    && (s.ends_with(".csv")
+                        || s.ends_with(".json")
+                        || s.ends_with(".md")
+                        || s.ends_with(".pdf")
+                        || s.ends_with(".tex"))
             });
             if relevant {
                 let mut l = last.lock().unwrap();
                 if l.elapsed() > std::time::Duration::from_millis(400) {
                     *l = std::time::Instant::now();
-                    let files: Vec<String> = ev.paths.iter().map(|p| p.to_string_lossy().to_string()).collect();
+                    let files: Vec<String> = ev
+                        .paths
+                        .iter()
+                        .map(|p| p.to_string_lossy().to_string())
+                        .collect();
                     let _ = app2.emit("workspace-changed", json!({"paths": files}));
                 }
             }
@@ -69,9 +93,15 @@ fn get_workspace(state: State<AppState>) -> Value {
 fn set_workspace(app: AppHandle, state: State<AppState>, path: String) -> Result<Value, String> {
     let p = PathBuf::from(&path);
     if !p.join("CLAUDE.md").exists() || !p.join(".claude/commands").is_dir() {
-        return Err("That folder is not an AI Job Search checkout (needs CLAUDE.md and .claude/commands).".into());
+        return Err(
+            "That folder is not an AI Job Search checkout (needs CLAUDE.md and .claude/commands)."
+                .into(),
+        );
     }
-    state.db.set_setting("workspace", &path).map_err(|e| e.to_string())?;
+    state
+        .db
+        .set_setting("workspace", &path)
+        .map_err(|e| e.to_string())?;
     watch(&app, &state, p);
     Ok(get_workspace(state))
 }
@@ -92,12 +122,22 @@ fn seen_jobs(state: State<AppState>) -> Result<Vec<Value>, String> {
 }
 
 #[tauri::command]
-fn update_status(state: State<AppState>, index: usize, expected: String, status: String, note: String) -> Result<workspace::TrackerRow, String> {
+fn update_status(
+    state: State<AppState>,
+    index: usize,
+    expected: String,
+    status: String,
+    note: String,
+) -> Result<workspace::TrackerRow, String> {
     workspace::update_status(&ws(&state), index, &expected, &status, &note, &today())
 }
 
 #[tauri::command]
-fn application_folder(state: State<AppState>, company: String, role: String) -> Result<workspace::AppFolder, String> {
+fn application_folder(
+    state: State<AppState>,
+    company: String,
+    role: String,
+) -> Result<workspace::AppFolder, String> {
     let name = workspace::folder_name(&company, &role);
     if name.is_empty() {
         return Err("empty folder name".into());
@@ -130,7 +170,9 @@ fn read_text(state: State<AppState>, rel: String) -> Result<String, String> {
 
 #[tauri::command]
 fn abs_path(state: State<AppState>, rel: String) -> Result<String, String> {
-    Ok(workspace::safe_join(&ws(&state), &rel)?.to_string_lossy().to_string())
+    Ok(workspace::safe_join(&ws(&state), &rel)?
+        .to_string_lossy()
+        .to_string())
 }
 
 #[tauri::command]
@@ -160,24 +202,71 @@ fn posting_guard(state: State<AppState>, text: String) -> Result<Value, String> 
     let w = ws(&state);
     let tmp = env::app_data_dir().join(format!("guard-{}.txt", uuid::Uuid::new_v4()));
     std::fs::write(&tmp, text).map_err(|e| e.to_string())?;
-    let r = deps::run_tool(&w, "tools/posting_guard.py", &["--text".into(), "--in".into(), tmp.to_string_lossy().to_string(), "--json".into()]);
+    let r = deps::run_tool(
+        &w,
+        "tools/posting_guard.py",
+        &[
+            "--text".into(),
+            "--in".into(),
+            tmp.to_string_lossy().to_string(),
+            "--json".into(),
+        ],
+    );
     let _ = std::fs::remove_file(&tmp);
     let (code, out, err) = r?;
     Ok(json!({"code": code, "stdout": out, "stderr": err}))
 }
 
 #[tauri::command]
-fn start_run(app: AppHandle, state: State<AppState>, workflow: String, prompt: String, model: Option<String>, resume: Option<String>) -> Result<db::RunSummary, String> {
-    state.bridge.start(app, state.db.clone(), ws(&state), workflow, prompt, model, resume)
+fn start_run(
+    app: AppHandle,
+    state: State<AppState>,
+    workflow: String,
+    prompt: String,
+    model: Option<String>,
+    resume: Option<String>,
+) -> Result<db::RunSummary, String> {
+    state.bridge.start(
+        app,
+        state.db.clone(),
+        ws(&state),
+        workflow,
+        prompt,
+        model,
+        resume,
+    )
 }
 
 #[tauri::command]
-fn respond_permission(app: AppHandle, state: State<AppState>, run_id: String, request_id: String, allow: bool, updated_input: Option<Value>, message: Option<String>, remember: Option<bool>) -> Result<(), String> {
-    state.bridge.respond(app, state.db.clone(), run_id, request_id, allow, updated_input, message, remember.unwrap_or(false))
+fn respond_permission(
+    app: AppHandle,
+    state: State<AppState>,
+    run_id: String,
+    request_id: String,
+    allow: bool,
+    updated_input: Option<Value>,
+    message: Option<String>,
+    remember: Option<bool>,
+) -> Result<(), String> {
+    state.bridge.respond(
+        app,
+        state.db.clone(),
+        run_id,
+        request_id,
+        allow,
+        updated_input,
+        message,
+        remember.unwrap_or(false),
+    )
 }
 
 #[tauri::command]
-fn send_message(app: AppHandle, state: State<AppState>, run_id: String, text: String) -> Result<(), String> {
+fn send_message(
+    app: AppHandle,
+    state: State<AppState>,
+    run_id: String,
+    text: String,
+) -> Result<(), String> {
     state.bridge.send(app, state.db.clone(), run_id, text)
 }
 
@@ -194,7 +283,8 @@ fn cancel_run(app: AppHandle, state: State<AppState>, run_id: String) -> Result<
 #[tauri::command]
 fn list_runs(state: State<AppState>) -> Result<Value, String> {
     let runs = state.db.list_runs(200).map_err(|e| e.to_string())?;
-    let live: std::collections::HashMap<String, String> = state.bridge.live_ids().into_iter().collect();
+    let live: std::collections::HashMap<String, String> =
+        state.bridge.live_ids().into_iter().collect();
     Ok(json!({"runs": runs, "live": live}))
 }
 
@@ -215,7 +305,10 @@ fn set_setting(state: State<AppState>, key: String, value: String) -> Result<(),
     if key == "workspace" {
         return Err("use set_workspace".into());
     }
-    state.db.set_setting(&key, &value).map_err(|e| e.to_string())
+    state
+        .db
+        .set_setting(&key, &value)
+        .map_err(|e| e.to_string())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -226,16 +319,45 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             let db = Arc::new(Db::open(&env::app_data_dir().join("app.db"))?);
-            let state = AppState { db, bridge: Bridge::default(), watcher: Mutex::new(None) };
-            let w = state.db.get_setting("workspace").map(PathBuf::from).unwrap_or_else(default_workspace);
+            let state = AppState {
+                db,
+                bridge: Bridge::default(),
+                watcher: Mutex::new(None),
+            };
+            let w = state
+                .db
+                .get_setting("workspace")
+                .map(PathBuf::from)
+                .unwrap_or_else(default_workspace);
             watch(app.handle(), &state, w);
             app.manage(state);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            get_workspace, set_workspace, dependencies, tracker, seen_jobs, update_status, application_folder,
-            profile, documents, read_text, abs_path, file_exists, compile_doc, verify_pdf, posting_guard, start_run,
-            respond_permission, send_message, finish_run, cancel_run, list_runs, run_events, get_setting, set_setting
+            get_workspace,
+            set_workspace,
+            dependencies,
+            tracker,
+            seen_jobs,
+            update_status,
+            application_folder,
+            profile,
+            documents,
+            read_text,
+            abs_path,
+            file_exists,
+            compile_doc,
+            verify_pdf,
+            posting_guard,
+            start_run,
+            respond_permission,
+            send_message,
+            finish_run,
+            cancel_run,
+            list_runs,
+            run_events,
+            get_setting,
+            set_setting
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

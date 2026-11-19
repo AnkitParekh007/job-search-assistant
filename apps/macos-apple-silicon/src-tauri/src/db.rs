@@ -48,7 +48,12 @@ impl Db {
 
     pub fn get_setting(&self, k: &str) -> Option<String> {
         let c = self.0.lock().unwrap();
-        c.query_row("SELECT value FROM settings WHERE key=?1", params![k], |r| r.get(0)).optional().ok().flatten()
+        c.query_row("SELECT value FROM settings WHERE key=?1", params![k], |r| {
+            r.get(0)
+        })
+        .optional()
+        .ok()
+        .flatten()
     }
 
     pub fn set_setting(&self, k: &str, v: &str) -> rusqlite::Result<()> {
@@ -66,7 +71,15 @@ impl Db {
         Ok(())
     }
 
-    pub fn finish_run(&self, id: &str, status: &str, cost: Option<f64>, summary: Option<&str>, error: Option<&str>, ts: i64) {
+    pub fn finish_run(
+        &self,
+        id: &str,
+        status: &str,
+        cost: Option<f64>,
+        summary: Option<&str>,
+        error: Option<&str>,
+        ts: i64,
+    ) {
         let c = self.0.lock().unwrap();
         let _ = c.execute(
             "UPDATE runs SET status=?2, finished_at=?3, cost_usd=COALESCE(?4,cost_usd), summary=COALESCE(?5,summary), error=COALESCE(?6,error) WHERE id=?1",
@@ -94,8 +107,16 @@ impl Db {
         )?;
         let rows = st.query_map(params![limit], |r| {
             Ok(RunSummary {
-                id: r.get(0)?, workflow: r.get(1)?, prompt: r.get(2)?, session_id: r.get(3)?, status: r.get(4)?,
-                started_at: r.get(5)?, finished_at: r.get(6)?, cost_usd: r.get(7)?, summary: r.get(8)?, error: r.get(9)?,
+                id: r.get(0)?,
+                workflow: r.get(1)?,
+                prompt: r.get(2)?,
+                session_id: r.get(3)?,
+                status: r.get(4)?,
+                started_at: r.get(5)?,
+                finished_at: r.get(6)?,
+                cost_usd: r.get(7)?,
+                summary: r.get(8)?,
+                error: r.get(9)?,
             })
         })?;
         rows.collect()
@@ -103,8 +124,11 @@ impl Db {
 
     pub fn run_events(&self, run_id: &str) -> rusqlite::Result<Vec<(i64, i64, String, String)>> {
         let c = self.0.lock().unwrap();
-        let mut st = c.prepare("SELECT seq,ts,kind,payload FROM run_events WHERE run_id=?1 ORDER BY seq")?;
-        let rows = st.query_map(params![run_id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?;
+        let mut st =
+            c.prepare("SELECT seq,ts,kind,payload FROM run_events WHERE run_id=?1 ORDER BY seq")?;
+        let rows = st.query_map(params![run_id], |r| {
+            Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?))
+        })?;
         rows.collect()
     }
 }
@@ -118,7 +142,18 @@ mod tests {
         let p = d.path().join("t.db");
         {
             let db = Db::open(&p).unwrap();
-            let r = RunSummary { id: "r1".into(), workflow: "scrape".into(), prompt: "x'; DROP TABLE runs;--".into(), session_id: "s".into(), status: "running".into(), started_at: 1, finished_at: None, cost_usd: None, summary: None, error: None };
+            let r = RunSummary {
+                id: "r1".into(),
+                workflow: "scrape".into(),
+                prompt: "x'; DROP TABLE runs;--".into(),
+                session_id: "s".into(),
+                status: "running".into(),
+                started_at: 1,
+                finished_at: None,
+                cost_usd: None,
+                summary: None,
+                error: None,
+            };
             db.insert_run(&r, "/ws").unwrap();
             db.add_event("r1", 1, 1, "assistant", "{}");
             db.set_setting("theme", "dark").unwrap();

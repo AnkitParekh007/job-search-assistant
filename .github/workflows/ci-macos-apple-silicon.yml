@@ -5,12 +5,18 @@ on:
     branches: [main]
     paths:
       - "apps/macos-apple-silicon/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/ci-macos-apple-silicon.yml"
       - "docs/**"
       - "*.md"
   pull_request:
     paths:
       - "apps/macos-apple-silicon/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/ci-macos-apple-silicon.yml"
       - "docs/**"
       - "*.md"
@@ -24,9 +30,6 @@ jobs:
   frontend:
     name: Frontend test & build
     runs-on: macos-14
-    defaults:
-      run:
-        working-directory: apps/macos-apple-silicon
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,18 +37,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
-          cache-dependency-path: apps/macos-apple-silicon/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          rm -rf node_modules apps/*/node_modules packages/*/node_modules
+          npm ci
 
       - name: Unit tests
-        run: npm test
+        run: npm run test -w ai-job-search-macos-apple-silicon
 
       - name: Typecheck & Vite production build
-        run: npm run build
+        run: npm run build -w ai-job-search-macos-apple-silicon
 
   rust:
     name: Rust tests & fmt
