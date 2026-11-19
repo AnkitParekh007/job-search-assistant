@@ -1,5 +1,5 @@
 name: Platform support request
-description: Intel Mac, Windows, web, or packaging/release help
+description: Intel Mac, Windows, or packaging/release help
 title: "[platform] "
 labels: ["enhancement"]
 body:
@@ -10,7 +10,6 @@ body:
       options:
         - macOS Intel
         - Windows
-        - Web
         - Linux (not in repo today)
         - Packaging / GitHub Releases
     validations:

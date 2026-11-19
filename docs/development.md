@@ -7,7 +7,6 @@ apps/
   macos-apple-silicon/   # primary client
   macos-intel/
   windows/
-  web/
 market-site/             # GitHub Pages React SPA (Vite)
 docs/                    # Markdown docs (this tree)
 .github/                 # workflows + templates

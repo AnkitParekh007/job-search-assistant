@@ -9,7 +9,7 @@
 ## Scope of change
 
 - [ ] macOS Apple Silicon app
-- [ ] Other app client (`macos-intel` / `windows` / `web`)
+- [ ] Other app client (`macos-intel` / `windows`)
 - [ ] Documentation / marketing site
 - [ ] CI / repository metadata
 - [ ] Other:

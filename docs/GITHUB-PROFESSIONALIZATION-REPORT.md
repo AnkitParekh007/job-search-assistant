@@ -12,7 +12,7 @@
 
 The repository was audited against the live codebase, git history, and public GitHub/Pages metadata, then upgraded for open-source readiness: a product-first README, a full Markdown docs tree, community health files, issue/PR templates, CI for the Apple Silicon client, marketing-site SEO and install accuracy, MIT licensing files (owner confirmation flagged), social-preview assets, and Wiki/Discussions staging.
 
-Claims were constrained to evidence. Apple Silicon remains the developed client; Intel/Windows are source ports without release artifacts; the web app is a localStorage demo. Claude Code cost/requirement disclosure is explicit. No fabricated releases, stars, screenshots of private data, or autonomous-apply claims were introduced.
+Claims were constrained to evidence. Apple Silicon remains the developed client; Intel/Windows are source ports without release artifacts. Claude Code cost/requirement disclosure is explicit. No fabricated releases, stars, screenshots of private data, or autonomous-apply claims were introduced.
 
 ---
 
@@ -66,7 +66,7 @@ Unrelated local WIP (`packages/` monorepo extraction) was **stashed** and not in
 |--------|--------|
 | Description / homepage / topics | **Applied and verified** via `gh repo edit` (public API confirms description, homepage, 18 topics) |
 | Social preview upload | **Prepared but requires authorization** — admin Settings upload of `docs/assets/social/github-social-preview.png` |
-| Labels | **Applied and verified** — taxonomy present (`bug`, `enhancement`, `security`, `macos`, `windows`, `web`, etc.) |
+| Labels | **Applied and verified** — taxonomy present (`bug`, `enhancement`, `security`, `macos`, `windows`, etc.) |
 | Private vulnerability reporting | **Prepared but requires authorization** |
 | Discussions enable + starter posts | **Prepared but requires authorization** — drafts in `docs/wiki-staging/discussion-*.md` |
 | Wiki publish | **Prepared** — staging + clone/push steps; not published |
@@ -108,7 +108,6 @@ Unrelated local WIP (`packages/` monorepo extraction) was **stashed** and not in
 - Release packaging, signing, notarization
 - Interview mode UI, Gmail proposal table, portal manager, backup/restore
 - Independent verification of Intel/Windows builds on target hardware
-- Web client beyond demo
 - Complete/land the stashed `packages/` monorepo extraction separately
 
 ---

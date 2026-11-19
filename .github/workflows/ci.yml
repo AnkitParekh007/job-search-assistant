@@ -25,7 +25,3 @@ jobs:
         run: npm run build:features
       - name: Test Apple Silicon shell
         run: npm run test -w ai-job-search-macos-apple-silicon
-      - name: Test web
-        run: npm run test:web
-      - name: Build web
-        run: npm run build:web

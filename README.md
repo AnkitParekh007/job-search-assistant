@@ -214,9 +214,8 @@ Details: [Features](./docs/features.md) · [Supported workflows](./docs/supporte
 | **macOS Apple Silicon** (M1–M4) | [`apps/macos-apple-silicon/`](./apps/macos-apple-silicon/) | **Developed client** — primary supported desktop app |
 | macOS Intel (x86_64) | [`apps/macos-intel/`](./apps/macos-intel/) | Source-complete; release packaging not published |
 | Windows | [`apps/windows/`](./apps/windows/) | Source-complete; release packaging not published |
-| Web (browser) | [`apps/web/`](./apps/web/) | UI demo with sample data — **no** AI provider bridge |
 
-The **browser UI is a demo**, not a functional replacement for the desktop app. See [`apps/README.md`](./apps/README.md).
+See [`apps/README.md`](./apps/README.md).
 
 ---
 
@@ -249,7 +248,6 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 - GitHub Release `v0.1.0` ships platform client packages; notarized installers are not published yet.
 - Does **not** auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
-- Web client is a demo UI only.
 
 ---
 
@@ -340,7 +338,6 @@ npm install
 npm test
 npm run build:features   # writes market-site/public/assets/data/features.json
 npm run build:market     # Vite React SPA → market-site/dist (GitHub Pages)
-npm run build:web
 ```
 
 </details>

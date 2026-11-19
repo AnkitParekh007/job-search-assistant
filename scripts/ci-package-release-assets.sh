@@ -51,33 +51,5 @@ pack_client windows-x64 "$ROOT/apps/windows" \
   "AI-Job-Search-${VERSION}-windows-x64.zip" "Windows x64" \
   "cd app && npm install && npm run tauri build"
 
-WEB_ASSET="AI-Job-Search-${VERSION}-web.zip"
-mkdir -p "$OUT/stage/web"
-if [[ -d "$ROOT/apps/web/dist" ]]; then
-  mkdir -p "$OUT/stage/web/site"
-  rsync -a "$ROOT/apps/web/dist/" "$OUT/stage/web/site/"
-  cat >"$OUT/stage/web/README.md" <<EOF
-# AI Job Search Assistant ${VERSION} — Web demo
-
-Static UI demo with sample data. It does not connect to Claude Code.
-
-  npx serve site
-EOF
-else
-  rsync -a \
-    --exclude node_modules \
-    --exclude dist \
-    --exclude .DS_Store \
-    "$ROOT/apps/web/" "$OUT/stage/web/app/"
-  cat >"$OUT/stage/web/README.md" <<EOF
-# AI Job Search Assistant ${VERSION} — Web demo
-
-  cd app && npm install && npx vite build && npx serve dist
-EOF
-fi
-echo "$VERSION" >"$OUT/stage/web/VERSION"
-(cd "$OUT/stage" && zip -r -q "../$WEB_ASSET" web)
-echo "Wrote $WEB_ASSET"
-
 (cd "$OUT" && sha256sum AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt)
 ls -lh "$OUT"

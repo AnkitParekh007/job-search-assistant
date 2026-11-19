@@ -7,7 +7,7 @@ export const RELEASE_VERSION = "0.1.0";
 export const RELEASES_PAGE = `${GITHUB_REPO}/releases`;
 export const RELEASE_TAG_URL = `${GITHUB_REPO}/releases/tag/${RELEASE_TAG}`;
 
-export type PlatformId = "macos-apple-silicon" | "macos-intel" | "windows" | "web";
+export type PlatformId = "macos-apple-silicon" | "macos-intel" | "windows";
 
 export type PlatformDownload = {
   id: PlatformId;
@@ -44,14 +44,6 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     badge: "Download",
     asset: `AI-Job-Search-${RELEASE_VERSION}-windows-x64.zip`,
     note: "Windows client package — unzip and follow README",
-  },
-  {
-    id: "web",
-    title: "Web demo",
-    subtitle: "Browser UI · sample data",
-    badge: "Demo",
-    asset: `AI-Job-Search-${RELEASE_VERSION}-web.zip`,
-    note: "Static demo only — no AI provider bridge",
   },
 ];
 

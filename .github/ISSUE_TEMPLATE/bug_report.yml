@@ -1,5 +1,5 @@
 name: Bug report
-description: Something broken in the desktop app, web demo, or docs site
+description: Something broken in the desktop app or docs site
 title: "[bug] "
 labels: ["bug"]
 body:
@@ -30,7 +30,6 @@ body:
         - Apple Silicon (apps/macos-apple-silicon)
         - Intel Mac (apps/macos-intel)
         - Windows (apps/windows)
-        - Web demo (apps/web)
         - Marketing site only
         - Unsure
     validations:

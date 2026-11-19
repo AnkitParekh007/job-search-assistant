@@ -47,6 +47,6 @@ Package version embedded in the desktop clients. Corresponds to early repository
 
 - macOS Apple Silicon Tauri 2 desktop client (`apps/macos-apple-silicon`)
 - Marketing site under `market-site/` with GitHub Pages deploy workflow
-- macOS Intel, Windows, and web client trees (`a34bfca`)
+- macOS Intel and Windows client trees (`a34bfca`)
 
 No tagged GitHub Release accompanies this version yet.

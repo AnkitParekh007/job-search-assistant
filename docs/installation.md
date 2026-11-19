@@ -82,7 +82,6 @@ Personal builds are typically **unsigned**. On first open, use **Finder → righ
 |--------|------|
 | macOS Intel | [`apps/macos-intel/README.md`](../apps/macos-intel/README.md) — `npm run build:intel` |
 | Windows | [`apps/windows/README.md`](../apps/windows/README.md) |
-| Web demo | [`apps/web/README.md`](../apps/web/README.md) — UI only |
 
 ## Related
 

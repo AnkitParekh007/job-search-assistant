@@ -15,8 +15,8 @@ The app has no subscription of its own. Claude Code and Codex use your respectiv
 **Where is my data?**  
 In your upstream workspace files, plus local SQLite for run history/settings under Application Support.
 
-**Is there a Windows / Intel / web app?**  
-Source ports exist. Apple Silicon is the developed client. Web is a localStorage demo without an AI provider bridge. See [apps/README.md](../apps/README.md).
+**Is there a Windows / Intel app?**  
+Source ports exist under `apps/macos-intel` and `apps/windows`. Apple Silicon is the developed client. See [apps/README.md](../apps/README.md).
 
 **Where do I download a binary?**  
 Platform packages are on [GitHub Releases](https://github.com/AnkitParekh007/job-search-assistant/releases) and the [download page](https://ankitparekh007.github.io/job-search-assistant/download). Notarized installers are not published yet — see [installation.md](./installation.md).

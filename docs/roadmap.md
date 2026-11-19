@@ -22,12 +22,12 @@ Derived from [`IMPLEMENTATION-PLAN.md`](../apps/macos-apple-silicon/docs/IMPLEME
 
 - macOS Intel release verification and artifacts
 - Windows release verification and artifacts
-- Browser client beyond localStorage demo (if pursued)
 - Additional AI provider support **only if** explicitly approved and designed
 - Richer visual automation controls / skill-gap charts from `/upskill`
 
 ## Explicitly out of scope (current product)
 
+- Browser / web application client
 - Fully autonomous employer submission
 - Claiming multi-platform “production complete” without release evidence
 - Bundling or relicensing upstream source without attribution review

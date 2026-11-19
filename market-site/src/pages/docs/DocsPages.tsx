@@ -72,7 +72,7 @@ export function DocsOverview() {
         <div className="docs-card-grid">
           <Link className="docs-card" to="/docs/install">
             <strong>Install</strong>
-            <span>Download v{RELEASE_VERSION} for Apple Silicon, Intel, Windows, or web demo.</span>
+            <span>Download v{RELEASE_VERSION} for Apple Silicon, Intel, or Windows.</span>
           </Link>
           <Link className="docs-card" to="/docs/providers">
             <strong>AI Providers</strong>
@@ -96,7 +96,7 @@ export function DocsOverview() {
           </li>
           <li>
             <strong>Platform packages</strong> — GitHub Release {RELEASE_TAG} assets for macOS arm64 / x64,
-            Windows x64, and a static web demo.
+            and Windows x64.
           </li>
           <li>
             <strong>Full workflow catalog</strong> — all 14 upstream commands from Automations, with Codex
@@ -309,8 +309,8 @@ npm test
 npm run tauri build
 open "src-tauri/target/release/bundle/macos/AI Job Search.app"`}</pre>
         <p>
-          The bundle lands under <code>src-tauri/target/release/bundle/macos/</code>. Intel Mac, Windows, and
-          web demo trees live under <code>apps/</code> — see their READMEs. Source:{" "}
+          The bundle lands under <code>src-tauri/target/release/bundle/macos/</code>. Intel Mac and Windows
+          trees live under <code>apps/</code> — see their READMEs. Source:{" "}
           <a href={GITHUB_REPO} rel="noopener">
             GitHub repository
           </a>
@@ -471,8 +471,7 @@ export function DocsProviders() {
 
         <div className="docs-callout">
           <strong>Platform note.</strong> The full Rust provider runtime ships on Apple Silicon today. Intel
-          Mac and Windows clients include UI stubs; porting the providers module is on the roadmap. The web
-          demo has no AI bridge.
+          Mac and Windows clients include UI stubs; porting the providers module is on the roadmap.
         </div>
       </article>
       <Pager
