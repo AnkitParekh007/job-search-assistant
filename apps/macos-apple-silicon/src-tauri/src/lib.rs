@@ -2,7 +2,9 @@ mod bridge;
 mod db;
 mod deps;
 mod env;
+mod orchestration;
 mod providers;
+mod security;
 mod workspace;
 
 use db::Db;
@@ -256,7 +258,9 @@ fn start_run(
         match provider {
             ProviderId::Claude => state.db.get_setting("model"),
             ProviderId::Codex => state.db.get_setting("codex_model"),
-            _ => None,
+            ProviderId::OpenaiApi => state.db.get_setting("openai_api_model"),
+            ProviderId::Gemini => state.db.get_setting("gemini_model"),
+            ProviderId::Ollama => state.db.get_setting("ollama_model"),
         }
         .filter(|s| !s.is_empty())
     });
@@ -327,8 +331,9 @@ fn run_events(state: State<AppState>, run_id: String) -> Result<Value, String> {
 }
 
 #[tauri::command]
-fn list_providers() -> Vec<providers::types::ProviderStatus> {
-    providers::registry::list_providers()
+fn list_providers(state: State<AppState>) -> Vec<providers::types::ProviderStatus> {
+    let endpoint = state.db.get_setting("ollama_endpoint");
+    providers::registry::list_providers(endpoint.as_deref())
 }
 
 #[tauri::command]
@@ -355,7 +360,36 @@ fn provider_account(provider: String) -> Result<Value, String> {
             }));
             Ok(v)
         }
-        _ => Err("Provider does not support account status yet".into()),
+        Some(ProviderId::OpenaiApi) => Ok(json!({
+            "loggedIn": security::credentials::has_secret(security::credentials::CredentialKind::OpenaiApi),
+            "authMethod": "api_key_keychain",
+            "requiresOpenaiAuth": !security::credentials::has_secret(security::credentials::CredentialKind::OpenaiApi),
+        })),
+        Some(ProviderId::Gemini) => Ok(json!({
+            "loggedIn": security::credentials::has_secret(security::credentials::CredentialKind::GeminiApi)
+                || env::which("gemini").is_some(),
+            "authMethod": if security::credentials::has_secret(security::credentials::CredentialKind::GeminiApi) {
+                "api_key_keychain"
+            } else {
+                "cli"
+            },
+            "cliInstalled": env::which("gemini").is_some(),
+            "apiKeyConfigured": security::credentials::has_secret(security::credentials::CredentialKind::GeminiApi),
+        })),
+        Some(ProviderId::Ollama) => {
+            let probe = providers::ollama::test_connection(None).unwrap_or_else(|e| {
+                json!({
+                    "ok": false,
+                    "error": e
+                })
+            });
+            Ok(json!({
+                "loggedIn": probe.get("ok").and_then(|b| b.as_bool()).unwrap_or(false),
+                "authMethod": "local",
+                "probe": probe,
+            }))
+        }
+        None => Err("Unknown provider".into()),
     }
 }
 
@@ -379,12 +413,24 @@ fn provider_login(provider: String, mode: Option<String>) -> Result<Value, Strin
             "Sign in to Claude Code from Terminal: run `claude` and complete the login flow."
                 .into(),
         ),
-        _ => Err("Login is not available for this provider yet".into()),
+        Some(ProviderId::Gemini) => Err(
+            "Sign in to Gemini CLI from Terminal (`gemini`), or paste a Developer API key via Settings → Configure."
+                .into(),
+        ),
+        Some(ProviderId::OpenaiApi) => Err(
+            "OpenAI API uses a Platform API key (BYOK). Use Settings → Configure — not ChatGPT / Codex login."
+                .into(),
+        ),
+        Some(ProviderId::Ollama) => Err(
+            "Ollama is local. Start the service with `ollama serve` and pull a model yourself."
+                .into(),
+        ),
+        None => Err("Unknown provider".into()),
     }
 }
 
 #[tauri::command]
-fn provider_models(provider: String) -> Result<Value, String> {
+fn provider_models(state: State<AppState>, provider: String) -> Result<Value, String> {
     match ProviderId::parse(&provider) {
         Some(ProviderId::Codex) => providers::codex::oneshot_rpc(
             "model/list",
@@ -398,7 +444,82 @@ fn provider_models(provider: String) -> Result<Value, String> {
                 {"id": "haiku", "name": "Haiku"}
             ]
         })),
-        _ => Err("Model discovery is not available for this provider yet".into()),
+        Some(ProviderId::OpenaiApi) => providers::openai_api::list_models(),
+        Some(ProviderId::Gemini) => {
+            if security::credentials::has_secret(security::credentials::CredentialKind::GeminiApi) {
+                providers::gemini::list_models_api()
+            } else {
+                Ok(json!({
+                    "data": [
+                        {"id": "gemini-2.0-flash", "name": "gemini-2.0-flash"},
+                        {"id": "gemini-2.5-flash", "name": "gemini-2.5-flash"},
+                        {"id": "gemini-2.5-pro", "name": "gemini-2.5-pro"}
+                    ],
+                    "note": "CLI model list unavailable; showing common IDs. Add an API key for live discovery."
+                }))
+            }
+        }
+        Some(ProviderId::Ollama) => {
+            let endpoint = state.db.get_setting("ollama_endpoint");
+            providers::ollama::list_models(endpoint.as_deref())
+        }
+        None => Err("Unknown provider".into()),
+    }
+}
+
+#[tauri::command]
+fn provider_set_credential(provider: String, secret: String) -> Result<Value, String> {
+    let kind = security::credentials::CredentialKind::parse(&provider)
+        .ok_or("This provider does not accept an API key here")?;
+    security::credentials::store_secret(kind, &secret)?;
+    // Do not echo the secret back.
+    Ok(json!({"ok": true, "provider": provider, "stored": true}))
+}
+
+#[tauri::command]
+fn provider_clear_credential(provider: String) -> Result<Value, String> {
+    let kind = security::credentials::CredentialKind::parse(&provider)
+        .ok_or("This provider does not store an API key here")?;
+    security::credentials::clear_secret(kind)?;
+    Ok(json!({"ok": true, "provider": provider, "cleared": true}))
+}
+
+#[tauri::command]
+fn provider_test(state: State<AppState>, provider: String) -> Result<Value, String> {
+    match ProviderId::parse(&provider) {
+        Some(ProviderId::OpenaiApi) => providers::openai_api::test_connection(),
+        Some(ProviderId::Gemini) => {
+            if security::credentials::has_secret(security::credentials::CredentialKind::GeminiApi) {
+                providers::gemini::test_connection_api()
+            } else {
+                providers::gemini::test_connection_cli()
+            }
+        }
+        Some(ProviderId::Ollama) => {
+            let endpoint = state.db.get_setting("ollama_endpoint");
+            providers::ollama::test_connection(endpoint.as_deref())
+        }
+        Some(ProviderId::Codex) => {
+            let acct = providers::codex::oneshot_rpc(
+                "account/read",
+                json!({"refreshToken": false}),
+                15_000,
+            )?;
+            Ok(json!({"ok": true, "mode": "codex", "account": acct}))
+        }
+        Some(ProviderId::Claude) => {
+            let claude = env::which("claude").ok_or("Claude Code CLI not found")?;
+            let out = std::process::Command::new(claude)
+                .arg("--version")
+                .env("PATH", env::child_path())
+                .output()
+                .map_err(|e| e.to_string())?;
+            Ok(json!({
+                "ok": out.status.success(),
+                "version": String::from_utf8_lossy(&out.stdout).trim(),
+            }))
+        }
+        None => Err("Unknown provider".into()),
     }
 }
 
@@ -468,7 +589,10 @@ pub fn run() {
             list_providers,
             provider_account,
             provider_login,
-            provider_models
+            provider_models,
+            provider_set_credential,
+            provider_clear_credential,
+            provider_test
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

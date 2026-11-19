@@ -548,7 +548,7 @@ impl Bridge {
     }
 
     pub fn shutdown(&self) {
-        for (_, l) in self.runs.lock().unwrap().iter_mut() {
+        for l in self.runs.lock().unwrap().values_mut() {
             l.stdin = None;
             let _ = l.child.kill();
         }

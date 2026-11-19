@@ -14,6 +14,9 @@ export type ProviderAccountResponse = {
   requiresOpenaiAuth?: boolean;
   loggedIn?: boolean;
   authMethod?: string;
+  cliInstalled?: boolean;
+  apiKeyConfigured?: boolean;
+  probe?: unknown;
   [key: string]: unknown;
 };
 
@@ -45,16 +48,78 @@ export type ProviderStatus = {
   default_model?: string | null;
 };
 
-export const PROVIDER_LABEL: Record<string, string> = {
-  claude: "Claude Code",
-  codex: "OpenAI Codex",
-  openai_api: "OpenAI API",
-  gemini: "Google Gemini",
-  ollama: "Ollama",
+export type ProviderAuthType = "cli_oauth" | "api_key_keychain" | "local" | "none";
+
+export type ProviderMeta = {
+  id: ProviderId;
+  label: string;
+  authType: ProviderAuthType;
+  execution: "agentic" | "inference" | "hybrid";
+  local: boolean;
+  experimental: boolean;
+  modelSettingKey: string;
 };
 
+export const PROVIDER_META: Record<ProviderId, ProviderMeta> = {
+  claude: {
+    id: "claude",
+    label: "Claude Code",
+    authType: "cli_oauth",
+    execution: "agentic",
+    local: false,
+    experimental: false,
+    modelSettingKey: "model",
+  },
+  codex: {
+    id: "codex",
+    label: "OpenAI Codex",
+    authType: "cli_oauth",
+    execution: "agentic",
+    local: false,
+    experimental: false,
+    modelSettingKey: "codex_model",
+  },
+  openai_api: {
+    id: "openai_api",
+    label: "OpenAI API",
+    authType: "api_key_keychain",
+    execution: "inference",
+    local: false,
+    experimental: false,
+    modelSettingKey: "openai_api_model",
+  },
+  gemini: {
+    id: "gemini",
+    label: "Google Gemini",
+    authType: "api_key_keychain",
+    execution: "hybrid",
+    local: false,
+    experimental: true,
+    modelSettingKey: "gemini_model",
+  },
+  ollama: {
+    id: "ollama",
+    label: "Ollama",
+    authType: "local",
+    execution: "inference",
+    local: true,
+    experimental: false,
+    modelSettingKey: "ollama_model",
+  },
+};
+
+export const PROVIDER_LABEL: Record<string, string> = Object.fromEntries(
+  Object.values(PROVIDER_META).map((p) => [p.id, p.label]),
+);
+
 /** Workflows that rely on Claude-specific connectors or slash-command machinery. */
-export const CLAUDE_ONLY_WORKFLOWS = new Set(["gmail-sync", "notion-sync", "add-portal", "add-template", "reset"]);
+export const CLAUDE_ONLY_WORKFLOWS = new Set([
+  "gmail-sync",
+  "notion-sync",
+  "add-portal",
+  "add-template",
+  "reset",
+]);
 
 /** Core workflows Codex can attempt via engine-neutral instructions (not slash-command parity). */
 export const CODEX_SUPPORTED_WORKFLOWS = new Set([
@@ -69,9 +134,27 @@ export const CODEX_SUPPORTED_WORKFLOWS = new Set([
   "upskill",
 ]);
 
+/**
+ * Structured inference workflows for OpenAI API / Gemini API / Ollama.
+ * These do not execute tools or upstream slash commands — host builds context,
+ * model returns advisory JSON.
+ */
+export const INFERENCE_SUPPORTED_WORKFLOWS = new Set([
+  "setup",
+  "rank",
+  "apply",
+  "outcome",
+  "interview",
+  "expand",
+  "upskill",
+]);
+
 export function providerSupportsWorkflow(provider: string, workflowId: string): boolean {
   if (provider === "claude") return true;
   if (provider === "codex") return CODEX_SUPPORTED_WORKFLOWS.has(workflowId);
+  if (provider === "openai_api" || provider === "gemini" || provider === "ollama") {
+    return INFERENCE_SUPPORTED_WORKFLOWS.has(workflowId);
+  }
   return false;
 }
 
@@ -83,5 +166,27 @@ export function unsupportedReason(provider: string, workflowId: string): string 
   if (provider === "codex") {
     return "OpenAI Codex does not support this workflow yet. Use Claude Code, or choose Discover / Rank / Apply / Outcome.";
   }
+  if (provider === "openai_api" || provider === "gemini" || provider === "ollama") {
+    if (workflowId === "scrape" || workflowId === "html-report") {
+      return `${PROVIDER_LABEL[provider] || provider} runs structured analysis only — it cannot scrape portals or run full agentic automation. Use Claude Code or Codex for Discover / HTML report.`;
+    }
+    if (CLAUDE_ONLY_WORKFLOWS.has(workflowId)) {
+      return "This workflow requires Claude Code connectors or slash-command machinery.";
+    }
+    return `${PROVIDER_LABEL[provider] || provider} supports structured job-search assists (rank, apply drafts, interview, upskill) — not this workflow.`;
+  }
   return `${PROVIDER_LABEL[provider] || provider} cannot run this workflow yet.`;
+}
+
+export function modelSettingKey(provider: string): string {
+  return PROVIDER_META[provider as ProviderId]?.modelSettingKey || "model";
+}
+
+/** Derive a coarse UI status chip from provider probe fields. */
+export function providerUiStatus(p: ProviderStatus): string {
+  if (p.planned) return "Experimental";
+  if (!p.available) return "Not installed";
+  if (!p.authenticated) return "Authentication required";
+  if (p.authenticated && p.available) return "Ready";
+  return "Unavailable";
 }

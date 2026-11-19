@@ -35,16 +35,20 @@ export const api = {
   runEvents: (runId: string) => invoke<{ events: import("@ai-job-search/core").RunEvent[]; pending: import("@ai-job-search/core").Pending[] }>("run_events", { runId }),
   getSetting: (key: string) => invoke<string | null>("get_setting", { key }),
   setSetting: (key: string, value: string) => invoke<void>("set_setting", { key, value }),
-  providers: async () => [] as import("@ai-job-search/core").ProviderStatus[],
-  providerAccount: async (_provider: string): Promise<import("@ai-job-search/core").ProviderAccountResponse> => ({ unsupported: true }),
-  providerLogin: async (_provider: string, _mode?: string): Promise<import("@ai-job-search/core").ProviderLoginResponse> => { throw new Error("Multi-provider runtime is on the Apple Silicon app first; rebuild the Intel app from the same sources to enable Codex."); },
-  providerModels: async (_provider: string) => ({ data: [] }),
+  providers: () => invoke<import("@ai-job-search/core").ProviderStatus[]>("list_providers"),
+  providerAccount: (provider: string) => invoke<import("@ai-job-search/core").ProviderAccountResponse>("provider_account", { provider }),
+  providerLogin: (provider: string, mode?: string) => invoke<import("@ai-job-search/core").ProviderLoginResponse>("provider_login", { provider, mode: mode || null }),
+  providerModels: (provider: string) => invoke<any>("provider_models", { provider }),
+  providerSetCredential: (provider: string, secret: string) =>
+    invoke<{ ok: boolean }>("provider_set_credential", { provider, secret }),
+  providerClearCredential: (provider: string) =>
+    invoke<{ ok: boolean }>("provider_clear_credential", { provider }),
+  providerTest: (provider: string) => invoke<any>("provider_test", { provider }),
 };
 
 export const fileUrl = (abs: string) => convertFileSrc(abs);
 export const on = <T,>(name: string, cb: (p: T) => void): Promise<UnlistenFn> => listen<T>(name, (e) => cb(e.payload));
 export const inTauri = () => typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
-export const isWebApp = () => false;
 
 /** System notification while the window is unfocused. Generic text only. */
 export async function notifyStatus(status: string) {
@@ -55,8 +59,8 @@ export async function notifyStatus(status: string) {
     if (!ok) ok = (await n.requestPermission()) === "granted";
     if (!ok) return;
     const body = {
-      awaiting_approval: "Claude needs your approval to continue.",
-      awaiting_input: "Claude is waiting for your reply.",
+      awaiting_approval: "Your AI provider needs approval to continue.",
+      awaiting_input: "A workflow is waiting for your reply.",
       completed: "A workflow finished.",
       failed: "A workflow failed. Open Agent Activity for details.",
     }[status] || status;

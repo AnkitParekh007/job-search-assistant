@@ -125,6 +125,22 @@ impl Db {
         let _ = c.execute("UPDATE runs SET status=?2 WHERE id=?1", params![id, status]);
     }
 
+    pub fn set_run_summary(&self, id: &str, summary: &str) {
+        let c = self.0.lock().unwrap();
+        let _ = c.execute(
+            "UPDATE runs SET summary=?2 WHERE id=?1",
+            params![id, summary],
+        );
+    }
+
+    pub fn set_run_error(&self, id: &str, error: &str) {
+        let c = self.0.lock().unwrap();
+        let _ = c.execute(
+            "UPDATE runs SET error=?2, status='failed', finished_at=?3 WHERE id=?1",
+            params![id, error, crate::bridge::now_ms()],
+        );
+    }
+
     pub fn add_event(&self, run_id: &str, seq: i64, ts: i64, kind: &str, payload: &str) {
         let c = self.0.lock().unwrap();
         let _ = c.execute(

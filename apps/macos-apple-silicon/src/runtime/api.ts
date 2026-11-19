@@ -39,12 +39,16 @@ export const api = {
   providerAccount: (provider: string) => invoke<import("@ai-job-search/core").ProviderAccountResponse>("provider_account", { provider }),
   providerLogin: (provider: string, mode?: string) => invoke<import("@ai-job-search/core").ProviderLoginResponse>("provider_login", { provider, mode: mode || null }),
   providerModels: (provider: string) => invoke<any>("provider_models", { provider }),
+  providerSetCredential: (provider: string, secret: string) =>
+    invoke<{ ok: boolean }>("provider_set_credential", { provider, secret }),
+  providerClearCredential: (provider: string) =>
+    invoke<{ ok: boolean }>("provider_clear_credential", { provider }),
+  providerTest: (provider: string) => invoke<any>("provider_test", { provider }),
 };
 
 export const fileUrl = (abs: string) => convertFileSrc(abs);
 export const on = <T,>(name: string, cb: (p: T) => void): Promise<UnlistenFn> => listen<T>(name, (e) => cb(e.payload));
 export const inTauri = () => typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
-export const isWebApp = () => false;
 
 /** System notification while the window is unfocused. Generic text only. */
 export async function notifyStatus(status: string) {

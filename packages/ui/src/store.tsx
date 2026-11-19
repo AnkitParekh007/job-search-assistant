@@ -3,7 +3,7 @@ import {
   byId, buildPromptForProvider, providerSupportsWorkflow, unsupportedReason,
 } from "@ai-job-search/core";
 import {
-  api, inTauri, isWebApp, notifyStatus, on,
+  api, inTauri, notifyStatus, on,
   type Dep, type Pending, type RunEvent, type RunSummary, type SeenJob, type Tracker, type Workspace,
 } from "@ai-job-search/runtime";
 
@@ -73,13 +73,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       ]);
       if (t) setTracker(t);
       if (s) setSeen(s);
-      const banner = isWebApp()
-        ? "Web demo — tracker/jobs are stored in this browser. Live Claude workflows need the desktop app."
-        : null;
-      setDataError(errs.length ? errs.join(" · ") : banner);
+      setDataError(errs.length ? errs.join(" · ") : null);
     } catch (e) {
       setWs(null);
-      setDataError(inTauri() || isWebApp() ? String(e) : "Preview mode — open the desktop app for live Claude runs and your workspace.");
+      setDataError(inTauri() ? String(e) : "Preview mode — open the desktop app for live Claude runs and your workspace.");
     } finally {
       setLoading(false);
     }
@@ -125,7 +122,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         finalPrompt = buildPromptForProvider(w, arg, effectiveProvider);
       }
 
-      const modelKey = effectiveProvider === "codex" ? "codex_model" : "model";
+      const modelKey =
+        effectiveProvider === "codex" ? "codex_model"
+        : effectiveProvider === "openai_api" ? "openai_api_model"
+        : effectiveProvider === "gemini" ? "gemini_model"
+        : effectiveProvider === "ollama" ? "ollama_model"
+        : "model";
       const model = (await api.getSetting(modelKey)) || undefined;
       const r = await api.startRun(workflow, finalPrompt, model || undefined, resume, effectiveProvider);
       setRuns((rs) => [r, ...rs]);

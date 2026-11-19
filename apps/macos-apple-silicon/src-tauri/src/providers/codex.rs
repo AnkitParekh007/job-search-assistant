@@ -905,7 +905,7 @@ impl CodexBridge {
     }
 
     pub fn shutdown(&self) {
-        for (_, l) in self.runs.lock().unwrap().iter_mut() {
+        for l in self.runs.lock().unwrap().values_mut() {
             l.stdin = None;
             let _ = l.child.kill();
         }
@@ -1036,11 +1036,11 @@ pub fn oneshot_rpc(method: &str, params: Value, timeout_ms: u64) -> Result<Value
             break;
         }
         // Login may complete via notification before result — keep reading briefly.
-        if method == "account/login/start" {
-            if msg.get("method").and_then(|m| m.as_str()) == Some("account/login/completed") {
-                result = msg.get("params").cloned();
-                break;
-            }
+        if method == "account/login/start"
+            && msg.get("method").and_then(|m| m.as_str()) == Some("account/login/completed")
+        {
+            result = msg.get("params").cloned();
+            break;
         }
     }
     let _ = child.kill();
