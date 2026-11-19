@@ -12,7 +12,7 @@ AI Job Search is a native **macOS** shell (Tauri 2 + React + Rust) that drives a
 [![Rust](https://img.shields.io/badge/Rust-edition%202021-DEA584?logo=rust&logoColor=black)](https://www.rust-lang.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![CI](https://github.com/AnkitParekh007/job-search-assitant/actions/workflows/ci-macos-apple-silicon.yml/badge.svg)](https://github.com/AnkitParekh007/job-search-assitant/actions/workflows/ci-macos-apple-silicon.yml)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/AnkitParekh007/job-search-assitant?style=social)](https://github.com/AnkitParekh007/job-search-assitant/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/AnkitParekh007/job-search-assitant)](https://github.com/AnkitParekh007/job-search-assitant/issues)
 [![Last commit](https://img.shields.io/github/last-commit/AnkitParekh007/job-search-assitant)](https://github.com/AnkitParekh007/job-search-assitant/commits)
@@ -322,30 +322,17 @@ More: [FAQ](./docs/faq.md)
 
 ---
 
-## Inspiration & Acknowledgements
+## License & Acknowledgements
 
-AI Job Search Assistant was inspired by [AI Job Search](https://github.com/ai-job-search-dev/ai-job-search), created by [Mads Lorentzen](https://github.com/MadsLorentzen) and its contributors.
+AI Job Search Assistant is released under the [MIT License](./LICENSE).
 
-The original project provides the agent-oriented job-search framework and workflows that inspired this application.
+This project was inspired by [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search), created by [Mads Lorentzen](https://github.com/MadsLorentzen) and its contributors.
 
-Our goal is to extend that experience with a visual, local-first desktop interface while preserving compatibility with the upstream framework.
+We sincerely appreciate their work in building an open-source AI-powered job-search framework.
 
-We are grateful to Mads and the open-source community for making their work available for developers to learn from and build upon.
+AI Job Search Assistant is an independent project that provides a graphical desktop interface and additional application features around the original framework. It is not an official release of the upstream project.
 
-**Please consider exploring and supporting the original project:**
-
-https://github.com/ai-job-search-dev/ai-job-search
-
-This application is an independent community project and is not an official upstream release.
-
-This project drives the upstream workspace without copying or modifying its source in this repository. You must keep a separate upstream checkout. See [NOTICE](./NOTICE) and [THIRD-PARTY.md](./THIRD-PARTY.md).
-
----
-
-## License
-
-This repository is intended to be licensed under the **MIT License**. See [LICENSE](./LICENSE).  
-Confirm the copyright holder line matches your preferred attribution before publishing forks or binaries. See [docs/LICENSE-DECISION.md](./docs/LICENSE-DECISION.md).
+The upstream framework is also MIT-licensed, with copyright attributed to Mads Lorentzen. This repository drives a separate upstream checkout and does not vendor upstream source trees; retain upstream copyright and license notices for any code you copy from that project. See [NOTICE](./NOTICE), [THIRD-PARTY.md](./THIRD-PARTY.md), and [docs/LICENSE-DECISION.md](./docs/LICENSE-DECISION.md).
 
 ---
 
