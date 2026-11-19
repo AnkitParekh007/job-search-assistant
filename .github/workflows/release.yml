@@ -68,7 +68,7 @@ jobs:
             - The app does **not** submit applications automatically.
             - Multi-provider AI support (Claude Code or Codex) is required for AI workflows.
 
-            Download page: https://ankitparekh007.github.io/job-search-assistant/download
+            Download page: https://job-search-assistant.rebound-ops.org/download
           files: |
             dist-release/AI-Job-Search-${{ steps.ver.outputs.version }}-*.zip
             dist-release/SHA256SUMS.txt

@@ -11,7 +11,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
 const ssrDir = join(root, "dist-ssr");
-const basename = (process.env.BASE_PATH || "/job-search-assistant/").replace(/\/$/, "");
+const basename = (process.env.BASE_PATH || "/").replace(/\/$/, "");
 
 const { render, headTags, ROUTES } = await import(pathToFileURL(join(ssrDir, "entry-server.js")).href);
 const template = readFileSync(join(dist, "index.html"), "utf8");

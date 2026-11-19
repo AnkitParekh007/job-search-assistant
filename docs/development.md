@@ -53,7 +53,7 @@ npm run dev:market      # Vite dev server (port 5174)
 npm run build:market    # production build → market-site/dist
 ```
 
-Clean routes (GitHub Pages base `/job-search-assistant/`): `/`, `/features`, `/download`, `/docs`, `/docs/install`, …
+Clean routes (served at the root of `job-search-assistant.rebound-ops.org`): `/`, `/features`, `/download`, `/docs`, `/docs/install`, …
 
 Deployed by `.github/workflows/deploy-market-site.yml` on pushes to `market-site/**` (uploads `market-site/dist`).
 

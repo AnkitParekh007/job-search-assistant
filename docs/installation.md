@@ -85,5 +85,5 @@ Personal builds are typically **unsigned**. On first open, use **Finder → righ
 
 ## Related
 
-- Marketing install page: https://ankitparekh007.github.io/job-search-assistant/docs/install
+- Marketing install page: https://job-search-assistant.rebound-ops.org/docs/install
 - [Troubleshooting](./troubleshooting.md)
