@@ -217,8 +217,8 @@ export const api = {
     save(KEY.settings, s);
   },
   providers: async () => [] as import("@ai-job-search/core").ProviderStatus[],
-  providerAccount: async (_provider: string) => ({ unsupported: true }),
-  providerLogin: async (_provider: string, _mode?: string) => {
+  providerAccount: async (_provider: string): Promise<import("@ai-job-search/core").ProviderAccountResponse> => ({ unsupported: true }),
+  providerLogin: async (_provider: string, _mode?: string): Promise<import("@ai-job-search/core").ProviderLoginResponse> => {
     throw new Error("Provider sign-in requires the desktop app.");
   },
   providerModels: async (_provider: string) => ({ data: [] }),

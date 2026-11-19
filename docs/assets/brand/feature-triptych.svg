@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="410" viewBox="0 0 1440 410" role="img" aria-label="Three conceptual feature illustrations: discover promising jobs, prepare truthful application documents, and track application outcomes">
+<defs>
+  <linearGradient id="back" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#11182F"/><stop offset="100%" stop-color="#1C1A3B"/></linearGradient>
+  <linearGradient id="one" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8D83FE"/><stop offset="100%" stop-color="#6273F4"/></linearGradient>
+  <linearGradient id="two" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7DE2CF"/><stop offset="100%" stop-color="#42AFC8"/></linearGradient>
+</defs>
+<rect width="1440" height="410" rx="24" fill="#0B1022"/>
+<g font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<!-- Discover -->
+<rect x="23" y="23" width="448" height="350" rx="22" fill="url(#back)" stroke="#5D5D9E" stroke-opacity=".55"/>
+<text x="48" y="65" font-size="14" font-weight="700" letter-spacing="2" fill="#AEA7FF">01 / DISCOVER</text>
+<text x="48" y="103" font-size="29" font-weight="800" fill="#FCFCFF">See the good fits.</text>
+<text x="48" y="129" font-size="15" fill="#ADB8D6">A clearer shortlist, fewer scattered tabs.</text>
+<rect x="50" y="154" width="392" height="170" rx="16" fill="#222B4A" stroke="#53618D" stroke-opacity=".5"/>
+<rect x="72" y="176" width="263" height="34" rx="10" fill="#141B32"/>
+<circle cx="90" cy="192" r="7" fill="none" stroke="#9A93F8" stroke-width="2.5"/><path d="M95 197 l8 8" stroke="#9A93F8" stroke-width="2.5" stroke-linecap="round"/>
+<text x="113" y="198" font-size="13" fill="#94A3C6">Find roles aligned with you</text>
+<rect x="72" y="227" width="348" height="39" rx="9" fill="#3A4165"/>
+<rect x="85" y="241" width="148" height="8" rx="4" fill="#B1ADF7"/>
+<rect x="340" y="237" width="66" height="19" rx="9.5" fill="#394E64"/>
+<text x="373" y="250" font-size="11" font-weight="700" fill="#9DE8D4" text-anchor="middle">REVIEW</text>
+<rect x="72" y="277" width="348" height="28" rx="8" fill="#303956"/>
+<rect x="85" y="288" width="192" height="7" rx="3.5" fill="#697B9F"/>
+<!-- Prepare -->
+<rect x="496" y="23" width="448" height="350" rx="22" fill="url(#back)" stroke="#4D887D" stroke-opacity=".6"/>
+<text x="520" y="65" font-size="14" font-weight="700" letter-spacing="2" fill="#7FE3D0">02 / PREPARE</text>
+<text x="520" y="103" font-size="29" font-weight="800" fill="#FCFCFF">Make every draft count.</text>
+<text x="520" y="129" font-size="15" fill="#ADB8D6">Tailor, inspect and approve before using.</text>
+<rect x="546" y="166" width="188" height="150" rx="12" fill="#F5F5FE" transform="rotate(-6 546 166)"/>
+<rect x="713" y="158" width="183" height="169" rx="12" fill="#F9FBFF" transform="rotate(5 713 158)"/>
+<rect x="568" y="191" width="103" height="9" rx="4" fill="#7E78E0"/><rect x="568" y="216" width="125" height="6" rx="3" fill="#BBC7E2"/><rect x="568" y="235" width="111" height="6" rx="3" fill="#BBC7E2"/><rect x="568" y="254" width="129" height="6" rx="3" fill="#BBC7E2"/>
+<rect x="743" y="182" width="94" height="9" rx="4" fill="#37ACB4"/><rect x="743" y="207" width="120" height="6" rx="3" fill="#BBC7E2"/><rect x="743" y="226" width="115" height="6" rx="3" fill="#BBC7E2"/><rect x="743" y="245" width="122" height="6" rx="3" fill="#BBC7E2"/>
+<circle cx="707" cy="289" r="27" fill="url(#two)" stroke="#182E3B" stroke-width="5"/>
+<path d="M694 290 l9 9 18 -21" stroke="#153A4B" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- Track -->
+<rect x="969" y="23" width="448" height="350" rx="22" fill="url(#back)" stroke="#8E678E" stroke-opacity=".55"/>
+<text x="994" y="65" font-size="14" font-weight="700" letter-spacing="2" fill="#F0ADDD">03 / TRACK</text>
+<text x="994" y="103" font-size="29" font-weight="800" fill="#FCFCFF">Always know what's next.</text>
+<text x="994" y="129" font-size="15" fill="#ADB8D6">One pipeline. Every update in your hands.</text>
+<rect x="996" y="156" width="393" height="175" rx="15" fill="#222A49" stroke="#56658F" stroke-opacity=".5"/>
+<rect x="1013" y="174" width="108" height="139" rx="10" fill="#2C3655"/>
+<rect x="1134" y="174" width="108" height="139" rx="10" fill="#2C3655"/>
+<rect x="1255" y="174" width="116" height="139" rx="10" fill="#2C3655"/>
+<rect x="1026" y="188" width="55" height="7" rx="3" fill="#B7B4FB"/>
+<rect x="1147" y="188" width="67" height="7" rx="3" fill="#9CE8D8"/>
+<rect x="1268" y="188" width="71" height="7" rx="3" fill="#F1AEDC"/>
+<rect x="1025" y="211" width="83" height="38" rx="8" fill="#454E78"/><rect x="1037" y="224" width="59" height="6" rx="3" fill="#A5A9E3"/>
+<rect x="1025" y="259" width="83" height="38" rx="8" fill="#454E78"/><rect x="1037" y="272" width="46" height="6" rx="3" fill="#A5A9E3"/>
+<rect x="1146" y="211" width="83" height="57" rx="8" fill="#32555B"/><rect x="1158" y="224" width="53" height="6" rx="3" fill="#82D9CC"/>
+<rect x="1267" y="211" width="91" height="46" rx="8" fill="#59435F"/><rect x="1279" y="224" width="63" height="6" rx="3" fill="#E8AADA"/>
+</g>
+<text x="720" y="396" font-family="Arial,sans-serif" font-size="11" text-anchor="middle" fill="#97A5C4" letter-spacing="1.4">PRODUCT CONCEPT ILLUSTRATIONS · NOT CAPTURED APPLICATION SCREENS</text>
+</svg>

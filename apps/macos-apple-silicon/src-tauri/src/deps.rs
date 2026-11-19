@@ -102,7 +102,9 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         } else {
             "neither Claude Code nor Codex CLI found".into()
         },
-        fix: "Install Claude Code and/or the Codex CLI, then choose a default provider in Settings.".into(),
+        fix:
+            "Install Claude Code and/or the Codex CLI, then choose a default provider in Settings."
+                .into(),
     });
     let py = env::python();
     v.push(Dep {

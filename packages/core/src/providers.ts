@@ -1,5 +1,29 @@
 /** Multi-provider AI runtime contracts shared by desktop apps and UI. */
 
+/** Provider account/status payload returned by native bridges. Browser/demo shells can
+ * report `unsupported` without inventing authentication state.
+ */
+export type ProviderAccountResponse = {
+  unsupported?: boolean;
+  account?: {
+    type?: string;
+    email?: string;
+    planType?: string;
+    [key: string]: unknown;
+  } | null;
+  requiresOpenaiAuth?: boolean;
+  loggedIn?: boolean;
+  authMethod?: string;
+  [key: string]: unknown;
+};
+
+/** Native sign-in may start an interactive browser flow, or return an error. */
+export type ProviderLoginResponse = {
+  success?: boolean;
+  error?: string;
+  [key: string]: unknown;
+};
+
 export type ProviderId = "claude" | "codex" | "openai_api" | "gemini" | "ollama";
 
 export type ProviderCapability = {
