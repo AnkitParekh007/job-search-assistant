@@ -3,16 +3,12 @@ import { Link } from "react-router-dom";
 import { AppChrome } from "../components/AppChrome";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { PAGE_SEO } from "../lib/pages";
 import { applySeo } from "../lib/seo";
 
 export function HomePage() {
   useEffect(() => {
-    applySeo({
-      title: "AI Job Search — Local-first macOS job search command center",
-      description:
-        "Local-first macOS desktop app that drives your ai-job-search workspace with Claude Code — discover, rank, prepare applications, and track outcomes on files you own.",
-      path: "/",
-    });
+    applySeo(PAGE_SEO.home);
   }, []);
 
   return (

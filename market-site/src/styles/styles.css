@@ -862,14 +862,27 @@ h3,
   font-size: 13px;
 }
 
-/* ——— Motion ——— */
-.reveal {
+/* ——— Motion ———
+   Content is visible unless JS opted in (html.reveal-ready, set in index.html).
+   If the app never boots (html lacks .reveal-live), a failsafe shows it anyway. */
+.reveal-ready .reveal {
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
 }
 
-.reveal.is-in {
+.reveal-ready:not(.reveal-live) .reveal {
+  animation: reveal-failsafe 0.4s var(--ease) 2.5s forwards;
+}
+
+@keyframes reveal-failsafe {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal-ready .reveal.is-in {
   opacity: 1;
   transform: none;
 }
@@ -885,10 +898,11 @@ h3,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
+  .reveal-ready .reveal {
     opacity: 1;
     transform: none;
     transition: none;
+    animation: none;
   }
   .btn:hover {
     transform: none;

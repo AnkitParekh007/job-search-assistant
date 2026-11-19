@@ -1,67 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AppChrome } from "../components/AppChrome";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import featuresData from "../../public/assets/data/features.json";
+import { PAGE_SEO } from "../lib/pages";
 import { applySeo } from "../lib/seo";
 
-type Feature = { title: string; blurb: string; group?: string };
+type Feature = { id?: string; title: string; blurb: string; group?: string };
 type Workflow = { command: string; title: string; stage: string; blurb: string };
 
-const FALLBACK_FEATURES: Feature[] = [
-  {
-    title: "Discover jobs",
-    blurb:
-      "Scrape installed portal CLIs or fall back to web search, then dedupe into your local seen-jobs store.",
-  },
-  {
-    title: "Rank matches",
-    blurb: "Integrity-gated scoring against your profile rubric, with a shortlist ready for Studio.",
-  },
-  {
-    title: "Application Studio",
-    blurb:
-      "Drafter → reviewer → revision. Compile LaTeX CVs and cover letters, verify PDFs, update the tracker.",
-  },
-  {
-    title: "Pipeline & outcomes",
-    blurb:
-      "Kanban-style tracking with archival writes. Record outcomes and draft follow-ups — never auto-send.",
-  },
-  {
-    title: "Interview prep",
-    blurb: "Stage-specific packs from the archived posting and your docs, with optional roleplay.",
-  },
-  {
-    title: "Agent activity",
-    blurb: "Watch live Claude Code runs, approvals, and workflow stages without digging through a terminal.",
-  },
-];
+// Bundled at build time so the page prerenders with real content and never
+// swaps cards after load. Regenerate with `npm run build:features`.
+const product = (featuresData.product ?? []) as Feature[];
+const workflows = (featuresData.workflows ?? []) as Workflow[];
 
 export function FeaturesPage() {
-  const [product, setProduct] = useState<Feature[]>(FALLBACK_FEATURES);
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
-
   useEffect(() => {
-    applySeo({
-      title: "Features — AI Job Search",
-      description:
-        "Discover jobs, rank matches, prepare documents in Studio, track your pipeline, prep interviews, and supervise Claude Code runs — local-first on macOS.",
-      path: "/features",
-    });
-  }, []);
-
-  useEffect(() => {
-    const base = import.meta.env.BASE_URL;
-    fetch(`${base}assets/data/features.json`)
-      .then((r) => r.json())
-      .then((data: { product?: Feature[]; workflows?: Workflow[] }) => {
-        if (data.product?.length) setProduct(data.product);
-        if (data.workflows?.length) setWorkflows(data.workflows);
-      })
-      .catch(() => {
-        /* keep fallbacks */
-      });
+    applySeo(PAGE_SEO.features);
   }, []);
 
   return (
@@ -85,7 +41,7 @@ export function FeaturesPage() {
           <div className="feature-grid">
             {product.map((f, i) => (
               <article
-                key={`${f.title}-${i}`}
+                key={f.id ?? f.title}
                 className={`feature-card reveal${i % 3 === 1 ? " reveal-delay-1" : i % 3 === 2 ? " reveal-delay-2" : ""}`}
               >
                 {f.group ? <p className="feature-kicker">{f.group}</p> : null}

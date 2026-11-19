@@ -7,3 +7,6 @@ dist/
 
 # Workspace apps use the root lockfile only
 apps/*/package-lock.json
+
+# market-site prerender (SSR bundle)
+dist-ssr/

@@ -13,6 +13,8 @@ export default defineConfig({
     react(),
     {
       name: "spa-github-pages-fallback",
+      // Client build only: copy the shell to 404.html before routes are prerendered.
+      apply: (_config, env) => !env.isSsrBuild,
       closeBundle() {
         const dist = resolve(rootDir, "dist");
         const index = resolve(dist, "index.html");
@@ -27,6 +29,10 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
     assetsDir: "assets",
+  },
+  ssr: {
+    // Bundle router deps into the SSR entry so the prerender step runs in plain Node.
+    noExternal: ["react-router-dom", "react-router"],
   },
   server: {
     port: 5174,
