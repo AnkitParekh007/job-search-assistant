@@ -38,7 +38,7 @@ The Rust host builds an explicit PATH (Homebrew, common Claude/Python/TeX locati
 
 ## Related
 
-- Marketing: [AI Providers](https://ankitparekh007.github.io/job-search-assistant/docs/providers) · [Settings](https://ankitparekh007.github.io/job-search-assistant/docs/settings)
+- Marketing: [AI Providers](https://job-search-assistant.rebound-ops.org/docs/providers) · [Settings](https://job-search-assistant.rebound-ops.org/docs/settings)
 - [MULTI-PROVIDER-IMPLEMENTATION.md](./MULTI-PROVIDER-IMPLEMENTATION.md)
 - [Privacy and security](./privacy-and-security.md)
 - [apps/macos-apple-silicon/docs/SECURITY-MODEL.md](../apps/macos-apple-silicon/docs/SECURITY-MODEL.md)

@@ -19,8 +19,8 @@ The desktop app exposes every upstream workflow listed in `apps/macos-apple-sili
 | add-portal | `/add-portal` | Add portal | `.agents/skills/<portal>/` | Network + guard | Claude only |
 | reset | `/reset` | Reset profile | Destructive profile reset | — | Claude only |
 
-Marketing docs mirror this table: https://ankitparekh007.github.io/job-search-assistant/docs/workflows  
-Provider setup: https://ankitparekh007.github.io/job-search-assistant/docs/providers · [MULTI-PROVIDER-IMPLEMENTATION.md](./MULTI-PROVIDER-IMPLEMENTATION.md)
+Marketing docs mirror this table: https://job-search-assistant.rebound-ops.org/docs/workflows  
+Provider setup: https://job-search-assistant.rebound-ops.org/docs/providers · [MULTI-PROVIDER-IMPLEMENTATION.md](./MULTI-PROVIDER-IMPLEMENTATION.md)
 
 Parity notes and gaps: [FEATURE-PARITY-MATRIX.md](../apps/macos-apple-silicon/docs/FEATURE-PARITY-MATRIX.md).  
 Upstream inventory: [UPSTREAM-AUDIT.md](../apps/macos-apple-silicon/docs/UPSTREAM-AUDIT.md).

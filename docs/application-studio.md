@@ -19,4 +19,4 @@ Application Studio wraps upstream `/apply`: drafter → reviewer → revision, w
 ## Related
 
 - [application-tracking.md](./application-tracking.md)
-- Marketing: https://ankitparekh007.github.io/job-search-assistant/docs/apply
+- Marketing: https://job-search-assistant.rebound-ops.org/docs/apply

@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
-const base = process.env.BASE_PATH || "/job-search-assistant/";
+const base = process.env.BASE_PATH || "/";
 
 export default defineConfig({
   base,

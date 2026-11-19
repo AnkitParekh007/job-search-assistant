@@ -2,7 +2,7 @@
 
 Vite + React + React Router, deployed to GitHub Pages at:
 
-`https://ankitparekh007.github.io/job-search-assistant/`
+`https://job-search-assistant.rebound-ops.org/`
 
 ## Clean routes
 
@@ -25,4 +25,4 @@ npm run build:market
 npm run build:features  # regenerates public/assets/data/features.json
 ```
 
-Production base path defaults to `/job-search-assistant/`. Override with `BASE_PATH=/` for local preview at the server root if needed.
+Production is served at the root of the custom domain, so the base path defaults to `/`. Override with `BASE_PATH=/some/path/` only if the site is ever hosted under a sub-path.

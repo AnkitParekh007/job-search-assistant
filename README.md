@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="./docs/installation.md"><strong>Build from source</strong></a> ·
-  <a href="https://ankitparekh007.github.io/job-search-assistant/"><strong>Explore the website</strong></a> ·
+  <a href="https://job-search-assistant.rebound-ops.org/"><strong>Explore the website</strong></a> ·
   <a href="./docs/getting-started.md"><strong>Get started</strong></a> ·
   <a href="https://github.com/AnkitParekh007/job-search-assistant/discussions"><strong>Join the discussion</strong></a>
 </p>
@@ -353,6 +353,6 @@ The upstream framework is also MIT-licensed. This repository drives a separate u
 ### Maintainer
 
 - GitHub: [@AnkitParekh007](https://github.com/AnkitParekh007)
-- Product site: https://ankitparekh007.github.io/job-search-assistant/
+- Product site: https://job-search-assistant.rebound-ops.org/
 
 Support channels: [SUPPORT.md](./SUPPORT.md)
