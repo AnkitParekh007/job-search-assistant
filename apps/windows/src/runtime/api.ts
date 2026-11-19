@@ -36,8 +36,8 @@ export const api = {
   getSetting: (key: string) => invoke<string | null>("get_setting", { key }),
   setSetting: (key: string, value: string) => invoke<void>("set_setting", { key, value }),
   providers: async () => [] as import("@ai-job-search/core").ProviderStatus[],
-  providerAccount: async (_provider: string) => ({ unsupported: true }),
-  providerLogin: async (_provider: string, _mode?: string) => { throw new Error("Multi-provider runtime is on the Apple Silicon app first; port the Rust providers module to enable Codex on Windows."); },
+  providerAccount: async (_provider: string): Promise<import("@ai-job-search/core").ProviderAccountResponse> => ({ unsupported: true }),
+  providerLogin: async (_provider: string, _mode?: string): Promise<import("@ai-job-search/core").ProviderLoginResponse> => { throw new Error("Multi-provider runtime is on the Apple Silicon app first; port the Rust providers module to enable Codex on Windows."); },
   providerModels: async (_provider: string) => ({ data: [] }),
 };
 
