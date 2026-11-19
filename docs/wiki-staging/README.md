@@ -6,11 +6,11 @@ GitHub Wiki is a **separate** git repository (`<repo>.wiki.git`). Adding Markdow
 
 ```bash
 # One-time
-git clone https://github.com/AnkitParekh007/job-search-assitant.wiki.git
-cd job-search-assitant.wiki
+git clone https://github.com/AnkitParekh007/job-search-assistant.wiki.git
+cd job-search-assistant.wiki
 
 # Copy staged pages
-cp /path/to/job-search-assitant/docs/wiki-staging/*.md .
+cp /path/to/job-search-assistant/docs/wiki-staging/*.md .
 # Rename Home.md as needed; commit & push
 git add .
 git commit -m "Initialize AI Job Search wiki"
