@@ -1,41 +1,56 @@
-# AI Job Search Assistant
+<p align="center">
+  <img src="./docs/assets/brand/scout-hero.svg" width="100%" alt="AI Job Search Assistant conceptual hero: Scout and a dark desktop workspace showing discovery, application preparation and tracking." />
+</p>
 
-### Your AI job-search workflows. One visual desktop workspace.
+<h1 align="center">AI Job Search Assistant</h1>
 
-Discover opportunities. Evaluate fit. Prepare applications. Track your progress. Stay in control.
+<p align="center">
+  <strong>Less tab chaos. More career momentum.</strong><br />
+  A local-first command center for discovering jobs, preparing honest applications, and tracking your search — with human approvals at every important step.
+</p>
 
-![AI Job Search Assistant — Scout hero](./docs/assets/brand/scout-hero.svg)
+<p align="center">
+  <a href="./docs/installation.md"><strong>Build from source</strong></a> ·
+  <a href="https://ankitparekh007.github.io/job-search-assistant/"><strong>Explore the website</strong></a> ·
+  <a href="./docs/getting-started.md"><strong>Get started</strong></a> ·
+  <a href="https://github.com/AnkitParekh007/job-search-assistant/discussions"><strong>Join the discussion</strong></a>
+</p>
 
-[![macOS](https://img.shields.io/badge/platform-macOS%20Apple%20Silicon-black?logo=apple)](./apps/macos-apple-silicon/)
-[![CI](https://github.com/AnkitParekh007/job-search-assistant/actions/workflows/ci-macos-apple-silicon.yml/badge.svg)](https://github.com/AnkitParekh007/job-search-assistant/actions/workflows/ci-macos-apple-silicon.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/AnkitParekh007/job-search-assistant?style=social)](https://github.com/AnkitParekh007/job-search-assistant/stargazers)
+<p align="center">
+  <a href="./LICENSE"><img alt="MIT licensed" src="https://img.shields.io/badge/license-MIT-AD9CFF?style=flat-square" /></a>
+  <a href="./apps/macos-apple-silicon/"><img alt="macOS Apple Silicon" src="https://img.shields.io/badge/platform-macOS%20arm64-17233A?style=flat-square&logo=apple&logoColor=white" /></a>
+  <a href="https://github.com/AnkitParekh007/job-search-assistant/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/AnkitParekh007/job-search-assistant/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://github.com/AnkitParekh007/job-search-assistant/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/AnkitParekh007/job-search-assistant?style=flat-square&color=6B78D5" /></a>
+</p>
 
-**Local-first** · **Open source** · **macOS** · **MIT**
+<p align="center"><sub>Independent community desktop companion inspired by <a href="https://github.com/ai-job-search-dev/ai-job-search">ai-job-search</a> by <a href="https://github.com/MadsLorentzen">Mads Lorentzen</a> and contributors. Not an official upstream release.</sub></p>
 
-[**Build from source**](#quick-start-build-from-source) · [Website](https://ankitparekh007.github.io/job-search-assistant/) · [Docs](./docs/getting-started.md) · [Contribute](./CONTRIBUTING.md) · [Issues](https://github.com/AnkitParekh007/job-search-assistant/issues)
-
-Independent desktop companion built around [the original AI Job Search framework](https://github.com/ai-job-search-dev/ai-job-search) by [Mads Lorentzen](https://github.com/MadsLorentzen). This app adds a visual command center — it does **not** replace the upstream engine, and it does **not** submit applications to employers for you.
-
-> **Version note:** Package version `0.1.0`. There is **no** published GitHub Release binary yet — build from source. A downloadable installer and release badge will be added when artifacts ship.
+> [!NOTE]
+> **Public release status:** Package version `0.1.0`; a downloadable installer has **not** been published. Build from source for now. macOS Apple Silicon is the primary supported client. AI workflows require a configured Claude Code or compatible experimental Codex integration; provider usage may incur costs.
 
 ---
 
-## See the desktop workspace
+## One workspace. Three big steps.
 
-![Value stack: upstream AI engine → desktop command center → reviewable applications](./docs/assets/diagrams/value-stack.svg)
+<p align="center">
+  <img src="./docs/assets/brand/feature-triptych.svg" width="100%" alt="Concept illustrations: discover opportunities, prepare reviewed resumes and cover letters, and track applications in one pipeline." />
+</p>
 
-| Layer | What it is |
-|-------|------------|
-| **Upstream AI engine** | Unmodified [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) workspace (Claude slash commands; Codex uses equivalent instructions) |
-| **Desktop command center** | This project — Tauri 2 + React + Rust UI, multi-provider runtime (Claude Code + OpenAI Codex), approvals, native views |
-| **Reviewable applications** | Drafts and tracker updates you control; you submit outside the app |
+Discover aligned roles, prepare tailored documents through the upstream workflows, then review and track the results from the desktop UI. **You approve actions and submit applications yourself** — the app does not auto-submit or send emails.
 
-Multi-provider details: [`docs/MULTI-PROVIDER-IMPLEMENTATION.md`](./docs/MULTI-PROVIDER-IMPLEMENTATION.md).
+**The pictures above are original concept illustrations, not screenshots.** Real screenshots will be added after capturing a sanitized running desktop build. [Help with screenshots](./docs/assets/screenshots/README.md) · [Explore features](./docs/features.md).
 
-**Product screenshots** (Today, Jobs, Ranking, Studio, Pipeline, Activity, Onboarding) belong in [`docs/assets/screenshots/`](./docs/assets/screenshots/). Captures are not checked in yet — see that folder’s checklist, or help by filing a PR with sanitized PNGs.
+---
 
-Until then, the [marketing site](https://ankitparekh007.github.io/job-search-assistant/) shows the product story with illustrative UI chrome (not live app captures).
+## What's inside the desktop app
+
+| **A visible agent workspace** | **A safer application workflow** |
+|:---|:---|
+| See job discovery, fit ranking, workflow progress, tool activity and the application pipeline in one place. | Review generated CVs and cover letters, inspect PDF output, and approve sensitive file or command actions before proceeding. |
+| **Files remain yours** | **Designed for extensions** |
+| Your candidate profile, tracker and application archives remain in your local upstream workspace. | Claude Code is the established execution path; an experimental Codex adapter is available on Apple Silicon, with other engines on the roadmap. |
+
+**Need the technical view?** [Architecture](./docs/architecture.md) · [Workflow support](./docs/supported-workflows.md) · [Multi-provider status](./docs/MULTI-PROVIDER-IMPLEMENTATION.md)
 
 ---
 
@@ -78,7 +93,7 @@ flowchart LR
 
 - **Upstream workspace files** own jobs, applications, profile, CVs, and the tracker CSV.
 - **SQLite** stores run history and app preferences only.
-- There is **no** independent local-LLM backend today — Claude Code is required for AI workflows.
+- Claude Code is the established runtime; the experimental OpenAI Codex adapter uses its own app-server protocol. There is no independent local-LLM backend. See the [provider implementation report](./docs/MULTI-PROVIDER-IMPLEMENTATION.md).
 
 Deep dive: [Architecture](./docs/architecture.md) · [App architecture](./apps/macos-apple-silicon/docs/ARCHITECTURE.md)
 
@@ -91,7 +106,7 @@ Deep dive: [Architecture](./docs/architecture.md) · [App architecture](./apps/m
 - **Human approvals** for write/exec tools; live agent timeline and cost metadata  
 - **Desktop experience** — Jobs, Ranking, Studio, Pipeline, Documents in one shell  
 - **Local ownership** — tracker, archives, and profile remain files on disk you own  
-- **Honest boundaries** — no auto-submit, no silent email, Claude usage under *your* account  
+- **Honest boundaries** — no auto-submit, no silent email; provider usage depends on your configured account  
 
 ---
 
@@ -228,10 +243,10 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 
 | Item | Detail |
 |------|--------|
-| Provider | Anthropic via **Claude Code CLI** (required) |
-| Cost | Uses your Claude subscription plan allowances and/or API credits |
+| Providers | **Claude Code CLI** (established); **OpenAI Codex** adapter on Apple Silicon (experimental, not live end-to-end verified) |
+| Cost | Depends on selected provider and authentication: Claude plan/API usage or Codex ChatGPT plan/API usage |
 | Local LLM | Not supported in this product today |
-| Disclosure | Every AI workflow incurs usage; check Settings and Claude Code billing |
+| Disclosure | AI workflows consume the selected provider's usage allowances or credits; review its billing and limits |
 
 ### Key limitations
 
@@ -308,7 +323,7 @@ Authoritative engineering specs: [`apps/macos-apple-silicon/docs/`](./apps/macos
 No. It prepares documents and tracks status. You submit applications yourself.
 
 **Do I need Claude Code?**  
-Yes, for all AI workflows. The desktop UI alone cannot rank, scrape, or draft without it.
+Claude Code is the established execution path. An experimental Codex adapter is available on Apple Silicon, but live end-to-end operation has not yet been verified. Neither engine runs AI workflows for free by default.
 
 **Is there a downloadable `.dmg`?**  
 Not yet. Build from source. Releases will be announced when artifacts exist.
