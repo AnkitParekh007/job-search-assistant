@@ -2,7 +2,7 @@
 
 Evidence base: [`FEATURE-PARITY-MATRIX.md`](../apps/macos-apple-silicon/docs/FEATURE-PARITY-MATRIX.md) and the React pages under `apps/macos-apple-silicon/src/pages/`.
 
-Legend: **Native** · **Upstream (Claude Code)** · **External connector** · **Planned**
+Legend: **Native** · **Upstream (multi-provider AI)** · **External connector** · **Planned**
 
 ## Discover
 

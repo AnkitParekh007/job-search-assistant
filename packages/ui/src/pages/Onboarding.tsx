@@ -57,7 +57,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       <h1 className="h-title !text-[30px] mt-5">Hi, I'm Scout.</h1>
       <p className="text-ink-2 text-[15px] mt-3 max-w-md mx-auto leading-relaxed">I'll help you find roles worth your time, tailor honest applications, and keep track of every one, without you touching the Terminal.</p>
       <div className="grid grid-cols-3 gap-3 mt-8 text-left">
-        {[["Local first", "Your profile, tracker and documents stay in your workspace on this Mac."], ["You stay in control", "Claude asks before it runs commands or writes files. Nothing is ever submitted for you."], ["Real AI, real cost", "Work runs through your Claude Code account and counts toward its limits."]].map(([t, d]) => (
+        {[["Local first", "Your profile, tracker and documents stay in your workspace on this Mac."], ["You stay in control", "Your AI provider asks before it runs commands or writes files. Nothing is ever submitted for you."], ["Multi-provider AI", "Work runs through Claude Code or Codex under your account and counts toward that provider’s limits."]].map(([t, d]) => (
           <div key={t} className="card p-4"><ShieldCheck size={16} className="text-ai" /><div className="font-medium mt-2">{t}</div><div className="text-ink-3 text-[12px] mt-1 leading-relaxed">{d}</div></div>))}
       </div>
     </div>,

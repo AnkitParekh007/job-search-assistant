@@ -69,9 +69,9 @@ jobs:
             Desktop and web packages for **AI Job Search Assistant** `${{ steps.ver.outputs.tag }}`.
 
             - **macOS Apple Silicon / Intel / Windows** archives contain the platform client (build locally if a signed binary is not included).
-            - **Web** is a static demo with sample data (no Claude Code bridge).
+            - **Web** is a static demo with sample data (no AI provider bridge).
             - The app does **not** submit applications automatically.
-            - Claude Code CLI is required for AI workflows.
+            - Multi-provider AI support (Claude Code or Codex) is required for AI workflows.
 
             Download page: https://ankitparekh007.github.io/job-search-assistant/download
           files: |

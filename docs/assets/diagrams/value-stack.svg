@@ -6,7 +6,7 @@
       <rect width="260" height="124" rx="18" fill="#ffffff" stroke="#e6e6eb"/>
       <text x="130" y="48" fill="#8b8b96" font-size="12" font-weight="600" letter-spacing="0.06em">UPSTREAM</text>
       <text x="130" y="78" fill="#17171c" font-size="18" font-weight="700">AI engine</text>
-      <text x="130" y="104" fill="#5b5b66" font-size="13">Claude Code workflows</text>
+      <text x="130" y="104" fill="#5b5b66" font-size="13">Multi-provider AI workflows</text>
       <text x="130" y="124" fill="#5b5b66" font-size="13">&amp; local workspace files</text>
     </g>
 

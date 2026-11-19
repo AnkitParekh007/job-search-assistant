@@ -1,4 +1,4 @@
-/** Browser API for the web app — localStorage-backed demo workspace (no Claude Code bridge). */
+/** Browser API for the web app — localStorage-backed demo workspace (no AI provider bridge). */
 import {
   TRACKER_HEADER, canonical,
   type Workspace, type Dep, type TrackerRow, type Tracker, type SeenJob,

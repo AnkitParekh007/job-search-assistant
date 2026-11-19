@@ -2,7 +2,7 @@
 
 Primary path: **macOS Apple Silicon** (`apps/macos-apple-silicon`).
 
-There is **no** published GitHub Release binary as of the repository audit on 2026-11-19. Install by building from source.
+Platform packages are on [GitHub Releases](https://github.com/AnkitParekh007/job-search-assistant/releases); notarized installers are not published yet. You can also build from source.
 
 ## System requirements
 
@@ -10,7 +10,7 @@ There is **no** published GitHub Release binary as of the repository audit on 20
 |------|------------|-------|
 | Apple Silicon Mac (M1–M4) | Yes (this guide) | Intel / Windows ports exist as source; see [`apps/README.md`](../apps/README.md) |
 | macOS 13.0+ | Yes | `tauri.conf.json` → `minimumSystemVersion` |
-| Claude Code CLI, signed in | Yes for AI | `brew install --cask claude-code` |
+| AI provider CLI (Claude Code and/or OpenAI Codex) | Yes for AI | Multi-provider AI support — see below |
 | Python ≥ 3.10 | Yes for upstream tools | Prefer Homebrew `python@3.12` |
 | Node.js 20+ and npm | Yes to build UI | |
 | Rust stable + Xcode Command Line Tools | Yes for Tauri | |
@@ -19,14 +19,18 @@ There is **no** published GitHub Release binary as of the repository audit on 20
 | poppler | Optional | ATS `pdftotext` check |
 | Bun | Optional | Community portal CLIs |
 
-## 1. Install Claude Code
+## 1. Install AI providers (multi-provider support)
+
+**Claude Code** (established path for all workflows, including Gmail/Notion connectors):
 
 ```bash
 brew install --cask claude-code
 claude   # complete sign-in once
 ```
 
-AI workflows consume Claude plan allowances or API credits.
+**OpenAI Codex** (Apple Silicon adapter for core workflows): install the Codex CLI, then connect from **Settings → AI Providers**.
+
+AI workflows consume your selected provider’s plan allowances or API credits. Pick a default provider in Settings.
 
 ## 2. Python
 

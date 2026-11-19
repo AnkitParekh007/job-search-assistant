@@ -32,7 +32,7 @@ pack_client() {
 ## Build
 ${cmds}
 
-Claude Code CLI is required for AI workflows. This package does not auto-submit applications.
+Multi-provider AI support (Claude Code or Codex) is required for AI workflows. This package does not auto-submit applications.
 EOF
   echo "$VERSION" >"$tmp/VERSION"
   (cd "$OUT/stage" && zip -r -q "../$asset" "$id")

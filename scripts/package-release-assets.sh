@@ -25,7 +25,7 @@ This archive contains the platform client for AI Job Search Assistant.
 ## Requirements
 - Node.js 20+
 - Rust (stable) for desktop clients
-- Claude Code CLI (signed in) for AI workflows
+- AI provider CLI (Claude Code and/or OpenAI Codex) for multi-provider AI workflows
 - A local checkout of https://github.com/ai-job-search-dev/ai-job-search
 
 ## Build
@@ -79,7 +79,7 @@ if [[ -d "$AS_APP" ]]; then
 3. First launch: right-click the app → **Open** (unsigned personal build).
 4. Select your local ai-job-search workspace when prompted.
 
-Claude Code CLI is required for AI workflows. This build does not auto-submit applications.
+Multi-provider AI support (Claude Code or Codex) is required for AI workflows. This build does not auto-submit applications.
 EOF
   (
     cd "$STAGE/macos-arm64"
@@ -164,7 +164,7 @@ if [[ -d "$WEB_DIST" ]]; then
   cat >"$STAGE/web/README.md" <<EOF
 # AI Job Search Assistant ${VERSION} — Web demo
 
-Static UI demo with sample data. It does **not** connect to Claude Code.
+Static UI demo with sample data. It does **not** connect to an AI provider.
 
 Open \`site/index.html\` via any static file server, for example:
 

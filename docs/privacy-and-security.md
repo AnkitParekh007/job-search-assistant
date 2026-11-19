@@ -6,7 +6,7 @@ Summary of [`apps/macos-apple-silicon/docs/SECURITY-MODEL.md`](../apps/macos-app
 
 - **Local-first:** jobs, applications, and profile live in your upstream workspace files.
 - **No product telemetry** and no remote app backend.
-- **No credential storage** in the app; Claude / Gmail / Notion auth stay in Claude Code.
+- **No credential storage** in the app; provider / Gmail / Notion auth stay in the provider CLIs and connectors.
 - **Human approvals** for write and exec tools; no permission bypass flags.
 - **Applications are never marked applied** merely because documents were generated.
 
@@ -22,7 +22,7 @@ Summary of [`apps/macos-apple-silicon/docs/SECURITY-MODEL.md`](../apps/macos-app
 
 ## Data leaving the machine
 
-Network use is Claude Code (Anthropic under your account) and whatever upstream workflows fetch. Profile and posting content processed by Claude are subject to Anthropic’s terms and **are not free**.
+Network use is your selected AI provider (Anthropic via Claude Code and/or OpenAI via Codex under your account) and whatever upstream workflows fetch. Profile and posting content processed by a provider are subject to that provider’s terms and **are not free**.
 
 ## Public forks
 

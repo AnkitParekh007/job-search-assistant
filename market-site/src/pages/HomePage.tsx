@@ -32,11 +32,11 @@ export function HomePage() {
               <h1>A desktop command center for your job search</h1>
               <p className="lede">
                 AI Job Search is a local-first macOS app that drives your existing <em>ai-job-search</em>{" "}
-                workspace through Claude Code — so discovery, ranking, applications, and tracking stay on
-                files you own.
+                workspace with <strong>multi-provider AI support</strong> (Claude Code or OpenAI Codex) — so
+                discovery, ranking, applications, and tracking stay on files you own.
               </p>
               <p className="lede">
-                No reimplemented agents in the cloud. Your signed-in Claude Code CLI runs the real upstream
+                No reimplemented agents in the cloud. Your chosen provider CLI runs the real upstream
                 workflows. The app is the native shell.
               </p>
               <div className="cta-row">
@@ -79,7 +79,8 @@ export function HomePage() {
             <div className="stat reveal reveal-delay-2">
               <strong>macOS native</strong>
               <span>
-                Built with Tauri 2: a focused React UI over a Rust bridge that supervises Claude Code runs.
+                Built with Tauri 2: a focused React UI over a Rust bridge that supervises multi-provider AI
+                runs.
               </span>
             </div>
           </div>
@@ -99,14 +100,14 @@ export function HomePage() {
 
             <div className="stack reveal reveal-delay-1">
               <p className="kicker">How it works</p>
-              <h2>You stay in control. Claude does the heavy lifting.</h2>
+              <h2>You stay in control. Your AI provider does the heavy lifting.</h2>
               <p className="lede">
-                Point the app at your workspace, keep Claude Code signed in, and launch workflows from a
-                clear pipeline: discover → rank → apply → outcome.
+                Point the app at your workspace, pick Claude Code or Codex in Settings, and launch workflows
+                from a clear pipeline: discover → rank → apply → outcome.
               </p>
               <p className="lede">
                 Sensitive actions ask for approval. Write and exec tools are never auto-approved.
-                Credentials stay with Claude Code — not inside the app.
+                Credentials stay with your provider CLI — not inside the app.
               </p>
               <div className="cta-row">
                 <Link className="btn btn-soft btn-lg" to="/features">

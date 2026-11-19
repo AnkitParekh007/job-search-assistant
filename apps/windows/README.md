@@ -1,13 +1,13 @@
 # AI Job Search — Windows
 
-Local-first **Windows** desktop app. Same Claude Code–driven workspace model as the macOS clients.
+Local-first **Windows** desktop app. Same multi-provider workspace model as the macOS clients (Claude Code / Codex when ported).
 
 ## Requirements
 
 | Need | Why |
 |---|---|
 | Windows 10/11 | WebView2 host |
-| Claude Code CLI, signed in | runs every AI workflow |
+| AI provider CLI (Claude Code and/or Codex) | multi-provider AI workflows |
 | Python ≥ 3.10 | upstream tools |
 | MiKTeX or TeX Live (optional) | CV / cover-letter PDFs |
 | Rust + MSVC toolchain | `npm run tauri build` |

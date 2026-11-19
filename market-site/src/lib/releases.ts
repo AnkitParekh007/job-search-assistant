@@ -51,7 +51,7 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     subtitle: "Browser UI · sample data",
     badge: "Demo",
     asset: `AI-Job-Search-${RELEASE_VERSION}-web.zip`,
-    note: "Static demo only — no Claude Code bridge",
+    note: "Static demo only — no AI provider bridge",
   },
 ];
 

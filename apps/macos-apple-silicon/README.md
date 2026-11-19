@@ -1,6 +1,6 @@
 # AI Job Search — macOS (Apple Silicon)
 
-Local-first **Apple Silicon** (`arm64`) desktop app for macOS. Drives an unmodified [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) workspace through your signed-in Claude Code CLI.
+Local-first **Apple Silicon** (`arm64`) desktop app for macOS. Drives an unmodified [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) workspace with **multi-provider AI support** (Claude Code and/or OpenAI Codex).
 
 This is the primary developed client. Sibling folders under `apps/` hold Intel Mac, Windows, and Web variants.
 
@@ -9,7 +9,7 @@ This is the primary developed client. Sibling folders under `apps/` hold Intel M
 | Need | Why | Install |
 |---|---|---|
 | Apple Silicon Mac | arm64 native target | M1 / M2 / M3 / M4 |
-| Claude Code CLI, signed in | runs every AI workflow | `brew install --cask claude-code`, then run `claude` once |
+| AI provider CLI (Claude Code and/or Codex) | multi-provider AI workflows | Claude: `brew install --cask claude-code`; Codex: CLI + Settings → Connect |
 | Python ≥ 3.10 | upstream tools | `brew install python@3.12` |
 | BasicTeX + packages | CV / cover-letter PDFs | see upstream `SETUP.md` |
 | poppler (optional) | ATS text check | `brew install poppler` |

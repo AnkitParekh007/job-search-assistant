@@ -35,8 +35,9 @@ export function DocsOverview() {
         <div className="docs-hero-copy">
           <h1>Overview</h1>
           <p className="lede">
-            Start with a workspace and a signed-in Claude Code CLI. AI Job Search is the native macOS shell —
-            discover, rank, apply, and track using upstream workflows on files you own.
+            Start with a workspace and multi-provider AI support (Claude Code or OpenAI Codex). AI Job Search
+            is the native macOS shell — discover, rank, apply, and track using upstream workflows on files you
+            own.
           </p>
           <div className="cta-row">
             <Link className="btn btn-primary btn-lg" to="/docs/quickstart">
@@ -55,15 +56,15 @@ export function DocsOverview() {
       <article className="docs-article">
         <h2>What this product is</h2>
         <p>
-          AI Job Search drives an unmodified <strong>ai-job-search</strong> checkout through Claude Code.
-          The desktop app never reimplements slash commands — it supervises runs, shows approvals, and
-          mirrors tracker/documents state from disk.
+          AI Job Search drives an unmodified <strong>ai-job-search</strong> checkout with multi-provider AI
+          support. The desktop app never reimplements slash commands — it supervises runs, shows approvals,
+          and mirrors tracker/documents state from disk.
         </p>
 
         <div className="docs-card-grid">
           <Link className="docs-card" to="/docs/install">
             <strong>Install</strong>
-            <span>macOS app, Claude Code, Python, and LaTeX.</span>
+            <span>macOS app, AI providers, Python, and LaTeX.</span>
           </Link>
           <Link className="docs-card" to="/docs/first-run">
             <strong>First run</strong>
@@ -81,7 +82,7 @@ export function DocsOverview() {
 
         <div className="docs-callout">
           <strong>Local-first.</strong> Tracker CSV, seen jobs, archives, and tailored documents stay in your
-          workspace. Credentials stay with Claude Code — not inside the app.
+          workspace. Credentials stay with your provider CLI — not inside the app.
         </div>
       </article>
 
@@ -106,9 +107,9 @@ export function DocsQuickstart() {
           </li>
           <li>
             <div>
-              <strong>Install Claude Code and sign in</strong>
-              <code>brew install --cask claude-code</code>, then run <code>claude</code> once so the CLI is
-              authenticated.
+              <strong>Install an AI provider and sign in</strong>
+              Claude Code (<code>brew install --cask claude-code</code>, then <code>claude</code>) and/or
+              OpenAI Codex — then pick your default in Settings → AI Providers.
             </div>
           </li>
           <li>
@@ -120,7 +121,8 @@ export function DocsQuickstart() {
           <li>
             <div>
               <strong>Check Dependencies</strong>
-              Settings → Dependencies should show Claude, Python ≥ 3.10, and LaTeX ready for PDF compile.
+              Settings → Dependencies should show your provider, Python ≥ 3.10, and LaTeX ready for PDF
+              compile.
             </div>
           </li>
           <li>
@@ -138,8 +140,8 @@ export function DocsQuickstart() {
           </li>
         </ol>
         <div className="docs-callout">
-          <strong>Runs cost Claude usage.</strong> Every workflow uses your Claude plan or API credits.
-          Nothing is submitted to employers for you.
+          <strong>Runs use provider credits.</strong> Every workflow uses your Claude or Codex plan / API
+          credits. Nothing is submitted to employers for you.
         </div>
       </article>
       <Pager
@@ -168,11 +170,12 @@ export function DocsInstall() {
             <tbody>
               <tr>
                 <td>
-                  <strong>Claude Code CLI</strong>
+                  <strong>Multi-provider AI</strong>
                 </td>
-                <td>Runs every AI workflow</td>
+                <td>Claude Code and/or OpenAI Codex for workflows</td>
                 <td>
-                  <code>brew install --cask claude-code</code>, then <code>claude</code> once
+                  Claude: <code>brew install --cask claude-code</code>; Codex: install CLI + Settings →
+                  Connect
                 </td>
               </tr>
               <tr>
@@ -258,7 +261,7 @@ export function DocsFirstRun() {
         <h2>Verify dependencies</h2>
         <p>
           Open Settings → Dependencies and click Re-check. Fix anything red before scraping or drafting —
-          especially Claude Code sign-in and LaTeX for PDFs.
+          especially provider sign-in and LaTeX for PDFs.
         </p>
         <div className="docs-callout">
           <strong>Skip is allowed.</strong> You can skip setup and fill Profile later, but ranking and apply
@@ -403,7 +406,7 @@ export function DocsSettings() {
         </p>
         <h2>Dependencies</h2>
         <p>
-          Re-check Claude Code, Python, LaTeX, and optional tools. The panel shows the exact install command
+          Re-check AI providers, Python, LaTeX, and optional tools. The panel shows the exact install command
           when something is missing.
         </p>
         <h2>Appearance</h2>
@@ -412,8 +415,8 @@ export function DocsSettings() {
           is default).
         </p>
         <div className="docs-callout">
-          <strong>No credentials here.</strong> Claude, Gmail, and Notion auth stay in Claude Code. App data
-          lives under Application Support for run history only.
+          <strong>No credentials here.</strong> Provider, Gmail, and Notion auth stay in the provider CLIs /
+          connectors. App data lives under Application Support for run history only.
         </div>
       </article>
       <Pager
@@ -577,10 +580,11 @@ export function DocsSecurity() {
             <strong>Local files</strong> — tracker, archives, and profile stay on disk in your workspace.
           </li>
           <li>
-            <strong>No stored credentials</strong> — Claude / Gmail / Notion auth remains in Claude Code.
+            <strong>No stored credentials</strong> — provider / Gmail / Notion auth remains in the provider
+            CLIs and connectors.
           </li>
           <li>
-            <strong>Safe process spawn</strong> — argv vectors only; untrusted text reaches Claude as
+            <strong>Safe process spawn</strong> — argv vectors only; untrusted text reaches the provider as
             message content.
           </li>
           <li>
@@ -591,8 +595,8 @@ export function DocsSecurity() {
             again upstream.
           </li>
           <li>
-            <strong>No telemetry backend</strong> — network use is Claude Code and what upstream workflows
-            fetch.
+            <strong>No telemetry backend</strong> — network use is your AI provider and what upstream
+            workflows fetch.
           </li>
         </ul>
         <div className="docs-callout">

@@ -5,16 +5,16 @@ This guide assumes **macOS Apple Silicon** — the developed client under [`apps
 ## Before you begin
 
 1. Clone the upstream workspace: [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search).
-2. Install and sign in to the **Claude Code** CLI (`brew install --cask claude-code`, then run `claude` once).
+2. Install and sign in to at least one AI provider for **multi-provider AI support** — Claude Code (`brew install --cask claude-code`, then `claude`) and/or OpenAI Codex.
 3. Build or run this app — see [installation.md](./installation.md).
 
-Claude Code uses your plan allowances or API credits. AI workflows are not free.
+Provider usage uses your plan allowances or API credits. AI workflows are not free.
 
 ## First-run checklist
 
 1. **Launch** — `npm run tauri dev` from `apps/macos-apple-silicon`, or open the built `AI Job Search.app`.
 2. **Select workspace** — point the onboarding/settings picker at your upstream checkout.
-3. **Verify dependencies** — Settings → Dependencies (Claude signed in, Python ≥ 3.10, LaTeX if you need PDFs).
+3. **Verify dependencies** — Settings → Dependencies / AI Providers (provider signed in, Python ≥ 3.10, LaTeX if you need PDFs).
 4. **Configure profile** — run Profile setup (`/setup`) or confirm existing upstream profile files.
 5. **Set preferences** — search focus / queries per upstream docs.
 6. **Discover** — Jobs → Search / Discover (`/scrape`).

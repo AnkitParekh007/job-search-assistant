@@ -1,6 +1,6 @@
 # Supported workflows
 
-The desktop app exposes every upstream workflow listed in `apps/macos-apple-silicon/src/lib/workflows.ts`. Logic lives in the upstream checkout; the app sends the exact command/skill trigger through Claude Code.
+The desktop app exposes every upstream workflow listed in `apps/macos-apple-silicon/src/lib/workflows.ts`. Logic lives in the upstream checkout; the app runs workflows through **multi-provider AI support** (Claude Code slash commands, or Codex instruction-mapped prompts for supported flows).
 
 | ID | Trigger | Title | Writes (summary) | External |
 |----|---------|-------|------------------|----------|

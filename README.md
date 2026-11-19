@@ -43,7 +43,7 @@ Discover aligned roles, prepare tailored documents through the upstream workflow
 |:---|:---|
 | See job discovery, fit ranking, workflow progress, tool activity and the application pipeline in one place. | Review generated CVs and cover letters, inspect PDF output, and approve sensitive file or command actions before proceeding. |
 | **Files remain yours** | **Designed for extensions** |
-| Your candidate profile, tracker and application archives remain in your local upstream workspace. | Claude Code is the established execution path; an experimental Codex adapter is available on Apple Silicon, with other engines on the roadmap. |
+| Your candidate profile, tracker and application archives remain in your local upstream workspace. | **Multi-provider AI support** — Claude Code and OpenAI Codex on Apple Silicon, with other engines on the roadmap. |
 
 **Need the technical view?** [Architecture](./docs/architecture.md) · [Workflow support](./docs/supported-workflows.md) · [Multi-provider status](./docs/MULTI-PROVIDER-IMPLEMENTATION.md)
 
@@ -51,7 +51,7 @@ Discover aligned roles, prepare tailored documents through the upstream workflow
 
 ## Why I built it
 
-The upstream framework is powerful: local files, Claude Code workflows, and a serious job-search pipeline. I wanted that same rigor with a more approachable **visual** experience — one place to see discovery, ranking, Application Studio, the pipeline, and agent activity, with human approval before sensitive tools run.
+The upstream framework is powerful: local files, AI-assisted workflows, and a serious job-search pipeline. I wanted that same rigor with a more approachable **visual** experience — one place to see discovery, ranking, Application Studio, the pipeline, and agent activity, with human approval before sensitive tools run and multi-provider AI support.
 
 AI Job Search Assistant is that desktop shell. Scout (the onboarding mascot) walks you through connecting a workspace; the rest stays local-first and under your control.
 
@@ -80,15 +80,15 @@ flowchart LR
   User([You]) --> UI[React 19 UI]
   UI -->|invoke / events| Host[Tauri 2 / Rust host]
   Host -->|SQLite WAL| DB[(App DB: runs + settings)]
-  Host -->|spawn argv stream-json| Claude[Claude Code CLI]
+  Host -->|multi-provider runtime| Provider[Claude Code or Codex]
   Host -->|read / atomic write| WS[ai-job-search workspace files]
-  Claude -->|cwd = workspace| WS
-  Claude -->|Anthropic API under your account| API[Anthropic]
+  Provider -->|cwd = workspace| WS
+  Provider -->|your provider account| API[Anthropic / OpenAI]
 ```
 
 - **Upstream workspace files** own jobs, applications, profile, CVs, and the tracker CSV.
 - **SQLite** stores run history and app preferences only.
-- Claude Code is the established runtime; the experimental OpenAI Codex adapter uses its own app-server protocol. There is no independent local-LLM backend. See the [provider implementation report](./docs/MULTI-PROVIDER-IMPLEMENTATION.md).
+- **Multi-provider AI support:** Claude Code (stream-json) and OpenAI Codex (app-server). There is no independent local-LLM backend. See the [provider implementation report](./docs/MULTI-PROVIDER-IMPLEMENTATION.md).
 
 Deep dive: [Architecture](./docs/architecture.md) · [App architecture](./apps/macos-apple-silicon/docs/ARCHITECTURE.md)
 
@@ -114,7 +114,7 @@ Primary conversion path until a verified installer ships: **build the macOS Appl
 | Requirement | Why |
 |-------------|-----|
 | Apple Silicon Mac, macOS 13+ | Native arm64 Tauri target |
-| [Claude Code](https://claude.ai/code) CLI, signed in | Runs every AI workflow (uses your Claude plan or API credits) |
+| AI provider CLI (Claude Code and/or OpenAI Codex), signed in | Multi-provider AI support for workflows (uses your plan or API credits) |
 | Python ≥ 3.10 | Upstream tools (`brew install python@3.12` recommended) |
 | Local [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) checkout | Unmodified workspace the app drives |
 | Node.js 20+ + npm | Frontend toolchain |
@@ -164,7 +164,7 @@ Full guide: [Installation](./docs/installation.md) · First-run walkthrough: [Ge
 
 ## Features and platform support
 
-Capabilities are **Native** (UI / SQLite / local tools), **Upstream** (Claude Code slash commands), **External** (connectors), or **Planned**.
+Capabilities are **Native** (UI / SQLite / local tools), **Upstream** (provider-run workflows), **External** (connectors), or **Planned**.
 
 <details>
 <summary><strong>Features by journey</strong></summary>
@@ -214,7 +214,7 @@ Details: [Features](./docs/features.md) · [Supported workflows](./docs/supporte
 | **macOS Apple Silicon** (M1–M4) | [`apps/macos-apple-silicon/`](./apps/macos-apple-silicon/) | **Developed client** — primary supported desktop app |
 | macOS Intel (x86_64) | [`apps/macos-intel/`](./apps/macos-intel/) | Source-complete; release packaging not published |
 | Windows | [`apps/windows/`](./apps/windows/) | Source-complete; release packaging not published |
-| Web (browser) | [`apps/web/`](./apps/web/) | UI demo with sample data — **no** Claude Code bridge |
+| Web (browser) | [`apps/web/`](./apps/web/) | UI demo with sample data — **no** AI provider bridge |
 
 The **browser UI is a demo**, not a functional replacement for the desktop app. See [`apps/README.md`](./apps/README.md).
 
@@ -227,10 +227,10 @@ The **browser UI is a demo**, not a functional replacement for the desktop app. 
 ### Privacy and security
 
 - No app telemetry or remote product backend.
-- Credentials stay in Claude Code / connectors — not stored by this app.
+- Credentials stay in your provider CLI / connectors — not stored by this app.
 - App data directory uses restrictive permissions; DB is mode `0600` on macOS.
 - Write/exec tools require human approval; posting-integrity checks stay in the loop.
-- Profile and posting content sent through Claude Code go to Anthropic under **your** account.
+- Profile and posting content sent through your selected provider go to that provider under **your** account.
 
 More: [Privacy & security](./docs/privacy-and-security.md)
 
@@ -238,7 +238,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 
 | Item | Detail |
 |------|--------|
-| Providers | **Claude Code CLI** (established); **OpenAI Codex** adapter on Apple Silicon (experimental, not live end-to-end verified) |
+| Providers | **Multi-provider AI support** — Claude Code CLI and OpenAI Codex (Apple Silicon; expand to more engines on the roadmap) |
 | Cost | Depends on selected provider and authentication: Claude plan/API usage or Codex ChatGPT plan/API usage |
 | Local LLM | Not supported in this product today |
 | Disclosure | AI workflows consume the selected provider's usage allowances or credits; review its billing and limits |
@@ -259,7 +259,7 @@ Help wanted in concrete areas:
 
 - **Tauri / Rust** host and packaging  
 - **Accessibility** and UI polish  
-- **Provider integrations** (beyond Claude Code)  
+- **Provider integrations** (additional engines beyond Claude Code / Codex)  
 - **Testing**, docs, and sanitized screenshots  
 
 Starter ideas: [contributor backlog](./docs/contributor-backlog.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
@@ -318,7 +318,7 @@ Authoritative engineering specs: [`apps/macos-apple-silicon/docs/`](./apps/macos
 No. It prepares documents and tracks status. You submit applications yourself.
 
 **Do I need Claude Code?**  
-Claude Code is the established execution path. An experimental Codex adapter is available on Apple Silicon, but live end-to-end operation has not yet been verified. Neither engine runs AI workflows for free by default.
+You need **multi-provider AI support**: Claude Code and/or OpenAI Codex (pick a default in Settings). Some connector workflows (Gmail / Notion) still require Claude Code. Provider usage is not free by default.
 
 **Is there a downloadable `.dmg`?**  
 Not yet. Build from source. Releases will be announced when artifacts exist.

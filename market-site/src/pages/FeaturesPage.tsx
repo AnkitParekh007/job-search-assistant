@@ -170,7 +170,7 @@ export function FeaturesPage() {
           </section>
         ) : null}
       </main>
-      <SiteFooter note="Personal macOS build · Not affiliated with OpenAI" />
+      <SiteFooter note="Personal macOS build · Not affiliated with Anthropic or OpenAI" />
     </>
   );
 }

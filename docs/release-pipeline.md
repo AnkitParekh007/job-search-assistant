@@ -27,7 +27,7 @@ Desktop and web packages for AI Job Search Assistant.
 - macOS Apple Silicon zip includes the unsigned `.app` when built locally.
 - Intel / Windows zips include the platform client (build with Tauri if no installer is bundled).
 - Web zip is a static demo only.
-- Does not auto-submit applications. Claude Code required for AI workflows.
+- Does not auto-submit applications. Multi-provider AI support (Claude Code or Codex) required for AI workflows.
 EOF
 ```
 

@@ -36,7 +36,7 @@
 
 ## Data ownership
 
-Upstream files are the only source of truth for jobs, applications and profile. SQLite holds only run history and preferences. The one native write is the `/outcome` Step 4 status change, guarded by an expected-current-status check and written atomically. Everything else that changes upstream files goes through Claude Code running upstream's own instructions.
+Upstream files are the only source of truth for jobs, applications and profile. SQLite holds only run history and preferences. The one native write is the `/outcome` Step 4 status change, guarded by an expected-current-status check and written atomically. Everything else that changes upstream files goes through the multi-provider AI runtime (Claude Code or Codex) running upstream-compatible instructions.
 
 ## Resource use
 

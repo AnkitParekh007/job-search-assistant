@@ -1,20 +1,27 @@
 # Integrations
 
-## Claude Code (required)
+## Multi-provider AI support
 
-All AI workflows run through the Claude Code CLI under your account. Install and sign-in are mandatory for scrape/rank/apply/interview and related commands.
+AI workflows run through your selected provider CLI under your account:
+
+| Provider | Role |
+|----------|------|
+| **Claude Code** | Established path for all upstream slash commands / skills |
+| **OpenAI Codex** | Multi-provider adapter on Apple Silicon for core workflows (discover, rank, apply, outcome, interview, and related) |
+
+Install and sign in to at least one provider. Pick the default in **Settings → AI Providers**. See [MULTI-PROVIDER-IMPLEMENTATION.md](./MULTI-PROVIDER-IMPLEMENTATION.md).
 
 ## Gmail sync
 
 - Workflow: `/gmail-sync`
-- Requires the **claude.ai Gmail connector** enabled in Claude Code.
+- Requires the **claude.ai Gmail connector** enabled in Claude Code (Claude provider only).
 - Proposes tracker status changes for approval; not a silent sync.
 - No dedicated proposal-review table UI yet (console-based).
 
 ## Notion sync
 
 - Workflow: `/notion-sync`
-- Requires a **Notion MCP** server configured for Claude Code.
+- Requires a **Notion MCP** server configured for Claude Code (Claude provider only).
 - One-way push; local files stay authoritative.
 
 ## Community portals

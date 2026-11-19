@@ -2,7 +2,7 @@
 
 Legend:
 - **Native**: a dedicated screen that reads or writes upstream files directly with upstream rules.
-- **Bridge**: runs the real upstream workflow through Claude Code with a live timeline, approvals and question answering.
+- **Bridge**: runs the real upstream workflow through multi-provider AI support (Claude Code or Codex) with a live timeline, approvals and question answering.
 - **Partial**: available, but less than the brief's full design (listed under Gaps).
 - **Blocked**: needs an external account or connector the app can't provide.
 

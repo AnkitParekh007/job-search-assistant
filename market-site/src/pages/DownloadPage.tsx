@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { AppChrome } from "../components/AppChrome";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { PAGE_SEO } from "../lib/pages";
 import { applySeo } from "../lib/seo";
 import {
   PLATFORM_DOWNLOADS,
@@ -59,8 +60,7 @@ export function DownloadPage() {
   useEffect(() => {
     applySeo({
       title: "Download — AI Job Search Assistant",
-      description:
-        "Download AI Job Search Assistant for macOS Apple Silicon, Intel Mac, Windows, or the web demo. Claude Code required for AI workflows.",
+      description: PAGE_SEO.download.description,
       path: "/download",
     });
   }, []);
@@ -92,7 +92,8 @@ export function DownloadPage() {
               <h1>Install AI Job Search Assistant</h1>
               <p className="lede">
                 Download the desktop workspace for your platform. Discover, rank, prepare tailored documents,
-                and track outcomes with Claude Code — without auto-submitting applications to employers.
+                and track outcomes with multi-provider AI support — without auto-submitting applications to
+                employers.
               </p>
               <div className="cta-row">
                 <a className="btn btn-primary btn-lg btn-icon" href={primaryUrl} rel="noopener">
@@ -164,7 +165,8 @@ export function DownloadPage() {
             <div className="panel reveal" data-tone="amber" aria-hidden="true">
               <div className="panel-inner">
                 <div className="quote-bubble">
-                  Check Claude Code, Python, and LaTeX from Settings → Dependencies before your first run.
+                  Check your AI provider, Python, and LaTeX from Settings → Dependencies before your first
+                  run.
                 </div>
                 <AppChrome chips={["Settings", "Dependencies"]} sideStrongIndex={2} sideCount={3} />
               </div>
@@ -173,13 +175,13 @@ export function DownloadPage() {
             <div className="stack reveal reveal-delay-1">
               <h2>What you need on the Mac</h2>
               <p className="lede">
-                The app is a shell. Claude Code and your upstream workspace do the real work.
+                The app is a shell. Your AI provider and upstream workspace do the real work.
               </p>
               <ul className="req-list">
                 <li>
                   <span>
-                    <strong>Claude Code CLI</strong>, signed in — runs every AI workflow (uses your Claude
-                    plan or API credits).
+                    <strong>Multi-provider AI support</strong> — Claude Code and/or OpenAI Codex signed in
+                    (provider usage uses your plan or API credits).
                   </span>
                 </li>
                 <li>
@@ -252,7 +254,7 @@ export function DownloadPage() {
           </div>
         </section>
       </main>
-      <SiteFooter note="Personal macOS build · Not affiliated with OpenAI" />
+      <SiteFooter note="Personal macOS build · Not affiliated with Anthropic or OpenAI" />
     </>
   );
 }

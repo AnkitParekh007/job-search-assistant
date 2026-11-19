@@ -8,7 +8,7 @@ Same as Apple Silicon, plus an Intel Mac (or Rosetta cross-compile host).
 
 | Need | Install |
 |---|---|
-| Claude Code CLI, signed in | `brew install --cask claude-code` |
+| AI provider CLI (Claude Code and/or Codex) | Multi-provider AI support |
 | Python ≥ 3.10 | `brew install python@3.12` |
 | BasicTeX | see upstream `SETUP.md` |
 | Rust `x86_64-apple-darwin` target | `rustup target add x86_64-apple-darwin` |

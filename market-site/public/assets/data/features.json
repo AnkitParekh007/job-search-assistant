@@ -39,7 +39,7 @@
     {
       "id": "activity",
       "title": "Agent activity",
-      "blurb": "Watch live Claude Code runs, approvals, and workflow stages.",
+      "blurb": "Watch live provider runs (Claude Code or Codex), approvals, and workflow stages.",
       "group": "Automate"
     },
     {

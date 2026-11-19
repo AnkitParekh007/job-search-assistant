@@ -6,7 +6,7 @@ type Props = {
 };
 
 export function SiteFooter({
-  note = "Local-first · Claude Code required · Does not auto-submit applications",
+  note = "Local-first · Multi-provider AI support · Does not auto-submit applications",
 }: Props) {
   return (
     <footer className="site-footer">
@@ -19,8 +19,8 @@ export function SiteFooter({
             <span>AI Job Search</span>
           </Link>
           <p>
-            Local-first job search automation for macOS, powered by Claude Code and your own workspace
-            files.
+            Local-first job search automation for macOS, with multi-provider AI support and workspace
+            files you own.
           </p>
         </div>
         <div className="footer-col">
@@ -38,7 +38,7 @@ export function SiteFooter({
         </div>
         <div className="footer-col">
           <h4>Notes</h4>
-          <Link to="/download#requirements">Claude Code required</Link>
+          <Link to="/download#requirements">Multi-provider AI support</Link>
           <a href={GITHUB_REPO} rel="noopener">
             GitHub
           </a>
