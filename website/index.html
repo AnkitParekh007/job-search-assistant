@@ -1,8 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("ajs-theme");
+          document.documentElement.setAttribute(
+            "data-theme",
+            t === "dark" ? "dark" : "light"
+          );
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
     <title>About — AI Job Search</title>
     <meta
       name="description"
@@ -31,9 +44,19 @@
         <nav class="nav-links" aria-label="Primary">
           <a class="is-active" href="index.html">About</a>
           <a href="features.html">Features</a>
+          <a href="docs/index.html">Docs</a>
           <a href="download.html">Download</a>
         </nav>
         <div class="nav-actions">
+          <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M20 14.5A7.5 7.5 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.05 5.05l1.56 1.56M17.39 17.39l1.56 1.56M18.95 5.05l-1.56 1.56M6.61 17.39l-1.56 1.56" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
           <a class="btn btn-ghost" href="features.html">Explore features</a>
           <a class="btn btn-primary" href="download.html">Download</a>
           <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
@@ -194,6 +217,7 @@
           <h4>Product</h4>
           <a href="index.html">About</a>
           <a href="features.html">Features</a>
+          <a href="docs/index.html">Docs</a>
           <a href="download.html">Download</a>
         </div>
         <div class="footer-col">

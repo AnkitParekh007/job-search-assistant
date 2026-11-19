@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("ajs-theme");
+          document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+    <title>Install — AI Job Search Docs</title>
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,600,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/docs.css" />
+    <style>:root { --font: "Satoshi", "Helvetica Neue", "Segoe UI", system-ui, sans-serif; --font-display: "Satoshi", "Helvetica Neue", "Segoe UI", system-ui, sans-serif; }</style>
+  </head>
+  <body class="docs-body" data-docs-page="install" data-docs-section="get-started">
+    <header class="site-header">
+      <div class="nav-inner">
+        <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true">AJ</span><span>AI Job Search</span></a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="../index.html">About</a>
+          <a href="../features.html">Features</a>
+          <a class="is-active" href="index.html">Docs</a>
+          <a href="../download.html">Download</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.5A7.5 7.5 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.05 5.05l1.56 1.56M17.39 17.39l1.56 1.56M18.95 5.05l-1.56 1.56M6.61 17.39l-1.56 1.56" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </button>
+          <a class="btn btn-primary" href="../download.html">Download</a>
+          <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span></button>
+        </div>
+      </div>
+    </header>
+    <div id="docs-chrome"></div>
+    <div class="docs-shell">
+      <main class="docs-main">
+        <article class="docs-article">
+          <h1>Install</h1>
+          <p class="lede">What you need on the Mac before workflows can run.</p>
+
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr><th>Need</th><th>Why</th><th>Install</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Claude Code CLI</strong></td>
+                  <td>Runs every AI workflow</td>
+                  <td><code>brew install --cask claude-code</code>, then <code>claude</code> once</td>
+                </tr>
+                <tr>
+                  <td><strong>Python ≥ 3.10</strong></td>
+                  <td>Upstream tools</td>
+                  <td><code>brew install python@3.12</code></td>
+                </tr>
+                <tr>
+                  <td><strong>BasicTeX</strong></td>
+                  <td>CV / cover-letter PDFs</td>
+                  <td>LuaLaTeX + XeLaTeX packages (see upstream SETUP)</td>
+                </tr>
+                <tr>
+                  <td><strong>poppler</strong> (optional)</td>
+                  <td>ATS text check</td>
+                  <td><code>brew install poppler</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>App install</h2>
+          <p>Open the <code>.app</code> from Releases or your local Tauri build. Drag it to <code>/Applications</code> if you want it to stay. The build is unsigned.</p>
+
+          <h2>Build from source</h2>
+          <pre class="docs-pre">npm install
+npm test
+npm run tauri build</pre>
+          <p>The bundle lands under <code>src-tauri/target/release/bundle/macos/</code>.</p>
+        </article>
+        <nav class="docs-pager" aria-label="Pagination">
+          <a href="quickstart.html"><span>Previous</span><strong>← Quickstart</strong></a>
+          <a class="next" href="first-run.html"><span>Next</span><strong>First run →</strong></a>
+        </nav>
+      </main>
+    </div>
+    <script src="../assets/js/docs-chrome.js"></script>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

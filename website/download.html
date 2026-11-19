@@ -1,8 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("ajs-theme");
+          document.documentElement.setAttribute(
+            "data-theme",
+            t === "dark" ? "dark" : "light"
+          );
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
     <title>Download — AI Job Search</title>
     <meta
       name="description"
@@ -31,9 +44,19 @@
         <nav class="nav-links" aria-label="Primary">
           <a href="index.html">About</a>
           <a href="features.html">Features</a>
+          <a href="docs/index.html">Docs</a>
           <a class="is-active" href="download.html">Download</a>
         </nav>
         <div class="nav-actions">
+          <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M20 14.5A7.5 7.5 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.05 5.05l1.56 1.56M17.39 17.39l1.56 1.56M18.95 5.05l-1.56 1.56M6.61 17.39l-1.56 1.56" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
           <a class="btn btn-ghost" href="index.html">About</a>
           <a class="btn btn-primary" href="#macos">Download</a>
           <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
@@ -154,10 +177,10 @@
               The app is a shell. Claude Code and your upstream workspace do the real work.
             </p>
             <ul class="req-list">
-              <li><span><strong style="color:#fff">Claude Code CLI</strong>, signed in — runs every AI workflow (uses your Claude plan or API credits).</span></li>
-              <li><span><strong style="color:#fff">Python ≥ 3.10</strong> for upstream tools (Homebrew <code style="color:#ccc">python@3.12</code> recommended).</span></li>
-              <li><span><strong style="color:#fff">BasicTeX</strong> (LuaLaTeX / XeLaTeX) to compile CV and cover-letter PDFs.</span></li>
-              <li><span><strong style="color:#fff">ai-job-search workspace</strong> checked out locally — the unmodified upstream source of truth.</span></li>
+              <li><span><strong>Claude Code CLI</strong>, signed in — runs every AI workflow (uses your Claude plan or API credits).</span></li>
+              <li><span><strong>Python ≥ 3.10</strong> for upstream tools (Homebrew <code>python@3.12</code> recommended).</span></li>
+              <li><span><strong>BasicTeX</strong> (LuaLaTeX / XeLaTeX) to compile CV and cover-letter PDFs.</span></li>
+              <li><span><strong>ai-job-search workspace</strong> checked out locally — the unmodified upstream source of truth.</span></li>
             </ul>
             <p class="fine-print">Optional: poppler for ATS text checks; Bun only if you install community portal CLIs.</p>
           </div>
@@ -197,7 +220,7 @@
             <h2>Build from source</h2>
             <p class="lede">
               Prefer compiling locally? Clone the desktop app, install dependencies, and produce an unsigned
-              <code style="color:#ccc">.app</code> with Tauri.
+              <code>.app</code> with Tauri.
             </p>
             <div class="cta-row">
               <a
@@ -215,10 +238,10 @@
               </a>
             </div>
             <p class="fine-print">
-              Typical flow: <code style="color:#aaa">npm install</code>,
-              <code style="color:#aaa">npm test</code>,
-              <code style="color:#aaa">npm run tauri build</code>.
-              Drag the app to <code style="color:#aaa">/Applications</code> when ready.
+              Typical flow: <code>npm install</code>,
+              <code>npm test</code>,
+              <code>npm run tauri build</code>.
+              Drag the app to <code>/Applications</code> when ready.
             </p>
           </div>
         </div>
@@ -238,6 +261,7 @@
           <h4>Product</h4>
           <a href="index.html">About</a>
           <a href="features.html">Features</a>
+          <a href="docs/index.html">Docs</a>
           <a href="download.html">Download</a>
         </div>
         <div class="footer-col">

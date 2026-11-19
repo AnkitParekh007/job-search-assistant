@@ -1,4 +1,36 @@
 (() => {
+  const THEME_KEY = "ajs-theme";
+
+  const getTheme = () => {
+    const stored = localStorage.getItem(THEME_KEY);
+    return stored === "dark" ? "dark" : "light";
+  };
+
+  const applyTheme = (theme) => {
+    const next = theme === "dark" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem(THEME_KEY, next);
+    document.querySelectorAll(".theme-toggle").forEach((btn) => {
+      btn.setAttribute(
+        "aria-label",
+        next === "dark" ? "Switch to light theme" : "Switch to dark theme"
+      );
+    });
+  };
+
+  // Ensure attribute is set even if the head boot script was skipped.
+  if (!document.documentElement.getAttribute("data-theme")) {
+    applyTheme(getTheme());
+  } else {
+    applyTheme(document.documentElement.getAttribute("data-theme"));
+  }
+
+  document.querySelectorAll(".theme-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      applyTheme(getTheme() === "dark" ? "light" : "dark");
+    });
+  });
+
   const header = document.querySelector(".site-header");
   const toggle = document.querySelector(".menu-toggle");
   const links = document.querySelector(".nav-links");

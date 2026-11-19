@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("ajs-theme");
+          document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+    <title>Workflows — AI Job Search Docs</title>
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,600,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/docs.css" />
+    <style>:root { --font: "Satoshi", "Helvetica Neue", "Segoe UI", system-ui, sans-serif; --font-display: "Satoshi", "Helvetica Neue", "Segoe UI", system-ui, sans-serif; }</style>
+  </head>
+  <body class="docs-body" data-docs-page="workflows" data-docs-section="reference">
+    <header class="site-header">
+      <div class="nav-inner">
+        <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true">AJ</span><span>AI Job Search</span></a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="../index.html">About</a>
+          <a href="../features.html">Features</a>
+          <a class="is-active" href="index.html">Docs</a>
+          <a href="../download.html">Download</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.5A7.5 7.5 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.05 5.05l1.56 1.56M17.39 17.39l1.56 1.56M18.95 5.05l-1.56 1.56M6.61 17.39l-1.56 1.56" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </button>
+          <a class="btn btn-primary" href="../download.html">Download</a>
+          <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span></button>
+        </div>
+      </div>
+    </header>
+    <div id="docs-chrome"></div>
+    <div class="docs-shell">
+      <main class="docs-main">
+        <article class="docs-article">
+          <h1>Workflows</h1>
+          <p class="lede">Every catalogued upstream command the app can launch.</p>
+
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr><th>Command</th><th>What it does</th><th>Writes</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>/setup</code></td><td>Profile onboarding</td><td>Profile / search files</td></tr>
+                <tr><td><code>/scrape</code></td><td>Discover jobs</td><td><code>seen_jobs.json</code></td></tr>
+                <tr><td><code>/rank</code></td><td>Score new postings</td><td>Rank fields in seen jobs</td></tr>
+                <tr><td><code>/apply</code></td><td>Application Studio</td><td>CV, letters, tracker, archive</td></tr>
+                <tr><td><code>/outcome</code></td><td>Record status</td><td>Tracker + outcome notes</td></tr>
+                <tr><td><code>/interview</code></td><td>Interview prep</td><td>Prep notes in archive</td></tr>
+                <tr><td><code>/gmail-sync</code></td><td>Propose status from mail</td><td>Tracker after approval</td></tr>
+                <tr><td><code>/notion-sync</code></td><td>Push to Notion</td><td>External Notion DB</td></tr>
+                <tr><td><code>/html-report</code></td><td>Offline dashboard</td><td><code>reports/</code></td></tr>
+                <tr><td><code>/expand</code></td><td>Enrich profile</td><td>Profile skills (confirmed)</td></tr>
+                <tr><td><code>/upskill</code></td><td>Skill-gap plan</td><td><code>upskill/</code></td></tr>
+                <tr><td><code>/add-template</code></td><td>Register template</td><td>Template config</td></tr>
+                <tr><td><code>/add-portal</code></td><td>Add job board skill</td><td><code>.agents/skills/</code></td></tr>
+                <tr><td><code>/reset</code></td><td>Reset profile (destructive)</td><td>Profile templates</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>Launch any of these from <strong>Workflows</strong>. The app shows what may be written before you start.</p>
+        </article>
+        <nav class="docs-pager" aria-label="Pagination">
+          <a href="settings.html"><span>Previous</span><strong>← Settings</strong></a>
+          <a class="next" href="security.html"><span>Next</span><strong>Security →</strong></a>
+        </nav>
+      </main>
+    </div>
+    <script src="../assets/js/docs-chrome.js"></script>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
