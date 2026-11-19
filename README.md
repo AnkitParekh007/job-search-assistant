@@ -283,6 +283,27 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). Bug reports, docs fixes, tests, and ca
 
 ---
 
+## ❤️ Support This Project
+
+AI Job Search Assistant is an independent, open-source project built to make AI-assisted job searching more accessible.
+
+Your sponsorship helps support:
+
+- Continued development and bug fixes
+- OpenAI Codex and additional AI provider integrations
+- macOS, Windows, and web platform improvements
+- Documentation, testing, and community contributions
+
+If you find this project useful, consider supporting its development.
+
+**[Become a GitHub Sponsor](https://github.com/sponsors/AnkitParekh007)**
+
+Not able to sponsor financially? A GitHub star, bug report, contribution, or recommendation is equally appreciated.
+
+Thank you for supporting open-source development!
+
+---
+
 ## FAQ
 
 **Does this apply to jobs for me?**  
