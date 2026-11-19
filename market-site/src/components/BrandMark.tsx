@@ -10,7 +10,7 @@ type Props = {
 /**
  * The "Ascend" mark.
  *
- * A lime arrow climbs out of a dotted aurora arc on an ink tile: the search
+ * A coral arrow climbs out of a dotted aurora arc on an ink tile: the search
  * moving forward, one deliberate step at a time. The arc is the field of
  * openings the app scans; the arrow is the move you choose to make.
  */
@@ -50,7 +50,7 @@ export function BrandMark({ size = 30, animated = false, className }: Props) {
         pathLength={1}
         d="M11 21 21.2 10.8M14.2 10.8h7v7"
         fill="none"
-        stroke="#D4FF5A"
+        stroke="#FF8C66"
         strokeWidth="2.8"
         strokeLinecap="round"
         strokeLinejoin="round"
