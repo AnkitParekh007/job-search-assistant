@@ -241,18 +241,14 @@ fn start_run(
         from_session
             .or_else(|| provider.as_deref().and_then(ProviderId::parse))
             .unwrap_or_else(|| {
-                providers::registry::resolve_default(
-                    state.db.get_setting("ai_provider").as_deref(),
-                )
+                providers::registry::resolve_default(state.db.get_setting("ai_provider").as_deref())
             })
     } else {
         provider
             .as_deref()
             .and_then(ProviderId::parse)
             .unwrap_or_else(|| {
-                providers::registry::resolve_default(
-                    state.db.get_setting("ai_provider").as_deref(),
-                )
+                providers::registry::resolve_default(state.db.get_setting("ai_provider").as_deref())
             })
     };
 
@@ -380,7 +376,8 @@ fn provider_login(provider: String, mode: Option<String>) -> Result<Value, Strin
             providers::codex::oneshot_rpc("account/login/start", params, 120_000)
         }
         Some(ProviderId::Claude) => Err(
-            "Sign in to Claude Code from Terminal: run `claude` and complete the login flow.".into(),
+            "Sign in to Claude Code from Terminal: run `claude` and complete the login flow."
+                .into(),
         ),
         _ => Err("Login is not available for this provider yet".into()),
     }
@@ -389,9 +386,11 @@ fn provider_login(provider: String, mode: Option<String>) -> Result<Value, Strin
 #[tauri::command]
 fn provider_models(provider: String) -> Result<Value, String> {
     match ProviderId::parse(&provider) {
-        Some(ProviderId::Codex) => {
-            providers::codex::oneshot_rpc("model/list", json!({"limit": 50, "includeHidden": false}), 20_000)
-        }
+        Some(ProviderId::Codex) => providers::codex::oneshot_rpc(
+            "model/list",
+            json!({"limit": 50, "includeHidden": false}),
+            20_000,
+        ),
         Some(ProviderId::Claude) => Ok(json!({
             "data": [
                 {"id": "opus", "name": "Opus"},

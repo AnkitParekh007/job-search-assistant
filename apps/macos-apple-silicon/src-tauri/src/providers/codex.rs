@@ -234,13 +234,7 @@ impl CodexBridge {
                         resume_c.as_deref(),
                         msg,
                     ) {
-                        b.emit(
-                            &app2,
-                            &db2,
-                            &rid,
-                            kind::FAILED,
-                            json!({"message": e}),
-                        );
+                        b.emit(&app2, &db2, &rid, kind::FAILED, json!({"message": e}));
                         b.set_status(&app2, &db2, &rid, "failed");
                         db2.finish_run(&rid, "failed", None, None, Some(&e), now_ms());
                     }
@@ -343,7 +337,13 @@ impl CodexBridge {
         // Notification (method, no id)
         if let Some(method) = msg.get("method").and_then(|m| m.as_str()) {
             if msg.get("id").is_none() {
-                self.on_notification(app, db, run_id, method, msg.get("params").cloned().unwrap_or(json!({})))?;
+                self.on_notification(
+                    app,
+                    db,
+                    run_id,
+                    method,
+                    msg.get("params").cloned().unwrap_or(json!({})),
+                )?;
                 return Ok(());
             }
         }
@@ -356,7 +356,13 @@ impl CodexBridge {
                     .and_then(|m| m.as_str())
                     .unwrap_or("Codex RPC error")
                     .to_string();
-                self.emit(app, db, run_id, kind::FAILED, json!({"message": err, "raw": msg}));
+                self.emit(
+                    app,
+                    db,
+                    run_id,
+                    kind::FAILED,
+                    json!({"message": err, "raw": msg}),
+                );
                 self.set_status(app, db, run_id, "failed");
                 db.finish_run(run_id, "failed", None, None, Some(&err), now_ms());
                 return Ok(());
@@ -374,11 +380,7 @@ impl CodexBridge {
                 );
                 // Start or resume thread
                 if let Some(tid) = resume {
-                    let _ = self.request(
-                        run_id,
-                        "thread/resume",
-                        json!({"threadId": tid}),
-                    )?;
+                    let _ = self.request(run_id, "thread/resume", json!({"threadId": tid}))?;
                 } else {
                     let mut params = json!({
                         "cwd": workspace,
@@ -476,7 +478,13 @@ impl CodexBridge {
             }
         });
 
-        self.emit(app, db, run_id, kind::APPROVAL_REQUIRED, pending_payload.clone());
+        self.emit(
+            app,
+            db,
+            run_id,
+            kind::APPROVAL_REQUIRED,
+            pending_payload.clone(),
+        );
         self.emit(app, db, run_id, "control:can_use_tool", pending_payload);
         self.set_status(app, db, run_id, "awaiting_approval");
         Ok(())
@@ -532,7 +540,14 @@ impl CodexBridge {
                         json!({"subtype": "success", "is_error": false, "result": "Turn completed."}),
                     );
                     self.set_status(app, db, run_id, "awaiting_input");
-                    db.finish_run(run_id, "awaiting_input", None, Some("Turn completed."), None, now_ms());
+                    db.finish_run(
+                        run_id,
+                        "awaiting_input",
+                        None,
+                        Some("Turn completed."),
+                        None,
+                        now_ms(),
+                    );
                 } else {
                     let err = text.unwrap_or_else(|| format!("Turn ended with status {status}"));
                     self.emit(app, db, run_id, kind::FAILED, params.clone());
@@ -562,10 +577,7 @@ impl CodexBridge {
                 if !delta.is_empty() {
                     let mut g = self.runs.lock().unwrap();
                     if let Some(l) = g.get_mut(run_id) {
-                        l.agent_buf
-                            .entry(item_id)
-                            .or_default()
-                            .push_str(delta);
+                        l.agent_buf.entry(item_id).or_default().push_str(delta);
                     }
                 }
             }
@@ -681,14 +693,23 @@ impl CodexBridge {
                 self.emit(app, db, run_id, "account:login_completed", params);
             }
             "serverRequest/resolved" => {
-                self.emit(app, db, run_id, "bridge:answered", json!({
-                    "request_id": params.get("requestId").cloned().unwrap_or(json!(null)),
-                    "provider": "codex"
-                }));
+                self.emit(
+                    app,
+                    db,
+                    run_id,
+                    "bridge:answered",
+                    json!({
+                        "request_id": params.get("requestId").cloned().unwrap_or(json!(null)),
+                        "provider": "codex"
+                    }),
+                );
             }
             _ => {
                 // Keep protocol continuity for debugging without flooding the UI.
-                if method.starts_with("item/") || method.starts_with("thread/") || method.starts_with("turn/") {
+                if method.starts_with("item/")
+                    || method.starts_with("thread/")
+                    || method.starts_with("turn/")
+                {
                     self.emit(app, db, run_id, &format!("codex:{method}"), params);
                 }
             }
@@ -1042,8 +1063,10 @@ mod tests {
 
     #[test]
     fn maps_file_approval() {
-        let (name, _, _) =
-            map_approval_to_ui("item/fileChange/requestApproval", &json!({"grantRoot": "/w"}));
+        let (name, _, _) = map_approval_to_ui(
+            "item/fileChange/requestApproval",
+            &json!({"grantRoot": "/w"}),
+        );
         assert_eq!(name, "Write");
     }
 }
