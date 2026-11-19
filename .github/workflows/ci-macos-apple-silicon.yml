@@ -29,7 +29,8 @@ concurrency:
 jobs:
   frontend:
     name: Frontend test & build
-    runs-on: macos-14
+    # Ubuntu is enough for Vite/unit tests; macos-14 is unavailable on this account.
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,7 +55,7 @@ jobs:
 
   rust:
     name: Rust tests & fmt
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: apps/macos-apple-silicon/src-tauri
