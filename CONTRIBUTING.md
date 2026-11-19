@@ -23,7 +23,7 @@ Full notes: [docs/development.md](./docs/development.md) · [docs/installation.m
 |------|------|
 | `apps/macos-apple-silicon/` | Developed desktop client |
 | `apps/macos-intel/`, `apps/windows/`, `apps/web/` | Additional clients (see status in `apps/README.md`) |
-| `market-site/` | GitHub Pages marketing + HTML docs |
+| `market-site/` | GitHub Pages marketing React SPA |
 | `docs/` | Markdown documentation |
 
 ## Tests

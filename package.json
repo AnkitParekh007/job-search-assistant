@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "market-site"
   ],
   "scripts": {
     "test": "npm run test -w @ai-job-search/core && npm run test -w ai-job-search-macos-apple-silicon && npm run test -w ai-job-search-web",
@@ -12,7 +13,9 @@
     "test:web": "npm run test -w ai-job-search-web",
     "build:web": "npm run build -w ai-job-search-web",
     "build:features": "npm run build:features -w @ai-job-search/core",
+    "build:market": "npm run build -w @ai-job-search/market-site",
     "dev:web": "npm run dev -w ai-job-search-web",
+    "dev:market": "npm run dev -w @ai-job-search/market-site",
     "dev:macos": "npm run tauri -w ai-job-search-macos-apple-silicon -- dev"
   },
   "devDependencies": {

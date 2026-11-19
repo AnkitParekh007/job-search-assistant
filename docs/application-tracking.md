@@ -18,4 +18,4 @@ Final statuses are not reopened by the quick-update path. Writes use atomic repl
 
 Application folders live under upstream `documents/applications/<company>_<role>/`.
 
-Marketing: [market-site/docs/track.html](../market-site/docs/track.html).
+Marketing: https://ankitparekh007.github.io/job-search-assistant/docs/track

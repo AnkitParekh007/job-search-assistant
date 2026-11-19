@@ -19,4 +19,4 @@
 - Not guaranteed coverage of every portal without installing portal skills / CLIs.
 - Ranking quality depends on your upstream profile and Claude Code execution.
 
-Marketing page: [market-site/docs/discover.html](../market-site/docs/discover.html).
+Marketing page: https://ankitparekh007.github.io/job-search-assistant/docs/discover

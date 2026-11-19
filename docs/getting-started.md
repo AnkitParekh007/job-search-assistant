@@ -33,4 +33,4 @@ Claude Code uses your plan allowances or API credits. AI workflows are not free.
 - [Installation](./installation.md)
 - [Configuration](./configuration.md)
 - [Features](./features.md)
-- Marketing first-run: [market-site/docs/first-run.html](../market-site/docs/first-run.html)
+- Marketing first-run: https://ankitparekh007.github.io/job-search-assistant/docs/first-run

@@ -351,6 +351,7 @@ Feature work lands once in `packages/core` + `packages/ui`. Every client and the
 ```bash
 npm install
 npm test
-npm run build:features   # writes market-site/assets/data/features.json
+npm run build:features   # writes market-site/public/assets/data/features.json
+npm run build:market     # Vite React SPA → market-site/dist (GitHub Pages)
 npm run build:web
 ```

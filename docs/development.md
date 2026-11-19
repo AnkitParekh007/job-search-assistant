@@ -8,7 +8,7 @@ apps/
   macos-intel/
   windows/
   web/
-market-site/             # GitHub Pages
+market-site/             # GitHub Pages React SPA (Vite)
 docs/                    # Markdown docs (this tree)
 .github/                 # workflows + templates
 ```
@@ -50,11 +50,13 @@ CI: `.github/workflows/ci-macos-apple-silicon.yml` (when enabled on the default 
 ## Marketing site
 
 ```bash
-cd market-site
-python3 -m http.server 5177
+npm run dev:market      # Vite dev server (port 5174)
+npm run build:market    # production build → market-site/dist
 ```
 
-Deployed by `.github/workflows/deploy-market-site.yml` on pushes to `market-site/**`.
+Clean routes (GitHub Pages base `/job-search-assistant/`): `/`, `/features`, `/download`, `/docs`, `/docs/install`, …
+
+Deployed by `.github/workflows/deploy-market-site.yml` on pushes to `market-site/**` (uploads `market-site/dist`).
 
 ## PR expectations
 
