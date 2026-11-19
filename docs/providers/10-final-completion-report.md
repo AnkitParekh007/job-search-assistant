@@ -80,4 +80,5 @@ Push PR to run GitHub Actions; local fmt/test/clippy green on Apple Silicon host
 
 ## 13. PR / commits
 
-Filled after `gh pr create`.
+- PR: https://github.com/AnkitParekh007/job-search-assistant/pull/8
+- Commit: `91106c4` — Complete multi-provider AI runtime for Codex, OpenAI API, Gemini, and Ollama.
