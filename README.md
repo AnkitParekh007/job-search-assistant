@@ -21,7 +21,9 @@ market-site/             # Marketing + docs (GitHub Pages)
 
 ### Apps
 
-See [`apps/README.md`](./apps/README.md). Each platform folder is the home for that client’s code and releases.
+See [`apps/README.md`](./apps/README.md).
+
+The current developed desktop product lives in [`apps/macos-apple-silicon/`](./apps/macos-apple-silicon/). Other platform folders are scaffolds.
 
 ### Market site
 

@@ -1,0 +1,37 @@
+[package]
+name = "ai-job-search-desktop"
+version = "0.1.0"
+description = "Local macOS desktop shell for the AI Job Search framework"
+authors = ["local"]
+edition = "2021"
+license = "MIT"
+
+[lib]
+name = "ai_job_search_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-notification = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.37", features = ["bundled"] }
+notify = "8"
+uuid = { version = "1", features = ["v4"] }
+csv = "1"
+dirs = "6"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
