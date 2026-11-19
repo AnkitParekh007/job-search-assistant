@@ -6,32 +6,32 @@ Local `gh` auth was **invalid** during professionalization — run these after `
 ## Description + homepage
 
 ```bash
-gh repo edit AnkitParekh007/job-search-assitant \
+gh repo edit AnkitParekh007/job-search-assistant \
   --description "Local-first AI job search desktop app for macOS. Discover and rank jobs, prepare tailored resumes, track applications, and run Claude Code workflows." \
-  --homepage "https://ankitparekh007.github.io/job-search-assitant/"
+  --homepage "https://ankitparekh007.github.io/job-search-assistant/"
 ```
 
 ## Topics (≤ 20)
 
 ```bash
-gh repo edit AnkitParekh007/job-search-assitant --add-topic ai-job-search
-gh repo edit AnkitParekh007/job-search-assitant --add-topic job-search
-gh repo edit AnkitParekh007/job-search-assitant --add-topic job-tracker
-gh repo edit AnkitParekh007/job-search-assitant --add-topic career-tools
-gh repo edit AnkitParekh007/job-search-assitant --add-topic macos
-gh repo edit AnkitParekh007/job-search-assitant --add-topic macos-app
-gh repo edit AnkitParekh007/job-search-assitant --add-topic desktop-app
-gh repo edit AnkitParekh007/job-search-assitant --add-topic tauri
-gh repo edit AnkitParekh007/job-search-assitant --add-topic rust
-gh repo edit AnkitParekh007/job-search-assitant --add-topic react
-gh repo edit AnkitParekh007/job-search-assitant --add-topic typescript
-gh repo edit AnkitParekh007/job-search-assitant --add-topic claude-code
-gh repo edit AnkitParekh007/job-search-assitant --add-topic local-first
-gh repo edit AnkitParekh007/job-search-assitant --add-topic ai-assistant
-gh repo edit AnkitParekh007/job-search-assitant --add-topic resume-builder
-gh repo edit AnkitParekh007/job-search-assitant --add-topic application-tracker
-gh repo edit AnkitParekh007/job-search-assitant --add-topic open-source
-gh repo edit AnkitParekh007/job-search-assitant --add-topic sqlite
+gh repo edit AnkitParekh007/job-search-assistant --add-topic ai-job-search
+gh repo edit AnkitParekh007/job-search-assistant --add-topic job-search
+gh repo edit AnkitParekh007/job-search-assistant --add-topic job-tracker
+gh repo edit AnkitParekh007/job-search-assistant --add-topic career-tools
+gh repo edit AnkitParekh007/job-search-assistant --add-topic macos
+gh repo edit AnkitParekh007/job-search-assistant --add-topic macos-app
+gh repo edit AnkitParekh007/job-search-assistant --add-topic desktop-app
+gh repo edit AnkitParekh007/job-search-assistant --add-topic tauri
+gh repo edit AnkitParekh007/job-search-assistant --add-topic rust
+gh repo edit AnkitParekh007/job-search-assistant --add-topic react
+gh repo edit AnkitParekh007/job-search-assistant --add-topic typescript
+gh repo edit AnkitParekh007/job-search-assistant --add-topic claude-code
+gh repo edit AnkitParekh007/job-search-assistant --add-topic local-first
+gh repo edit AnkitParekh007/job-search-assistant --add-topic ai-assistant
+gh repo edit AnkitParekh007/job-search-assistant --add-topic resume-builder
+gh repo edit AnkitParekh007/job-search-assistant --add-topic application-tracker
+gh repo edit AnkitParekh007/job-search-assistant --add-topic open-source
+gh repo edit AnkitParekh007/job-search-assistant --add-topic sqlite
 ```
 
 Avoid misleading topics (`ollama`, `windows-app`, `fully-autonomous`) until verified.

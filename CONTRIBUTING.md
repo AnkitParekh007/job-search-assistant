@@ -5,8 +5,8 @@ Thanks for helping improve **AI Job Search**. Please read this before opening a 
 ## Local development (primary client)
 
 ```bash
-git clone https://github.com/AnkitParekh007/job-search-assitant.git
-cd job-search-assitant/apps/macos-apple-silicon
+git clone https://github.com/AnkitParekh007/job-search-assistant.git
+cd job-search-assistant/apps/macos-apple-silicon
 npm install
 npm test
 (cd src-tauri && cargo test)
