@@ -23,11 +23,6 @@
   <a href="https://github.com/AnkitParekh007/job-search-assistant/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/AnkitParekh007/job-search-assistant?style=flat-square&color=6B78D5" /></a>
 </p>
 
-<p align="center"><sub>Independent community desktop companion inspired by <a href="https://github.com/ai-job-search-dev/ai-job-search">ai-job-search</a> by <a href="https://github.com/MadsLorentzen">Mads Lorentzen</a> and contributors. Not an official upstream release.</sub></p>
-
-> [!NOTE]
-> **Public release status:** Package version `0.1.0`. Platform download packages are on [GitHub Releases (`v0.1.0`)](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.0) and the [download page](https://ankitparekh007.github.io/job-search-assistant/download). Notarized installers are **not** published yet — unzip and follow each package README (unsigned macOS `.app` builds may need right-click → Open). macOS Apple Silicon is the primary supported client. AI workflows require a configured Claude Code or compatible experimental Codex integration; provider usage may incur costs.
-
 ---
 
 ## One workspace. Three big steps.
