@@ -3,6 +3,7 @@ export type DocsPageId =
   | "quickstart"
   | "install"
   | "first-run"
+  | "providers"
   | "discover"
   | "apply"
   | "track"
@@ -30,6 +31,7 @@ export const DOCS_SIDEBAR: {
       { id: "quickstart", to: "/docs/quickstart", label: "Quickstart" },
       { id: "install", to: "/docs/install", label: "Install" },
       { id: "first-run", to: "/docs/first-run", label: "First run" },
+      { id: "providers", to: "/docs/providers", label: "AI Providers" },
     ],
   },
   {
@@ -56,62 +58,70 @@ export const DOCS_META: Record<
 > = {
   overview: {
     section: "get-started",
-    title: "Docs — AI Job Search",
-    description: "Learn how to install, set up, and run AI Job Search on macOS.",
+    title: "Docs — AI Job Search Assistant",
+    description:
+      "Install, configure multi-provider AI support, and run discover → rank → apply → track on files you own.",
     path: "/docs",
   },
   quickstart: {
     section: "get-started",
-    title: "Quickstart — Docs — AI Job Search",
-    description: "Get from install to a shortlist in one sitting.",
+    title: "Quickstart — Docs — AI Job Search Assistant",
+    description: "Get from download to a shortlist in one sitting.",
     path: "/docs/quickstart",
   },
   install: {
     section: "get-started",
-    title: "Install — Docs — AI Job Search",
-    description: "What you need on the Mac before workflows can run.",
+    title: "Install — Docs — AI Job Search Assistant",
+    description: "Download v0.1.0 for your platform or build from source; install AI providers and tools.",
     path: "/docs/install",
   },
   "first-run": {
     section: "get-started",
-    title: "First run — Docs — AI Job Search",
-    description: "Workspace, profile setup, and dependency health.",
+    title: "First run — Docs — AI Job Search Assistant",
+    description: "Workspace, AI provider, profile setup, and dependency health.",
     path: "/docs/first-run",
+  },
+  providers: {
+    section: "get-started",
+    title: "AI Providers — Docs — AI Job Search Assistant",
+    description:
+      "Choose Claude Code or OpenAI Codex, connect accounts, and see which workflows each provider supports.",
+    path: "/docs/providers",
   },
   discover: {
     section: "guides",
-    title: "Discover & rank — Docs — AI Job Search",
-    description: "Find new roles, dedupe them locally, then score what fits.",
+    title: "Discover & rank — Docs — AI Job Search Assistant",
+    description: "Find new roles, dedupe them locally, compare matches, then score what fits.",
     path: "/docs/discover",
   },
   apply: {
     section: "guides",
-    title: "Application Studio — Docs — AI Job Search",
-    description: "Draft tailored CVs and cover letters with approval gates.",
+    title: "Application Studio — Docs — AI Job Search Assistant",
+    description: "Draft tailored CVs and cover letters with approval gates and PDF compile.",
     path: "/docs/apply",
   },
   track: {
     section: "guides",
-    title: "Track & prep — Docs — AI Job Search",
-    description: "Pipeline outcomes, interview packs, and optional inbox sync.",
+    title: "Track & prep — Docs — AI Job Search Assistant",
+    description: "Pipeline outcomes, interview packs, Documents, and optional inbox sync.",
     path: "/docs/track",
   },
   settings: {
     section: "guides",
-    title: "Settings — Docs — AI Job Search",
-    description: "Workspace path, dependency health, and appearance.",
+    title: "Settings — Docs — AI Job Search Assistant",
+    description: "Workspace path, AI Providers, dependency health, and appearance.",
     path: "/docs/settings",
   },
   workflows: {
     section: "reference",
-    title: "Workflows — Docs — AI Job Search",
-    description: "Every catalogued upstream command the app can launch.",
+    title: "Workflows — Docs — AI Job Search Assistant",
+    description: "All 14 upstream commands plus Claude vs Codex support.",
     path: "/docs/workflows",
   },
   security: {
     section: "security",
-    title: "Security model — Docs — AI Job Search",
-    description: "How the desktop app keeps you in control.",
+    title: "Security model — Docs — AI Job Search Assistant",
+    description: "Approvals, local files, path guards, and provider sandbox defaults.",
     path: "/docs/security",
   },
 };

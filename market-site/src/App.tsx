@@ -11,6 +11,7 @@ import {
   DocsFirstRun,
   DocsInstall,
   DocsOverview,
+  DocsProviders,
   DocsQuickstart,
   DocsSecurity,
   DocsSettings,
@@ -43,6 +44,7 @@ export function App() {
           <Route path="quickstart" element={<DocsQuickstart />} />
           <Route path="install" element={<DocsInstall />} />
           <Route path="first-run" element={<DocsFirstRun />} />
+          <Route path="providers" element={<DocsProviders />} />
           <Route path="discover" element={<DocsDiscover />} />
           <Route path="apply" element={<DocsApply />} />
           <Route path="track" element={<DocsTrack />} />
@@ -59,6 +61,7 @@ export function App() {
         <Route path="/docs/quickstart.html" element={<Navigate to="/docs/quickstart" replace />} />
         <Route path="/docs/install.html" element={<Navigate to="/docs/install" replace />} />
         <Route path="/docs/first-run.html" element={<Navigate to="/docs/first-run" replace />} />
+        <Route path="/docs/providers.html" element={<Navigate to="/docs/providers" replace />} />
         <Route path="/docs/discover.html" element={<Navigate to="/docs/discover" replace />} />
         <Route path="/docs/apply.html" element={<Navigate to="/docs/apply" replace />} />
         <Route path="/docs/track.html" element={<Navigate to="/docs/track" replace />} />

@@ -31,6 +31,6 @@ Provider usage uses your plan allowances or API credits. AI workflows are not fr
 ## Next
 
 - [Installation](./installation.md)
-- [Configuration](./configuration.md)
+- [Configuration](./configuration.md) — AI Providers (Claude Code / Codex)
 - [Features](./features.md)
-- Marketing first-run: https://ankitparekh007.github.io/job-search-assistant/docs/first-run
+- Marketing docs: [first run](https://ankitparekh007.github.io/job-search-assistant/docs/first-run) · [AI Providers](https://ankitparekh007.github.io/job-search-assistant/docs/providers)

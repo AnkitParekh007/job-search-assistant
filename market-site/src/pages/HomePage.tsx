@@ -41,10 +41,10 @@ export function HomePage() {
               </p>
               <div className="cta-row">
                 <Link className="btn btn-primary btn-lg" to="/download">
-                  Build for macOS
+                  Download for macOS
                 </Link>
-                <Link className="text-link" to="/features">
-                  See what it can do
+                <Link className="text-link" to="/docs">
+                  Read the docs
                   <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
                     <path
                       d="M3 8h10M9 4l4 4-4 4"

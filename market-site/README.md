@@ -12,7 +12,8 @@ Vite + React + React Router, deployed to GitHub Pages at:
 | `/features` | Features |
 | `/download` | Download / install |
 | `/docs` | Docs overview |
-| `/docs/*` | Docs guides (install, quickstart, …) |
+| `/docs/providers` | AI Providers (Claude Code / Codex) |
+| `/docs/*` | Docs guides (install, quickstart, workflows, …) |
 
 Legacy `*.html` paths redirect to the clean routes inside the SPA. Deep links work via a `404.html` fallback identical to `index.html`.
 
