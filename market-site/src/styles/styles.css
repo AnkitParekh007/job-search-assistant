@@ -3123,9 +3123,6 @@ a.platform-card:focus-visible {
     grid-column: span 2;
   }
 
-  .platform-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .stats {
     grid-template-columns: 1fr;
   }
