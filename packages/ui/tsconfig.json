@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "paths": {
+      "@ai-job-search/core": [
+        "../core/src/index.ts"
+      ],
+      "@ai-job-search/runtime": [
+        "../../apps/macos-apple-silicon/src/runtime/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ]
+}

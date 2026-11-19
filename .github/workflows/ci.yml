@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  core-and-clients:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install
+        run: npm install
+      - name: Test core
+        run: npm run test:core
+      - name: Export features for market site
+        run: npm run build:features
+      - name: Test Apple Silicon shell
+        run: npm run test -w ai-job-search-macos-apple-silicon
+      - name: Test web
+        run: npm run test:web
+      - name: Build web
+        run: npm run build:web

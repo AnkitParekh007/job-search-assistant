@@ -1,0 +1,22 @@
+{
+  "name": "job-search-assitant",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm run test -w @ai-job-search/core && npm run test -w ai-job-search-macos-apple-silicon && npm run test -w ai-job-search-web",
+    "test:core": "npm run test -w @ai-job-search/core",
+    "test:web": "npm run test -w ai-job-search-web",
+    "build:web": "npm run build -w ai-job-search-web",
+    "build:features": "npm run build:features -w @ai-job-search/core",
+    "dev:web": "npm run dev -w ai-job-search-web",
+    "dev:macos": "npm run tauri -w ai-job-search-macos-apple-silicon -- dev"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.1",
+    "vitest": "^5.1.1"
+  }
+}

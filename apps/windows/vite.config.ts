@@ -1,3 +1,4 @@
+import path from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -5,30 +6,29 @@ import tailwindcss from "@tailwindcss/vite";
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
-// https://vite.dev/config/
 export default defineConfig(async () => ({
   plugins: [react(), tailwindcss()],
-  test: { environment: "jsdom", globals: true, setupFiles: ["./src/test-setup.ts"] },
-
-  // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
-  //
-  // 1. prevent Vite from obscuring rust errors
+  resolve: {
+    alias: {
+      "@ai-job-search/runtime": path.resolve(__dirname, "src/runtime/index.ts"),
+      "@ai-job-search/core": path.resolve(__dirname, "../../packages/core/src"),
+      "@ai-job-search/ui": path.resolve(__dirname, "../../packages/ui/src"),
+    },
+  },
+  // @ts-expect-error vitest
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./src/test-setup.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
+  },
   clearScreen: false,
-  // 2. tauri expects a fixed port, fail if that port is not available
   server: {
-    port: 1420,
+    port: 1424,
     strictPort: true,
     host: host || false,
-    hmr: host
-      ? {
-          protocol: "ws",
-          host,
-          port: 1421,
-        }
-      : undefined,
-    watch: {
-      // 3. tell Vite to ignore watching `src-tauri`
-      ignored: ["**/src-tauri/**"],
-    },
+    hmr: host ? { protocol: "ws", host, port: 1425 } : undefined,
+    fs: { allow: [path.resolve(__dirname, "../..")] },
+    watch: { ignored: ["**/src-tauri/**"] },
   },
 }));
