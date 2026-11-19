@@ -137,7 +137,12 @@ fn codex_status() -> ProviderStatus {
     }
 }
 
-fn planned(id: ProviderId, detail: &str, fix: &str, cap_notes: &[(&str, &str, bool)]) -> ProviderStatus {
+fn planned(
+    id: ProviderId,
+    detail: &str,
+    fix: &str,
+    cap_notes: &[(&str, &str, bool)],
+) -> ProviderStatus {
     ProviderStatus {
         id: id.as_str().into(),
         name: id.display_name().into(),
