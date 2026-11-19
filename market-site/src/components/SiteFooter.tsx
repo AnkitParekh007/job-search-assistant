@@ -1,3 +1,4 @@
+import { BrandLockup } from "./BrandMark";
 import { Link } from "react-router-dom";
 import { GITHUB_REPO } from "../lib/site";
 
@@ -13,10 +14,7 @@ export function SiteFooter({
       <div className="footer-inner">
         <div className="footer-brand">
           <Link className="brand" to="/">
-            <span className="brand-mark" aria-hidden="true">
-              AJ
-            </span>
-            <span>AI Job Search</span>
+            <BrandLockup />
           </Link>
           <p>
             Local-first job search automation for macOS, with multi-provider AI support and workspace

@@ -6,7 +6,8 @@ export type Theme = "light" | "dark";
 
 // The pre-paint script in index.html sets <html data-theme> from localStorage,
 // so the attribute is the source of truth. One shared store keeps every header
-// in sync, and the server snapshot ("light") keeps prerendered HTML hydratable.
+// in sync, and the server snapshot ("dark", the site default) keeps prerendered
+// HTML hydratable.
 const listeners = new Set<() => void>();
 
 function subscribe(listener: () => void) {
@@ -17,11 +18,11 @@ function subscribe(listener: () => void) {
 }
 
 function getSnapshot(): Theme {
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
 }
 
 function getServerSnapshot(): Theme {
-  return "light";
+  return "dark";
 }
 
 function setTheme(theme: Theme) {

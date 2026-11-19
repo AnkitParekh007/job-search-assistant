@@ -15,6 +15,33 @@ type Workflow = { command: string; title: string; stage: string; blurb: string }
 const product = (featuresData.product ?? []) as Feature[];
 const workflows = (featuresData.workflows ?? []) as Workflow[];
 
+const GLYPHS: Record<string, string> = {
+  discover: "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM20 20l-4-4",
+  rank: "M5 19v-7M12 19V5M19 19v-10",
+  studio: "M4 20l4-1L19 8l-3-3L5 16l-1 4ZM14 7l3 3",
+  documents: "M7 3h7l5 5v13H7V3ZM14 3v5h5M10 13h6M10 17h4",
+  pipeline: "M4 6h16M4 12h11M4 18h6",
+  interview: "M5 5h14v10H10l-5 4V5Z",
+  activity: "M3 12h4l3-7 4 14 3-7h4",
+  "local-first": "M4 5h16v11H4V5ZM2 19h20",
+};
+
+function FeatureGlyph({ id }: { id?: string }) {
+  return (
+    <span className="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path
+          d={GLYPHS[id ?? ""] ?? "M5 12h14M12 5v14"}
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  );
+}
+
 export function FeaturesPage() {
   useEffect(() => {
     applySeo(PAGE_SEO.features);
@@ -28,10 +55,12 @@ export function FeaturesPage() {
         primaryCta={{ to: "/download", label: "Download" }}
       />
       <main>
-        <section className="band band-hero">
+        <section className="band band-hero page-hero">
           <div className="section-head reveal">
             <p className="kicker">Features</p>
-            <h1>Everything you need to run the search end to end</h1>
+            <h1>
+              Everything you need to run the search <em>end to end.</em>
+            </h1>
             <p className="lede">
               One native surface for discovery, ranking, drafting, tracking, and prep — each action mapped
               to a real upstream slash command.
@@ -44,6 +73,7 @@ export function FeaturesPage() {
                 key={f.id ?? f.title}
                 className={`feature-card reveal${i % 3 === 1 ? " reveal-delay-1" : i % 3 === 2 ? " reveal-delay-2" : ""}`}
               >
+                <FeatureGlyph id={f.id} />
                 {f.group ? <p className="feature-kicker">{f.group}</p> : null}
                 <h3>{f.title}</h3>
                 <p>{f.blurb}</p>
@@ -138,7 +168,9 @@ export function FeaturesPage() {
           <section className="band" id="core-workflows">
             <div className="section-head reveal">
               <p className="kicker">Workflows</p>
-              <h2>Live catalog from shared core</h2>
+              <h2>
+                Live catalog from <em>shared core.</em>
+              </h2>
               <p className="lede">
                 Generated from <code>packages/core</code> so marketing stays in lockstep with every client.
               </p>
