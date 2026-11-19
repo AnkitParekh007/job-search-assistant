@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/* ── Design tokens ────────────────────────────────────────────────
+   Dark is the default ("quiet command center"). Light mirrors the same
+   semantics. html[data-theme] pins a theme; "system" removes the attribute
+   and follows macOS. Semantics: accent = interaction (violet),
+   ai = Claude working (teal), you = needs the user (coral),
+   good = verified success, warn = caution, bad = failure. */
+:root, :root[data-theme="dark"] {
+  --bg: #0f0f12;
+  --bg-sidebar: #0b0b0d;
+  --surface: #17171b;
+  --surface-2: #1c1c21;
+  --surface-3: #232329;
+  --surface-sunken: #121215;
+  --border: #26262c;
+  --border-strong: #34343c;
+  --text: #ededf0;
+  --text-2: #a3a3ad;
+  --text-3: #6f6f7a;
+  --accent: #8b7cf6;
+  --accent-strong: #9d90ff;
+  --accent-soft: #221f3a;
+  --accent-text: #b9b0ff;
+  --ai: #3ec9b6;
+  --ai-soft: #10302c;
+  --you: #ff8a70;
+  --you-soft: #3a1f19;
+  --good: #46c17f;
+  --good-soft: #13291d;
+  --warn: #e7b24f;
+  --warn-soft: #312610;
+  --bad: #f2685f;
+  --bad-soft: #351a18;
+  --info: #6aa8ff;
+  --info-soft: #14243b;
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 0 0 1px rgb(255 255 255 / 0.06), 0 24px 64px rgb(0 0 0 / 0.55);
+  --ring: 0 0 0 3px rgb(139 124 246 / 0.35);
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg: #f7f7f8;
+  --bg-sidebar: #efeff2;
+  --surface: #ffffff;
+  --surface-2: #fafafb;
+  --surface-3: #f3f3f6;
+  --surface-sunken: #f1f1f4;
+  --border: #e6e6eb;
+  --border-strong: #d4d4dc;
+  --text: #17171c;
+  --text-2: #5b5b66;
+  --text-3: #8b8b96;
+  --accent: #6d5ef0;
+  --accent-strong: #5b4ce0;
+  --accent-soft: #efedff;
+  --accent-text: #4b3dc9;
+  --ai: #0f9a88;
+  --ai-soft: #e1f5f2;
+  --you: #e2583e;
+  --you-soft: #fdece8;
+  --good: #1d8a52;
+  --good-soft: #e4f4ea;
+  --warn: #a96b00;
+  --warn-soft: #fbf1dc;
+  --bad: #cc3a31;
+  --bad-soft: #fbe7e5;
+  --info: #2563c9;
+  --info-soft: #e6effd;
+  --shadow: 0 1px 2px rgb(16 16 24 / 0.05);
+  --shadow-lg: 0 0 0 1px rgb(16 16 24 / 0.06), 0 24px 64px rgb(16 16 24 / 0.16);
+  --ring: 0 0 0 3px rgb(109 94 240 / 0.25);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f7f7f8; --bg-sidebar: #efeff2; --surface: #ffffff; --surface-2: #fafafb; --surface-3: #f3f3f6; --surface-sunken: #f1f1f4;
+    --border: #e6e6eb; --border-strong: #d4d4dc; --text: #17171c; --text-2: #5b5b66; --text-3: #8b8b96;
+    --accent: #6d5ef0; --accent-strong: #5b4ce0; --accent-soft: #efedff; --accent-text: #4b3dc9;
+    --ai: #0f9a88; --ai-soft: #e1f5f2; --you: #e2583e; --you-soft: #fdece8; --good: #1d8a52; --good-soft: #e4f4ea;
+    --warn: #a96b00; --warn-soft: #fbf1dc; --bad: #cc3a31; --bad-soft: #fbe7e5; --info: #2563c9; --info-soft: #e6effd;
+    --shadow: 0 1px 2px rgb(16 16 24 / 0.05); --shadow-lg: 0 0 0 1px rgb(16 16 24 / 0.06), 0 24px 64px rgb(16 16 24 / 0.16);
+    --ring: 0 0 0 3px rgb(109 94 240 / 0.25); color-scheme: light;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-sidebar: var(--bg-sidebar);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-sunken: var(--surface-sunken);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-ink-2: var(--text-2);
+  --color-ink-3: var(--text-3);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-text);
+  --color-ai: var(--ai);
+  --color-ai-soft: var(--ai-soft);
+  --color-you: var(--you);
+  --color-you-soft: var(--you-soft);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --font-sans: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-sans); font-size: 13px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; user-select: none; overflow: hidden;
+  font-feature-settings: "cv11", "ss01";
+}
+input, textarea, [contenteditable], .selectable { user-select: text; }
+* { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+:focus { outline: none; }
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: 8px; }
+::selection { background: var(--accent-soft); }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ── Primitives ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+.sheet { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 20px; box-shadow: var(--shadow-lg); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 28px; padding: 0 11px; border-radius: 10px; font-weight: 500; font-size: 12.5px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); transition: background .12s, border-color .12s, color .12s, box-shadow .12s; cursor: default; white-space: nowrap; }
+.btn:hover { background: var(--surface-3); border-color: var(--border-strong); }
+.btn:active { transform: translateY(0.5px); }
+.btn:disabled { opacity: .4; pointer-events: none; }
+.btn-primary { background: var(--accent); border-color: transparent; color: #fff; }
+.btn-primary:hover { background: var(--accent-strong); border-color: transparent; }
+.btn-you { background: var(--you); border-color: transparent; color: #fff; }
+.btn-you:hover { filter: brightness(1.06); background: var(--you); }
+.btn-danger { color: var(--bad); }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-ghost:hover { background: var(--surface-3); border-color: transparent; }
+.btn-lg { height: 34px; padding: 0 14px; font-size: 13px; }
+.input { height: 30px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-sunken); color: var(--text); font-size: 12.5px; transition: border-color .12s, box-shadow .12s; }
+.input::placeholder { color: var(--text-3); }
+.input:focus { border-color: var(--accent); box-shadow: var(--ring); }
+textarea.input { height: auto; padding: 8px 10px; line-height: 1.5; }
+select.input { padding-right: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; height: 19px; padding: 0 7px; border-radius: 999px; font-size: 10.5px; font-weight: 600; letter-spacing: .01em; white-space: nowrap; }
+.label { font-size: 10.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-3); }
+.h-title { font-family: var(--font-display); font-size: 22px; font-weight: 650; letter-spacing: -0.02em; }
+.h-section { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+.hairline { border-color: var(--border); }
+.drag { -webkit-app-region: drag; }
+.no-drag { -webkit-app-region: no-drag; }
+.row-hover:hover { background: var(--surface-2); }
+
+/* Titlebar search sits clear of traffic lights; sidebar content starts below the notch. */
+aside nav { padding-top: 2px; }
+main > .drag { padding-left: 4px; }
+
+.prose-md h1 { font-family: var(--font-display); font-size: 19px; font-weight: 650; letter-spacing: -0.015em; margin: 0 0 10px; }
+.prose-md h2 { font-size: 14px; font-weight: 650; margin: 18px 0 6px; }
+.prose-md h3 { font-size: 13px; font-weight: 650; margin: 14px 0 4px; }
+.prose-md p, .prose-md li { line-height: 1.62; color: var(--text-2); }
+.prose-md p + p { margin-top: 6px; }
+.prose-md ul { padding-left: 18px; list-style: disc; margin: 4px 0; }
+.prose-md code { font-family: var(--font-mono); font-size: 11.5px; background: var(--surface-3); padding: 1px 5px; border-radius: 5px; }
+.prose-md table { border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+.prose-md td, .prose-md th { border: 1px solid var(--border); padding: 4px 8px; text-align: left; }
+.prose-md strong { color: var(--text); }
+
+@keyframes shimmer { 0% { background-position: -400px 0 } 100% { background-position: 400px 0 } }
+.skeleton { border-radius: 10px; background: linear-gradient(90deg, var(--surface-2) 0, var(--surface-3) 50%, var(--surface-2) 100%); background-size: 800px 100%; animation: shimmer 1.4s linear infinite; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1 } 50% { opacity: .3 } }
+.live-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}

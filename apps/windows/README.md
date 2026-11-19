@@ -1,22 +1,39 @@
 # AI Job Search — Windows
 
-Desktop app for **Windows**.
+Local-first **Windows** desktop app. Same Claude Code–driven workspace model as the macOS clients.
 
-## Status
+## Requirements
 
-Scaffold ready. Product implementation will live in this folder (Tauri / native shell equivalent for Windows).
+| Need | Why |
+|---|---|
+| Windows 10/11 | WebView2 host |
+| Claude Code CLI, signed in | runs every AI workflow |
+| Python ≥ 3.10 | upstream tools |
+| MiKTeX or TeX Live (optional) | CV / cover-letter PDFs |
+| Rust + MSVC toolchain | `npm run tauri build` |
 
-## Planned layout
+## Develop
 
-```text
-windows/
-  src/           # frontend UI
-  src-tauri/     # Rust host (Windows targets)
-  package.json
-  README.md
+```bash
+cd apps/windows
+npm install
+npm test
+cd src-tauri && cargo test
+npm run tauri dev
 ```
 
-## Release target
+## Build
 
-- Installer / portable binary for Windows
-- Distribution: GitHub Releases asset tagged for Windows
+```bash
+cd apps/windows
+npm install
+npm run tauri build
+```
+
+Installers land under `src-tauri/target/release/bundle/` (`nsis` / `msi`).
+
+## Notes
+
+- Window chrome uses standard Windows decorations (no macOS overlay titlebar).
+- PATH discovery covers common Claude, Python, Git, and TeX install locations.
+- App data: `%AppData%\dev.local.aijobsearch.windows`

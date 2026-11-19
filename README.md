@@ -23,7 +23,12 @@ market-site/             # Marketing + docs (GitHub Pages)
 
 See [`apps/README.md`](./apps/README.md).
 
-The current developed desktop product lives in [`apps/macos-apple-silicon/`](./apps/macos-apple-silicon/). Other platform folders are scaffolds.
+| Client | Path |
+|--------|------|
+| macOS Apple Silicon | [`apps/macos-apple-silicon/`](./apps/macos-apple-silicon/) |
+| macOS Intel | [`apps/macos-intel/`](./apps/macos-intel/) |
+| Windows | [`apps/windows/`](./apps/windows/) |
+| Web (React) | [`apps/web/`](./apps/web/) |
 
 ### Market site
 

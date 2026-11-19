@@ -1,22 +1,35 @@
 # AI Job Search — Web
 
-Browser version of the product.
+React web client for browsing the product UI with **browser-local demo data**.
 
-## Status
+Live Claude Code workflows, LaTeX compile, and real workspace files require the desktop apps under `apps/macos-*` or `apps/windows`.
 
-Scaffold ready. Product implementation will live in this folder (web UI that can run without a native shell, with platform-appropriate limits vs desktop).
+## Develop
 
-## Planned layout
-
-```text
-web/
-  src/           # app UI
-  public/        # static assets
-  package.json
-  README.md
+```bash
+cd apps/web
+npm install
+npm run dev
 ```
 
-## Release target
+Open http://127.0.0.1:5173
 
-- Hosted web app (separate from the marketing site in `market-site/`)
-- Marketing Pages stay on GitHub Pages; this app may use its own host or a `/app` deploy later
+## Test / build
+
+```bash
+npm test
+npm run build
+npm run preview
+```
+
+## What works in the browser
+
+- Today / Jobs / Pipeline / Studio / Documents / Profile / Settings UI
+- Sample tracker + ranked jobs (seeded into `localStorage`)
+- Status updates persist in this browser
+- Workflow starts explain that Claude runs need desktop
+
+## What stays desktop-only
+
+- Claude Code bridge, approvals, Gmail/Notion connectors
+- Real workspace filesystem + PDF compile

@@ -1,22 +1,41 @@
 # AI Job Search — macOS (Intel)
 
-Desktop app build for **Intel** Macs (`x86_64`).
+Local-first **Intel** (`x86_64`) desktop app for macOS. Same product as the Apple Silicon client, built for Intel Macs.
 
-## Status
+## Requirements
 
-Scaffold ready. Product implementation will live in this folder (Tauri / native shell driving the `ai-job-search` workspace via Claude Code).
+Same as Apple Silicon, plus an Intel Mac (or Rosetta cross-compile host).
 
-## Planned layout
+| Need | Install |
+|---|---|
+| Claude Code CLI, signed in | `brew install --cask claude-code` |
+| Python ≥ 3.10 | `brew install python@3.12` |
+| BasicTeX | see upstream `SETUP.md` |
+| Rust `x86_64-apple-darwin` target | `rustup target add x86_64-apple-darwin` |
 
-```text
-macos-intel/
-  src/           # frontend UI
-  src-tauri/     # Rust host (x86_64 target)
-  package.json
-  README.md
+## Develop
+
+```bash
+cd apps/macos-intel
+npm install
+npm test
+(cd src-tauri && cargo test)
+npm run tauri dev
 ```
 
-## Release target
+On Apple Silicon hosts, prefer building the Intel release target explicitly:
 
-- Bundle: `AI Job Search.app` (Intel / universal optional later)
-- Distribution: GitHub Releases asset tagged for Intel Mac
+```bash
+npm run build:intel
+```
+
+## Build (Intel)
+
+```bash
+cd apps/macos-intel
+npm install
+rustup target add x86_64-apple-darwin
+npm run build:intel
+```
+
+Artifact: `src-tauri/target/x86_64-apple-darwin/release/bundle/macos/AI Job Search.app`
