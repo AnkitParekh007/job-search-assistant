@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ankitparekh007.github.io/job-search-assitant/sitemap.xml
+Sitemap: https://ankitparekh007.github.io/job-search-assistant/sitemap.xml

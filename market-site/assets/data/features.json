@@ -1,0 +1,181 @@
+{
+  "product": [
+    {
+      "id": "discover",
+      "title": "Discover jobs",
+      "blurb": "Scrape portal CLIs or web search, then dedupe into local seen-jobs.",
+      "group": "Find"
+    },
+    {
+      "id": "rank",
+      "title": "Rank matches",
+      "blurb": "Integrity-gated scoring against your profile rubric.",
+      "group": "Find"
+    },
+    {
+      "id": "studio",
+      "title": "Application Studio",
+      "blurb": "Drafter → reviewer → revision with PDF compile and approvals.",
+      "group": "Apply"
+    },
+    {
+      "id": "documents",
+      "title": "Documents",
+      "blurb": "Real CV and cover-letter sources from your workspace.",
+      "group": "Apply"
+    },
+    {
+      "id": "pipeline",
+      "title": "Pipeline & outcomes",
+      "blurb": "Track statuses, archive what was sent, draft follow-ups (never auto-send).",
+      "group": "Track"
+    },
+    {
+      "id": "interview",
+      "title": "Interview prep",
+      "blurb": "Stage-specific packs from archived postings and your docs.",
+      "group": "Track"
+    },
+    {
+      "id": "activity",
+      "title": "Agent activity",
+      "blurb": "Watch live Claude Code runs, approvals, and workflow stages.",
+      "group": "Automate"
+    },
+    {
+      "id": "local-first",
+      "title": "Local-first",
+      "blurb": "Tracker, archives, and profile stay on disk you own.",
+      "group": "Platform"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "setup",
+      "command": "/setup",
+      "title": "Profile setup",
+      "blurb": "Guided onboarding: import a CV, a documents folder, or answer an interview. Re-run one section with --section.",
+      "writes": "CLAUDE.md, profile skill files, search-queries.md",
+      "stage": "Onboarding",
+      "external": ""
+    },
+    {
+      "id": "scrape",
+      "command": "/scrape",
+      "title": "Discover jobs",
+      "blurb": "Searches installed portal CLIs (or WebSearch when none), deduplicates, and stores new postings.",
+      "writes": "job_scraper/seen_jobs.json",
+      "stage": "Job Discovery",
+      "external": ""
+    },
+    {
+      "id": "rank",
+      "command": "/rank",
+      "title": "Rank matches",
+      "blurb": "Fetches each new posting, runs the integrity gate, scores it with the upstream rubric, and returns a shortlist.",
+      "writes": "rank fields in job_scraper/seen_jobs.json",
+      "stage": "Ranking",
+      "external": ""
+    },
+    {
+      "id": "apply",
+      "command": "/apply",
+      "title": "Application Studio",
+      "blurb": "Drafter → reviewer → revision. Evaluates fit, asks before drafting, compiles and verifies the PDFs.",
+      "writes": "cv/, cover_letters/, job_search_tracker.csv (drafted), documents/applications/",
+      "stage": "Document Drafting",
+      "external": ""
+    },
+    {
+      "id": "outcome",
+      "command": "/outcome",
+      "title": "Record outcome",
+      "blurb": "Updates an application's status, archives what was sent, drafts follow-ups (never sends).",
+      "writes": "job_search_tracker.csv, documents/applications/<app>/outcome.md",
+      "stage": "Tracking",
+      "external": ""
+    },
+    {
+      "id": "interview",
+      "command": "/interview",
+      "title": "Interview prep",
+      "blurb": "Stage-specific prep pack from the archived posting and your documents; roleplay on request.",
+      "writes": "documents/applications/<app>/ prep notes",
+      "stage": "Interviews",
+      "external": ""
+    },
+    {
+      "id": "gmail-sync",
+      "command": "/gmail-sync",
+      "title": "Gmail sync",
+      "blurb": "Reads application emails through the claude.ai Gmail connector and proposes status changes for approval.",
+      "writes": "job_search_tracker.csv (after you approve)",
+      "stage": "Tracking",
+      "external": "claude.ai Gmail connector"
+    },
+    {
+      "id": "notion-sync",
+      "command": "/notion-sync",
+      "title": "Notion sync",
+      "blurb": "One-way push of ranked jobs and applications to a Notion database. Local files stay authoritative.",
+      "writes": "your Notion database (external)",
+      "stage": "Tracking",
+      "external": "Notion MCP server"
+    },
+    {
+      "id": "html-report",
+      "command": "/html-report",
+      "title": "HTML report",
+      "blurb": "Generates a self-contained offline dashboard from the tracker and archives.",
+      "writes": "reports/application-dashboard.html",
+      "stage": "Reporting",
+      "external": ""
+    },
+    {
+      "id": "expand",
+      "command": "/expand",
+      "title": "Profile enrichment",
+      "blurb": "Finds competency evidence in your documents, GitHub or portfolio; confirms before writing.",
+      "writes": "profile skill files (after confirmation)",
+      "stage": "Onboarding",
+      "external": ""
+    },
+    {
+      "id": "upskill",
+      "command": "/upskill",
+      "title": "Skill gaps",
+      "blurb": "Compares tracked postings with your profile and builds a prioritised learning plan.",
+      "writes": "upskill/ plan files",
+      "stage": "Growth",
+      "external": ""
+    },
+    {
+      "id": "add-template",
+      "command": "/add-template",
+      "title": "Add template",
+      "blurb": "Registers a custom CV or cover-letter template and its compile command.",
+      "writes": "05/06 template files (ACTIVE-TEMPLATE block)",
+      "stage": "Templates",
+      "external": ""
+    },
+    {
+      "id": "add-portal",
+      "command": "/add-portal",
+      "title": "Add portal",
+      "blurb": "Generates a portal-search skill for a job board, checked by the upstream security guard.",
+      "writes": ".agents/skills/<portal>/",
+      "stage": "Portals",
+      "external": ""
+    },
+    {
+      "id": "reset",
+      "command": "/reset",
+      "title": "Reset profile",
+      "blurb": "Resets candidate profile data back to templates. Destructive: it shows what will change and asks first.",
+      "writes": "profile files (destructive)",
+      "stage": "Workspace",
+      "external": ""
+    }
+  ],
+  "count": 14
+}

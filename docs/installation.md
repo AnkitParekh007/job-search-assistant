@@ -49,8 +49,8 @@ git clone https://github.com/ai-job-search-dev/ai-job-search.git
 ## 5. Clone and build this app
 
 ```bash
-git clone https://github.com/AnkitParekh007/job-search-assitant.git
-cd job-search-assitant/apps/macos-apple-silicon
+git clone https://github.com/AnkitParekh007/job-search-assistant.git
+cd job-search-assistant/apps/macos-apple-silicon
 npm install
 npm test
 (cd src-tauri && cargo test)

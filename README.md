@@ -4,18 +4,18 @@
 
 AI Job Search is a native **macOS** shell (Tauri 2 + React + Rust) that drives an unmodified [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) workspace through your signed-in **Claude Code** CLI. Your tracker, archives, CVs, and profile stay as files on disk you own. The app supervises runs, approvals, and native views — it does not reimplement upstream agents in the cloud, and it does **not** submit applications to employers for you.
 
-[Website](https://ankitparekh007.github.io/job-search-assitant/) · [Documentation](./docs/getting-started.md) · [Install / build](./docs/installation.md) · [Contributing](./CONTRIBUTING.md) · [Upstream engine](https://github.com/ai-job-search-dev/ai-job-search)
+[Website](https://ankitparekh007.github.io/job-search-assistant/) · [Documentation](./docs/getting-started.md) · [Install / build](./docs/installation.md) · [Contributing](./CONTRIBUTING.md) · [Upstream engine](https://github.com/ai-job-search-dev/ai-job-search)
 
 [![macOS](https://img.shields.io/badge/platform-macOS%20Apple%20Silicon-black?logo=apple)](./apps/macos-apple-silicon/)
 [![Tauri](https://img.shields.io/badge/Tauri-2-24C8DB?logo=tauri&logoColor=white)](https://tauri.app/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Rust](https://img.shields.io/badge/Rust-edition%202021-DEA584?logo=rust&logoColor=black)](https://www.rust-lang.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![CI](https://github.com/AnkitParekh007/job-search-assitant/actions/workflows/ci-macos-apple-silicon.yml/badge.svg)](https://github.com/AnkitParekh007/job-search-assitant/actions/workflows/ci-macos-apple-silicon.yml)
+[![CI](https://github.com/AnkitParekh007/job-search-assistant/actions/workflows/ci-macos-apple-silicon.yml/badge.svg)](https://github.com/AnkitParekh007/job-search-assistant/actions/workflows/ci-macos-apple-silicon.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/AnkitParekh007/job-search-assitant?style=social)](https://github.com/AnkitParekh007/job-search-assitant/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/AnkitParekh007/job-search-assitant)](https://github.com/AnkitParekh007/job-search-assitant/issues)
-[![Last commit](https://img.shields.io/github/last-commit/AnkitParekh007/job-search-assitant)](https://github.com/AnkitParekh007/job-search-assitant/commits)
+[![GitHub stars](https://img.shields.io/github/stars/AnkitParekh007/job-search-assistant?style=social)](https://github.com/AnkitParekh007/job-search-assistant/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/AnkitParekh007/job-search-assistant)](https://github.com/AnkitParekh007/job-search-assistant/issues)
+[![Last commit](https://img.shields.io/github/last-commit/AnkitParekh007/job-search-assistant)](https://github.com/AnkitParekh007/job-search-assistant/commits)
 
 > **Version note:** Application package version is `0.1.0`. There is **no** published GitHub Release binary yet — build from source (below). A release badge will be added when artifacts ship.
 
@@ -25,7 +25,7 @@ AI Job Search is a native **macOS** shell (Tauri 2 + React + Rust) that drives a
 
 Product screenshots belong in [`docs/assets/screenshots/`](./docs/assets/screenshots/). Capture guidance and the checklist for Today, Jobs, Ranking, Studio, Pipeline, Interview, Agent Activity, and Onboarding are in that folder.
 
-Until screenshots are checked in, the [marketing site](https://ankitparekh007.github.io/job-search-assitant/) shows the product story with illustrative UI chrome (not live app captures).
+Until screenshots are checked in, the [marketing site](https://ankitparekh007.github.io/job-search-assistant/) shows the product story with illustrative UI chrome (not live app captures).
 
 ![AI Job Search social preview](./docs/assets/social/social-preview.svg)
 
@@ -145,8 +145,8 @@ git clone https://github.com/ai-job-search-dev/ai-job-search.git
 # Follow upstream SETUP.md for profile / LaTeX as needed
 
 # 2) This repository
-git clone https://github.com/AnkitParekh007/job-search-assitant.git
-cd job-search-assitant/apps/macos-apple-silicon
+git clone https://github.com/AnkitParekh007/job-search-assistant.git
+cd job-search-assistant/apps/macos-apple-silicon
 
 # 3) Install & verify
 npm install
@@ -236,7 +236,6 @@ Notable externals: **Gmail sync** needs the claude.ai Gmail connector; **Notion 
 - Does not auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
 - Web client is a demo UI only.
-- Repository folder name `job-search-assitant` is intentional for URL compatibility until an explicit rename.
 
 ---
 
@@ -277,7 +276,7 @@ Authoritative engineering specs also live under [`apps/macos-apple-silicon/docs/
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). Bug reports, docs fixes, tests, and carefully scoped UI improvements are welcome. Respect upstream file contracts — do not reimplement slash-command logic inside the app.
 
-- Bugs → [GitHub Issues](https://github.com/AnkitParekh007/job-search-assitant/issues) (use the bug form)
+- Bugs → [GitHub Issues](https://github.com/AnkitParekh007/job-search-assistant/issues) (use the bug form)
 - Features → Feature request form
 - Security → [SECURITY.md](./SECURITY.md) (do not file public issues for vulnerabilities)
 
@@ -339,6 +338,19 @@ The upstream framework is also MIT-licensed, with copyright attributed to Mads L
 ## Maintainer
 
 - GitHub: [@AnkitParekh007](https://github.com/AnkitParekh007)
-- Product site: https://ankitparekh007.github.io/job-search-assitant/
+- Product site: https://ankitparekh007.github.io/job-search-assistant/
 
 Support channels: [SUPPORT.md](./SUPPORT.md)
+
+---
+
+## Shared packages
+
+Feature work lands once in `packages/core` + `packages/ui`. Every client and the market site consume those packages.
+
+```bash
+npm install
+npm test
+npm run build:features   # writes market-site/assets/data/features.json
+npm run build:web
+```

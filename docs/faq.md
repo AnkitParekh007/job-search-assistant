@@ -24,5 +24,5 @@ No GitHub Release artifacts are published yet. Build from source ([installation.
 **Can I use a local LLM?**  
 Not with the current architecture.
 
-**Why is the repo named `job-search-assitant`?**  
-Intentional spelling for URL/compatibility until an explicit rename is approved.
+**Why was the repo briefly named `job-search-assitant`?**  
+That misspelling was corrected. The canonical repository is [`AnkitParekh007/job-search-assistant`](https://github.com/AnkitParekh007/job-search-assistant). Product display name remains **AI Job Search Assistant**.

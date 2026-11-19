@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Requires: gh auth with repo scope
 set -euo pipefail
-REPO="${REPO:-AnkitParekh007/job-search-assitant}"
+REPO="${REPO:-AnkitParekh007/job-search-assistant}"
 
 create() {
   local name="$1" color="$2" desc="$3"

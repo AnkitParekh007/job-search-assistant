@@ -21,17 +21,17 @@
       name="description"
       content="Discover jobs, rank matches, prepare documents in Studio, track your pipeline, prep interviews, and supervise Claude Code runs — local-first on macOS."
     />
-    <link rel="canonical" href="https://ankitparekh007.github.io/job-search-assitant/features.html" />
+    <link rel="canonical" href="https://ankitparekh007.github.io/job-search-assistant/features.html" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Features — AI Job Search" />
     <meta
       property="og:description"
       content="Discover, rank, prepare, track, and control Claude Code workflows from a local-first macOS desktop app."
     />
-    <meta property="og:url" content="https://ankitparekh007.github.io/job-search-assitant/features.html" />
+    <meta property="og:url" content="https://ankitparekh007.github.io/job-search-assistant/features.html" />
     <meta
       property="og:image"
-      content="https://ankitparekh007.github.io/job-search-assitant/assets/img/og-social.png"
+      content="https://ankitparekh007.github.io/job-search-assistant/assets/img/og-social.png"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://api.fontshare.com" />
@@ -90,7 +90,7 @@
           </p>
         </div>
 
-        <div class="feature-grid">
+        <div class="feature-grid" id="core-feature-grid">
           <article class="feature-card reveal">
             <div class="feature-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h10M4 17h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -270,6 +270,21 @@
           </div>
         </div>
       </section>
+    
+      <section class="band" id="core-workflows">
+        <div class="section-head reveal">
+          <p class="kicker">Workflows</p>
+          <h2>Live catalog from shared core</h2>
+          <p class="lede">Generated from <code>packages/core</code> so marketing stays in lockstep with every client.</p>
+        </div>
+        <div class="table-wrap reveal">
+          <table class="data-table">
+            <thead><tr><th>Command</th><th>Title</th><th>Stage</th><th>Description</th></tr></thead>
+            <tbody id="core-workflow-body"></tbody>
+          </table>
+        </div>
+      </section>
+
     </main>
 
     <footer class="site-footer">
@@ -297,7 +312,7 @@
         <div class="footer-col">
           <h4>Notes</h4>
           <a href="download.html#requirements">Claude Code required</a>
-          <a href="https://github.com/AnkitParekh007/job-search-assitant" rel="noopener">GitHub</a>
+          <a href="https://github.com/AnkitParekh007/job-search-assistant" rel="noopener">GitHub</a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -307,5 +322,6 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
+      <script src="assets/js/features-from-core.js"></script>
   </body>
 </html>

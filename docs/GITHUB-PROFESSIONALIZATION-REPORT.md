@@ -2,7 +2,9 @@
 
 **Branch:** `docs/github-professionalization`  
 **Date:** 2026-11-19  
-**Repository:** https://github.com/AnkitParekh007/job-search-assitant
+**Repository (at report time):** https://github.com/AnkitParekh007/job-search-assitant  
+
+> **Historical note:** The repository was later renamed to [`AnkitParekh007/job-search-assistant`](https://github.com/AnkitParekh007/job-search-assistant). Links below that use the pre-rename slug are preserved as report-time evidence (GitHub redirects most repo URLs).
 
 ---
 
@@ -69,8 +71,8 @@ Unrelated local WIP (`packages/` monorepo extraction) was **stashed** and not in
 | Discussions enable + starter posts | **Prepared but requires authorization** — drafts in `docs/wiki-staging/discussion-*.md` |
 | Wiki publish | **Prepared** — staging + clone/push steps; not published |
 | Pages site reachability | **Verified** — HTTP 200 for homepage |
-| Pull request | **Applied** — https://github.com/AnkitParekh007/job-search-assitant/pull/2 |
-| Repository rename | **Not applicable** — intentionally unchanged |
+| Pull request | **Applied** — https://github.com/AnkitParekh007/job-search-assitant/pull/2 (pre-rename URL; now `job-search-assistant`) |
+| Repository rename | **Completed later** — slug corrected to `job-search-assistant` (see rename migration PR) |
 | Force-push / visibility | **Not applicable** — not performed |
 
 ---

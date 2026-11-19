@@ -1,9 +1,11 @@
 # Repository Audit — AI Job Search
 
 **Audited:** 2026-11-19  
-**Repository:** https://github.com/AnkitParekh007/job-search-assitant  
+**Repository (at audit time):** https://github.com/AnkitParekh007/job-search-assitant  
 **Default branch tip inspected:** `a34bfca` (`Complete Intel Mac, Windows, and web clients.`)  
-**Marketing site:** https://ankitparekh007.github.io/job-search-assitant/ (HTTP 200 verified)
+**Marketing site (at audit time):** https://ankitparekh007.github.io/job-search-assitant/ (HTTP 200 verified)
+
+> **Historical note (2026-11-19):** After this audit, the GitHub repository was renamed to [`AnkitParekh007/job-search-assistant`](https://github.com/AnkitParekh007/job-search-assistant). The Pages site path is now `https://ankitparekh007.github.io/job-search-assistant/`. URLs below intentionally preserve the pre-rename slug as audited evidence.
 
 This audit records evidence from the local checkout, public GitHub API metadata, and the live Pages site. Subjective opinions are excluded.
 

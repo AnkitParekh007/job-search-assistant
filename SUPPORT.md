@@ -8,7 +8,7 @@ Start here:
 - [Installation](./docs/installation.md)
 - [Troubleshooting](./docs/troubleshooting.md)
 - [FAQ](./docs/faq.md)
-- Website docs: https://ankitparekh007.github.io/job-search-assitant/docs/
+- Website docs: https://ankitparekh007.github.io/job-search-assistant/docs/
 
 ## Bugs
 
