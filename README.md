@@ -301,9 +301,23 @@ More: [FAQ](./docs/faq.md)
 
 ---
 
-## Upstream attribution
+## Inspiration & Acknowledgements
 
-This project **drives** [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) (MIT, per GitHub license metadata) without copying or modifying its source in this repository. You must keep a separate upstream checkout. See [NOTICE](./NOTICE) and [THIRD-PARTY.md](./THIRD-PARTY.md).
+AI Job Search Assistant was inspired by [AI Job Search](https://github.com/ai-job-search-dev/ai-job-search), created by [Mads Lorentzen](https://github.com/MadsLorentzen) and its contributors.
+
+The original project provides the agent-oriented job-search framework and workflows that inspired this application.
+
+Our goal is to extend that experience with a visual, local-first desktop interface while preserving compatibility with the upstream framework.
+
+We are grateful to Mads and the open-source community for making their work available for developers to learn from and build upon.
+
+**Please consider exploring and supporting the original project:**
+
+https://github.com/ai-job-search-dev/ai-job-search
+
+This application is an independent community project and is not an official upstream release.
+
+This project drives the upstream workspace without copying or modifying its source in this repository. You must keep a separate upstream checkout. See [NOTICE](./NOTICE) and [THIRD-PARTY.md](./THIRD-PARTY.md).
 
 ---
 
