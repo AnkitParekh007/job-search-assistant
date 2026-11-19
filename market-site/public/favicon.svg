@@ -9,5 +9,5 @@
   <rect x="1" y="1" width="30" height="30" rx="9.5" fill="#0D0F22"/>
   <rect x="1.6" y="1.6" width="28.8" height="28.8" rx="8.9" fill="none" stroke="url(#g)" stroke-width="1.2"/>
   <path d="M7.5 24.5A17 17 0 0 1 24.5 7.5" fill="none" stroke="url(#g)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="0.1 4.2"/>
-  <path d="M11 21 21.2 10.8M14.2 10.8h7v7" fill="none" stroke="#D4FF5A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M11 21 21.2 10.8M14.2 10.8h7v7" fill="none" stroke="#FF8C66" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

@@ -1,7 +1,7 @@
 /* ==========================================================================
    AI Job Search — "Signal" design system
    Dark-first: deep ink night, aurora gradients (azure → violet → magenta),
-   and a sharp lime signal for actions. Light theme keeps the same accents on
+   and a warm coral flare for actions. Light theme keeps the same accents on
    warm paper. Tokens consumed by docs.css keep their original names.
    ========================================================================== */
 
@@ -17,10 +17,10 @@ html[data-theme="dark"] {
   --text: #f4f5ff;
   --text-muted: #a6abcc;
   --text-dim: #6c7199;
-  --accent: #c8ff4d;
-  --cta: #c8ff4d;
+  --accent: #ff8c66;
+  --cta: #ff8c66;
   --cta-text: #070814;
-  --cta-glow: rgba(200, 255, 77, 0.35);
+  --cta-glow: rgba(255, 140, 102, 0.38);
   --header-bg: rgba(7, 8, 20, 0.66);
   --nav-mobile-bg: rgba(7, 8, 20, 0.97);
   --btn-soft: rgba(170, 176, 255, 0.1);
@@ -37,7 +37,7 @@ html[data-theme="dark"] {
   --azure: #2ee6ff;
   --violet: #7b61ff;
   --magenta: #ff4fb8;
-  --lime: #c8ff4d;
+  --flare: #ff8c66;
   --amber: #ffb347;
   --aurora: linear-gradient(115deg, #2ee6ff 0%, #7b61ff 48%, #ff4fb8 100%);
   --aurora-soft: linear-gradient(115deg, rgba(46, 230, 255, 0.22), rgba(123, 97, 255, 0.22) 50%, rgba(255, 79, 184, 0.22));
@@ -45,7 +45,7 @@ html[data-theme="dark"] {
 
   --glow-a: var(--azure);
   --glow-b: var(--magenta);
-  --glow-c: var(--lime);
+  --glow-c: var(--flare);
 
   --radius-panel: 28px;
   --radius-card: 22px;
@@ -73,7 +73,7 @@ html[data-theme="light"] {
   --text-dim: #8a8ca3;
   --accent: #0c0d1c;
   --cta: #0c0d1c;
-  --cta-text: #d4ff5a;
+  --cta-text: #ffa07f;
   --cta-glow: rgba(91, 61, 245, 0.28);
   --header-bg: rgba(246, 245, 240, 0.74);
   --nav-mobile-bg: rgba(246, 245, 240, 0.98);
@@ -91,7 +91,7 @@ html[data-theme="light"] {
   --azure: #0098c7;
   --violet: #5b3df5;
   --magenta: #e0218a;
-  --lime: #6a9a00;
+  --flare: #c9441c;
   --amber: #c26a00;
   --aurora: linear-gradient(115deg, #00a6d6 0%, #5b3df5 48%, #e0218a 100%);
   --aurora-soft: linear-gradient(115deg, rgba(0, 166, 214, 0.14), rgba(91, 61, 245, 0.14) 50%, rgba(224, 33, 138, 0.14));
@@ -719,7 +719,7 @@ h2 em {
 }
 
 .panel[data-tone="mint"] {
-  --panel-glow: radial-gradient(50% 50% at 75% 25%, var(--lime), transparent 70%),
+  --panel-glow: radial-gradient(50% 50% at 75% 25%, var(--flare), transparent 70%),
     radial-gradient(50% 50% at 20% 80%, var(--azure), transparent 70%);
 }
 
@@ -828,9 +828,9 @@ h2 em {
 }
 
 .side-item.strong i {
-  background: var(--lime);
+  background: var(--flare);
   opacity: 1;
-  box-shadow: 0 0 10px var(--lime);
+  box-shadow: 0 0 10px var(--flare);
 }
 
 .app-main {
@@ -891,7 +891,7 @@ h2 em {
 }
 
 .card-line.accent b {
-  color: var(--lime);
+  color: var(--flare);
 }
 
 .card-line.accent span {
@@ -1294,8 +1294,8 @@ a.platform-card:focus-visible {
 }
 
 .req-list li::before {
-  background: var(--lime);
-  box-shadow: 0 0 10px var(--lime);
+  background: var(--flare);
+  box-shadow: 0 0 10px var(--flare);
   opacity: 1;
 }
 
@@ -1363,7 +1363,7 @@ a.platform-card:focus-visible {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--lime);
+  background: var(--flare);
   flex: 0 0 auto;
 }
 
@@ -1455,7 +1455,7 @@ a.platform-card:focus-visible {
 
 .signal-out {
   fill: none;
-  stroke: var(--lime);
+  stroke: var(--flare);
   stroke-width: 1.6;
   stroke-dasharray: 4 7;
   opacity: 0.85;
@@ -1495,7 +1495,7 @@ a.platform-card:focus-visible {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: conic-gradient(from 0deg, var(--azure), var(--violet), var(--magenta), var(--lime), var(--azure));
+  background: conic-gradient(from 0deg, var(--azure), var(--violet), var(--magenta), var(--flare), var(--azure));
   mask: radial-gradient(circle, transparent 62%, #000 63%, #000 67%, transparent 68%),
     radial-gradient(circle, transparent 78%, #000 79%, #000 80%, transparent 81%);
   -webkit-mask: radial-gradient(circle, transparent 62%, #000 63%, #000 67%, transparent 68%),
@@ -1535,7 +1535,7 @@ a.platform-card:focus-visible {
 
 .lens-count em {
   font-style: normal;
-  color: var(--lime);
+  color: var(--flare);
   margin: 0 0.15em;
 }
 
@@ -1625,8 +1625,8 @@ a.platform-card:focus-visible {
 }
 
 .short-card.is-pending {
-  border-color: color-mix(in srgb, var(--lime) 50%, transparent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--lime) 20%, transparent), 0 20px 50px -20px color-mix(in srgb, var(--lime) 40%, transparent);
+  border-color: color-mix(in srgb, var(--flare) 50%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--flare) 20%, transparent), 0 20px 50px -20px color-mix(in srgb, var(--flare) 40%, transparent);
 }
 
 .score {
@@ -1636,7 +1636,7 @@ a.platform-card:focus-visible {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: conic-gradient(var(--lime) calc(var(--s) * 1%), var(--border-strong) 0);
+  background: conic-gradient(var(--flare) calc(var(--s) * 1%), var(--border-strong) 0);
   position: relative;
 }
 
@@ -1683,8 +1683,8 @@ a.platform-card:focus-visible {
   margin-top: 0.8cqw;
   padding: 0.4cqw 1.4cqw;
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--lime) 16%, transparent);
-  color: var(--lime);
+  background: color-mix(in srgb, var(--flare) 16%, transparent);
+  color: var(--flare);
   font-family: var(--font-mono);
   font-size: 1.7cqw;
   animation: blink 2.4s ease-in-out infinite;
@@ -1738,7 +1738,7 @@ a.platform-card:focus-visible {
 
 .ticker code {
   font-size: 14px;
-  color: var(--lime);
+  color: var(--flare);
 }
 
 /* ---------- story scroller ---------- */
@@ -1937,7 +1937,7 @@ a.platform-card:focus-visible {
   border-radius: 6px;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--lime);
+  color: var(--flare);
   background: var(--btn-soft);
 }
 
@@ -2077,12 +2077,12 @@ a.platform-card:focus-visible {
 }
 
 .rank-row.is-top {
-  border-color: color-mix(in srgb, var(--lime) 50%, transparent);
-  box-shadow: 0 0 30px -10px color-mix(in srgb, var(--lime) 50%, transparent);
+  border-color: color-mix(in srgb, var(--flare) 50%, transparent);
+  box-shadow: 0 0 30px -10px color-mix(in srgb, var(--flare) 50%, transparent);
 }
 
 .rank-row.is-top b {
-  color: var(--lime);
+  color: var(--flare);
 }
 
 .rank-why {
@@ -2129,8 +2129,8 @@ a.platform-card:focus-visible {
   border-radius: 6px;
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--lime);
-  background: color-mix(in srgb, var(--lime) 14%, transparent);
+  color: var(--flare);
+  background: color-mix(in srgb, var(--flare) 14%, transparent);
 }
 
 .doc-line {
@@ -2158,8 +2158,8 @@ a.platform-card:focus-visible {
   padding: 16px 18px;
   border-radius: 16px;
   background: var(--bg-elevated);
-  border: 1px solid color-mix(in srgb, var(--lime) 45%, transparent);
-  box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.7), 0 0 40px -16px color-mix(in srgb, var(--lime) 50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--flare) 45%, transparent);
+  box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.7), 0 0 40px -16px color-mix(in srgb, var(--flare) 50%, transparent);
   --i: 6;
 }
 
@@ -2421,7 +2421,7 @@ a.platform-card:focus-visible {
 .file-chip:nth-child(7) {
   bottom: 22%;
   left: 2%;
-  color: var(--lime);
+  color: var(--flare);
 }
 
 .file-chip:nth-child(8) {
@@ -2872,7 +2872,7 @@ a.platform-card:focus-visible {
   }
   50%,
   85% {
-    background: var(--lime);
+    background: var(--flare);
   }
   100% {
     background: var(--border-strong);
