@@ -1,0 +1,22 @@
+name: Documentation improvement
+description: Fix or expand docs, README, or marketing copy accuracy
+title: "[docs] "
+labels: ["documentation"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Doc location
+      placeholder: "e.g. docs/installation.md or market-site/download.html"
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix

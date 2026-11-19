@@ -1,0 +1,84 @@
+name: CI — macOS Apple Silicon app
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/macos-apple-silicon/**"
+      - ".github/workflows/ci-macos-apple-silicon.yml"
+      - "docs/**"
+      - "*.md"
+  pull_request:
+    paths:
+      - "apps/macos-apple-silicon/**"
+      - ".github/workflows/ci-macos-apple-silicon.yml"
+      - "docs/**"
+      - "*.md"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-macos-as-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend test & build
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: apps/macos-apple-silicon
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/macos-apple-silicon/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Typecheck & Vite production build
+        run: npm run build
+
+  rust:
+    name: Rust tests & fmt
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: apps/macos-apple-silicon/src-tauri
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/macos-apple-silicon/src-tauri -> target
+
+      - name: rustfmt check
+        run: cargo fmt --all -- --check
+
+      - name: Unit tests
+        run: cargo test
+
+  docs-links:
+    name: Docs relative links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Markdown relative links
+        run: python3 scripts/check-doc-links.py

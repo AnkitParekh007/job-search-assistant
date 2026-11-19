@@ -1,0 +1,74 @@
+name: Bug report
+description: Something broken in the desktop app, web demo, or docs site
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **Do not** paste credentials, API keys, resumes, or private application data.
+  - type: input
+    id: app_version
+    attributes:
+      label: Application version
+      description: package.json / tauri version or git commit
+      placeholder: "0.1.0 / commit sha"
+    validations:
+      required: true
+  - type: input
+    id: macos_version
+    attributes:
+      label: macOS version (or OS if other platform)
+      placeholder: "macOS 15.x"
+    validations:
+      required: true
+  - type: dropdown
+    id: arch
+    attributes:
+      label: CPU architecture / client
+      options:
+        - Apple Silicon (apps/macos-apple-silicon)
+        - Intel Mac (apps/macos-intel)
+        - Windows (apps/windows)
+        - Web demo (apps/web)
+        - Marketing site only
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: deps
+    attributes:
+      label: Dependency status
+      description: From Settings → Dependencies if available (sanitized)
+      placeholder: "Claude signed in: yes/no; Python version; LaTeX present?"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs
+      description: Remove tokens, emails, names, URLs that identify employers if sensitive
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional. Blur personal data.

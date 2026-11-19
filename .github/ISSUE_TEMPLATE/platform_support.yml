@@ -1,0 +1,33 @@
+name: Platform support request
+description: Intel Mac, Windows, web, or packaging/release help
+title: "[platform] "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - macOS Intel
+        - Windows
+        - Web
+        - Linux (not in repo today)
+        - Packaging / GitHub Releases
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: What do you need?
+      description: Build failure, missing docs, release artifact request, etc.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "OS version, CPU, Rust/Node versions"
+  - type: markdown
+    attributes:
+      value: |
+        Apple Silicon is the developed client. Other clients are source ports or demos — see `apps/README.md`.
