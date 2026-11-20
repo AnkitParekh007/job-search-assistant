@@ -57,7 +57,7 @@ export function HomePage() {
             </p>
             <div className="cta-row load-in" style={{ ["--d" as string]: 3 }}>
               <Link className="btn btn-primary btn-lg" to="/download">
-                Download for macOS
+                Build for macOS
               </Link>
               <Link className="text-link" to="/docs">
                 Read the docs
