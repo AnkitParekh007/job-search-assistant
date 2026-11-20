@@ -25,3 +25,5 @@ jobs:
         run: npm run build:features
       - name: Test Apple Silicon shell
         run: npm run test -w ai-job-search-macos-apple-silicon
+      - name: Test native release ZIP integrity checks
+        run: python3 -m unittest discover -s scripts/tests -p 'test_release_assets.py'
