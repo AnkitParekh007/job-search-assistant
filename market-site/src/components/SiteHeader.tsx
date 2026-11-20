@@ -11,7 +11,7 @@ type Props = {
 
 export function SiteHeader({
   active,
-  primaryCta = { to: "/download", label: "Download" },
+  primaryCta = { to: "/download", label: "Build from source" },
   ghostCta,
 }: Props) {
   const { theme, toggle } = useTheme();
@@ -55,7 +55,7 @@ export function SiteHeader({
             to="/download"
             className={({ isActive }) => (isActive || active === "download" ? "is-active" : undefined)}
           >
-            Download
+            Build
           </NavLink>
         </nav>
         <div className="nav-actions">
