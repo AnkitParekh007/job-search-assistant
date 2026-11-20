@@ -71,7 +71,8 @@ export function ApproachSection() {
         </article>
       </div>
       <p className="marketing-footnote">
-        These are workflow approaches, not an audited comparison of named competitors or a claim about hiring outcomes.
+        These are workflow approaches, not a ranking or a claim about hiring outcomes.{" "}
+        <Link to="/compare" className="marketing-inline-link">Compare published features of other tools.</Link>
       </p>
     </section>
   );
