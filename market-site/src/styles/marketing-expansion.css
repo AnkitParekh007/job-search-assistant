@@ -79,3 +79,14 @@
   .marketing-step,.approach-card,.evidence-card,.faq-indicator { transition: none; }
   .marketing-step:hover,.approach-card:hover,.evidence-card:hover { transform: none; }
 }
+
+/* Cross-product comparisons and transparent sources */
+.marketing-inline-link { color: var(--azure); text-decoration: underline; text-underline-offset: 3px; }
+.competitor-table { min-width: 940px; }
+.competitor-table th[scope="row"] { text-align: left; padding: 17px; font-size: 13px; font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); }
+.competitor-table th:nth-child(2), .competitor-table td:nth-child(2) { background: color-mix(in srgb,var(--violet) 9%,transparent); }
+.competitor-table td { min-width: 180px; line-height: 1.6; }
+.marketing-source-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.marketing-source-links a { display: inline-flex; align-items: center; gap: 12px; padding: 17px 25px; border: 1px solid var(--border-strong); background: var(--bg-elevated); border-radius: 16px; font-weight: 700; transition: border-color .2s, transform .2s; }
+.marketing-source-links a:hover { transform: translateY(-2px); border-color: var(--azure); }
+@media (prefers-reduced-motion: reduce) { .marketing-source-links a { transition: none; } .marketing-source-links a:hover { transform: none; } }
