@@ -1,76 +1,164 @@
-name: Release
+name: Verified native release
 
+# No tag-triggered source packaging. Human-reviewed native release candidates only.
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to create or refresh (e.g. v0.1.0)"
+        description: Existing vX.Y.Z tag pointing to current main
+        type: string
         required: true
-        default: "v0.1.0"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: native-release-${{ inputs.tag }}
   cancel-in-progress: false
 
 jobs:
-  package:
-    name: Package release assets
+  verify:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+      - id: tag
+        env:
+          TAG: ${{ inputs.tag }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
+          git fetch origin main
+          [[ "$(git rev-parse HEAD)" == "$(git rev-parse origin/main)" ]] || { echo "Tag must point to current main"; exit 1; }
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to overwrite"; exit 1
+          fi
+          echo "version=$(echo "$TAG" | cut -c2-)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: package-lock.json
-
-      - name: Install dependencies
-        run: |
-          rm -rf node_modules apps/*/node_modules packages/*/node_modules
-          npm ci
-
-      - name: Resolve version
-        id: ver
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            TAG="${{ inputs.tag }}"
-          else
-            TAG="${GITHUB_REF_NAME}"
-          fi
-          VERSION="${TAG#v}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Package assets
+      - run: npm ci
+      - name: Verify versions match tag
         env:
-          VERSION: ${{ steps.ver.outputs.version }}
-        run: bash scripts/ci-package-release-assets.sh
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          for (const p of ['package.json','apps/macos-apple-silicon/package.json','apps/macos-intel/package.json','apps/windows/package.json','apps/macos-apple-silicon/src-tauri/tauri.conf.json','apps/macos-intel/src-tauri/tauri.conf.json','apps/windows/src-tauri/tauri.conf.json']) {
+            if (JSON.parse(fs.readFileSync(p,'utf8')).version !== process.env.VERSION) throw new Error('Version mismatch: ' + p);
+          }
+          NODE
+      - run: npm test
+      - run: npm run build:market
+      - run: python3 -m unittest discover -s scripts/tests -p 'test_release_assets.py'
 
-      - name: Publish GitHub Release
+  native:
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {id: macos-arm64, os: macos-15, app: apps/macos-apple-silicon}
+          - {id: macos-x64, os: macos-15-intel, app: apps/macos-intel}
+          - {id: windows-x64, os: windows-latest, app: apps/windows}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ matrix.app }}/src-tauri -> target
+      - run: npm ci
+      - name: Build actual native application
+        run: npm run tauri -w ${{ matrix.app }} -- build
+      - name: Package macOS application
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          APP_DIR: ${{ matrix.app }}
+          PLATFORM: ${{ matrix.id }}
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist-release
+          BUNDLE="$APP_DIR/src-tauri/target/release/bundle/macos"
+          COUNT=$(find "$BUNDLE" -mindepth 1 -maxdepth 1 -type d -name '*.app' | wc -l | tr -d ' ')
+          [[ "$COUNT" == "1" ]] || { echo "Expected exactly one native .app"; exit 1; }
+          APP=$(find "$BUNDLE" -mindepth 1 -maxdepth 1 -type d -name '*.app' -print -quit)
+          [[ -f "$APP/Contents/Info.plist" && -d "$APP/Contents/MacOS" ]] || exit 1
+          ditto -c -k --keepParent "$APP" "dist-release/AI-Job-Search-$VERSION-$PLATFORM.zip"
+      - name: Package Windows installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          APP_DIR: ${{ matrix.app }}
+          PLATFORM: ${{ matrix.id }}
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $bundle = Join-Path $env:APP_DIR 'src-tauri/target/release/bundle'
+          $installers = @(Get-ChildItem $bundle -Recurse -File | Where-Object {
+            ($_.Extension -eq '.exe' -and $_.DirectoryName -match 'nsis') -or
+            ($_.Extension -eq '.msi' -and $_.DirectoryName -match 'msi')
+          })
+          if ($installers.Count -lt 1) { throw 'No native Windows installer produced' }
+          New-Item -ItemType Directory -Force dist-release | Out-Null
+          Compress-Archive -Path $installers.FullName -DestinationPath "dist-release/AI-Job-Search-$env:VERSION-$env:PLATFORM.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.id }}
+          path: dist-release/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  draft:
+    needs: [verify, native]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: native-*
+          merge-multiple: true
+          path: dist-release
+      - name: Validate native binaries; reject source archives
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: python3 scripts/verify-release-assets.py dist-release "$VERSION"
+      - name: Checksums
+        working-directory: dist-release
+        run: sha256sum AI-Job-Search-*.zip > SHA256SUMS.txt
+      - name: Create draft release for human approval
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.ver.outputs.tag }}
-          name: AI Job Search Assistant ${{ steps.ver.outputs.tag }}
+          tag_name: ${{ inputs.tag }}
+          name: AI Job Search Assistant ${{ inputs.tag }}
+          draft: true
+          prerelease: true
           generate_release_notes: true
           body: |
-            Desktop packages for **AI Job Search Assistant** `${{ steps.ver.outputs.tag }}`.
-
-            - **macOS Apple Silicon / Intel / Windows** archives contain the platform client (build locally if a signed binary is not included).
-            - The app does **not** submit applications automatically.
-            - Multi-provider AI support (Claude Code or Codex) is required for AI workflows.
-
-            Download page: https://job-search-assistant.rebound-ops.org/download
+            Native release candidate requiring manual installation and user-journey acceptance tests.
+            Unsigned / unnotarized builds may show OS warnings. AI providers can cost money.
+            The app never submits employer applications automatically.
           files: |
-            dist-release/AI-Job-Search-${{ steps.ver.outputs.version }}-*.zip
+            dist-release/AI-Job-Search-*.zip
             dist-release/SHA256SUMS.txt
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
