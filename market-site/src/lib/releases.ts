@@ -1,6 +1,6 @@
 import { GITHUB_REPO } from "./site";
 
-/** Keep in sync with the GitHub Release tag created for downloadable assets. */
+/** Existing historical release; its ZIPs are source/client archives, NOT native installers. */
 export const RELEASE_TAG = "v0.1.1";
 export const RELEASE_VERSION = "0.1.1";
 
@@ -25,17 +25,17 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     id: "macos-apple-silicon",
     title: "Apple Silicon",
     subtitle: "macOS 13+ · M1–M4",
-    badge: "Recommended",
+    badge: "Source package",
     asset: `AI-Job-Search-${RELEASE_VERSION}-macos-arm64.zip`,
-    note: "Unsigned .app — right-click → Open the first time",
+    note: "No verified .app installer in this release. Build from source.",
   },
   {
     id: "macos-intel",
     title: "Intel Mac",
     subtitle: "macOS 13+ · x86_64",
-    badge: "Download",
+    badge: "Source port",
     asset: `AI-Job-Search-${RELEASE_VERSION}-macos-x64.zip`,
-    note: "Intel client package — unzip and follow README",
+    note: "No verified Intel installer. Source build only.",
   },
   {
     id: "windows",
@@ -43,7 +43,7 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     subtitle: "Windows 10/11 · x64",
     badge: "Download",
     asset: `AI-Job-Search-${RELEASE_VERSION}-windows-x64.zip`,
-    note: "Windows client package — unzip and follow README",
+    note: "No verified Windows installer. Source build only.",
   },
 ];
 
