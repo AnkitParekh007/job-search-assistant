@@ -1,0 +1,26 @@
+{
+  "name": "way-back-in-films",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "studio": "remotion studio",
+    "render:film1": "remotion render Film1 out/mix1.mp4 --gl=angle --crf=18 && sh tools/master.sh out/mix1.mp4 out/film1-commit-history-4x5.mp4",
+    "render:film2": "remotion render Film2 out/mix2.mp4 --gl=angle --crf=18 && sh tools/master.sh out/mix2.mp4 out/film2-return-date-4x5.mp4",
+    "render:film3": "remotion render Film3 out/mix3.mp4 --gl=angle --crf=18 && sh tools/master.sh out/mix3.mp4 out/film3-parsed-4x5.mp4"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^9.8.2",
+    "@remotion/cli": "4.0.545",
+    "@remotion/google-fonts": "4.0.545",
+    "@remotion/three": "^4.0.545",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.545",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "@types/three": "^0.187.0",
+    "typescript": "5.8.3"
+  }
+}
