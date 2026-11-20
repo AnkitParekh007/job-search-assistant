@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Monorepo: Vite serves UI via @fs absolute paths, which breaks Tailwind's
+   automatic source detection. Explicitly scan this package's components. */
+@source "./**/*.{js,ts,jsx,tsx}";
+
 /* ── Design tokens ────────────────────────────────────────────────
    Dark is the default ("quiet command center"). Light mirrors the same
    semantics. html[data-theme] pins a theme; "system" removes the attribute

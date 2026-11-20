@@ -8,6 +8,7 @@ import { StoreProvider, useStore } from "./store";
 import { WORKFLOWS } from "@ai-job-search/core";
 import { api, inTauri } from "@ai-job-search/runtime";
 import { Kbd } from "./components/ui";
+import { BrandMark } from "./components/BrandMark";
 import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
 import Pipeline from "./pages/Pipeline";
@@ -39,6 +40,16 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
   return (
     <motion.aside animate={{ width: collapsed ? 64 : 224 }} transition={{ type: "spring", stiffness: 420, damping: 40 }} className="shrink-0 bg-sidebar border-r border-line flex flex-col overflow-hidden">
       <div className="h-[52px] drag shrink-0" />
+      <div className={clsx("px-2.5 pb-3 shrink-0", collapsed ? "flex justify-center" : "")}>
+        <div className={clsx("flex items-center gap-2.5 min-w-0", collapsed ? "justify-center" : "px-1")}>
+          <BrandMark size={collapsed ? 28 : 26} className="shrink-0" />
+          {!collapsed && (
+            <div className="min-w-0 leading-tight">
+              <div className="text-[13px] font-semibold text-ink truncate">AI Job <span className="text-accent-ink">Search</span></div>
+            </div>
+          )}
+        </div>
+      </div>
       <nav className="flex-1 px-2.5 overflow-y-auto overflow-x-hidden" aria-label="Main">
         {NAV_GROUPS.map((g, gi) => (
           <div key={gi} className={gi ? "mt-4" : ""}>
