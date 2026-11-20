@@ -54,7 +54,7 @@ export function DownloadPage() {
     if (!hash) return;
     const id = hash.replace("#", "");
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
   }, [hash]);
 
   return (
