@@ -4,7 +4,7 @@ import { useTheme } from "../hooks/useTheme";
 import { BrandLockup } from "./BrandMark";
 
 type Props = {
-  active?: "about" | "features" | "docs" | "download";
+  active?: "about" | "features" | "benchmarks" | "faq" | "docs" | "download";
   primaryCta?: { to: string; label: string };
   ghostCta?: { to: string; label: string };
 };
@@ -44,6 +44,18 @@ export function SiteHeader({
             className={({ isActive }) => (isActive || active === "features" ? "is-active" : undefined)}
           >
             Features
+          </NavLink>
+          <NavLink
+            to="/benchmarks"
+            className={({ isActive }) => (isActive || active === "benchmarks" ? "is-active" : undefined)}
+          >
+            Benchmarks
+          </NavLink>
+          <NavLink
+            to="/faq"
+            className={({ isActive }) => (isActive || active === "faq" ? "is-active" : undefined)}
+          >
+            FAQs
           </NavLink>
           <NavLink
             to="/docs"
