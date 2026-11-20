@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRight, HelpCircle, MessageCircleQuestion, Send, X } from "lucide-react";
-import { Scout } from "../pages/Onboarding";
+import { Jobzuu } from "./Jobzuu";
 import { useStore } from "../store";
 import { answerHelpQuestion, HELP_TOPICS, suggestedHelpTopics, type HelpTopic } from "./helpContent";
 
@@ -12,7 +12,7 @@ type HelpMessage = {
   topicId?: string;
 };
 
-const GREETING = "Hi! I'm Scout, your offline app guide. Ask me how to use a feature, or choose a question below. I never use AI or send your questions anywhere.";
+const GREETING = "Hi! I'm Jobzuu, your offline app guide. Ask me how to use a feature, or choose a question below. I never use AI or send your questions anywhere.";
 
 export function HelpAssistant({ paletteOpen = false, onOpenChange }: { paletteOpen?: boolean; onOpenChange?: (open: boolean) => void }) {
   const { route, go } = useStore();
@@ -103,10 +103,10 @@ export function HelpAssistant({ paletteOpen = false, onOpenChange }: { paletteOp
       <AnimatePresence>
         {open && (
           <motion.section
-            id="ask-scout-panel"
+            id="ask-jobzuu-panel"
             role="dialog"
             aria-modal="false"
-            aria-label="Ask Scout app guide"
+            aria-label="Ask Jobzuu app guide"
             initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.97 }}
@@ -114,12 +114,12 @@ export function HelpAssistant({ paletteOpen = false, onOpenChange }: { paletteOp
             className="fixed bottom-20 right-4 z-40 flex h-[min(460px,calc(100vh-240px))] w-[min(390px,calc(100vw-32px))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl"
           >
             <div className="relative flex shrink-0 items-center gap-2.5 border-b border-line bg-surface-2 px-4 py-3">
-              <Scout size={38} />
+              <Jobzuu size={38} />
               <div className="min-w-0 flex-1">
-                <h2 className="text-[14px] font-semibold text-ink">Ask Scout</h2>
+                <h2 className="text-[14px] font-semibold text-ink">Ask Jobzuu</h2>
                 <p className="text-[11px] text-ink-3">Offline app guide · No AI · No API cost</p>
               </div>
-              <button onClick={() => setOpen(false)} className="btn btn-ghost h-8 w-8 justify-center p-0" aria-label="Close Ask Scout" title="Close">
+              <button onClick={() => setOpen(false)} className="btn btn-ghost h-8 w-8 justify-center p-0" aria-label="Close Ask Jobzuu" title="Close">
                 <X size={17} />
               </button>
             </div>
@@ -173,10 +173,10 @@ export function HelpAssistant({ paletteOpen = false, onOpenChange }: { paletteOp
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
                   placeholder="Ask how to use the app…"
-                  aria-label="Your question for Scout"
+                  aria-label="Your question for Jobzuu"
                   className="min-w-0 flex-1 rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-[12.5px] text-ink outline-none focus:border-accent"
                 />
-                <button type="submit" disabled={!draft.trim()} aria-label="Ask Scout"
+                <button type="submit" disabled={!draft.trim()} aria-label="Ask Jobzuu"
                   className="btn btn-primary h-9 w-9 shrink-0 justify-center p-0 disabled:opacity-40">
                   <Send size={15} />
                 </button>
@@ -196,10 +196,10 @@ export function HelpAssistant({ paletteOpen = false, onOpenChange }: { paletteOp
         ref={launcher}
         onClick={() => setOpen((current) => !current)}
         type="button"
-        aria-label={open ? "Close Ask Scout" : "Open Ask Scout"}
+        aria-label={open ? "Close Ask Jobzuu" : "Open Ask Jobzuu"}
         aria-expanded={open}
-        aria-controls="ask-scout-panel"
-        title="Ask Scout — offline app help"
+        aria-controls="ask-jobzuu-panel"
+        title="Ask Jobzuu — offline app help"
         className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-accent text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {open ? <X size={22} /> : <MessageCircleQuestion size={22} />}
