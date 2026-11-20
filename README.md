@@ -107,7 +107,7 @@ Deep dive: [Architecture](./docs/architecture.md) · [App architecture](./apps/m
 
 ## Quick start (build from source)
 
-Primary conversion path until a verified installer ships: **build the macOS Apple Silicon app from source**.
+**Developer preview:** the current public v0.1.1 platform ZIPs are source archives, not click-to-install native apps. Until a verified installer ships, **build the macOS Apple Silicon app from source**.
 
 ### Prerequisites
 
@@ -241,7 +241,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 ### Key limitations
 
 - Primary support target is **macOS Apple Silicon**.
-- GitHub Release `v0.1.1` ships platform client packages; notarized installers are not published yet.
+- GitHub Release `v0.1.1` contains **source/client archives only**; it does **not** ship verified native installers. Build the developed Apple Silicon client from source until a native release passes acceptance.
 - Does **not** auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
 
