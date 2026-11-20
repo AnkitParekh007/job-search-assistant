@@ -6,6 +6,8 @@ import { SignalField } from "../components/SignalField";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { StoryScroller } from "../components/StoryScroller";
+import { FaqSection } from "../components/FaqSection";
+import { ApproachSection, BenchmarksTeaser, CandidateValueSection } from "../components/MarketingSections";
 import { PAGE_SEO } from "../lib/pages";
 import { applySeo } from "../lib/seo";
 
@@ -51,9 +53,9 @@ export function HomePage() {
               One shortlist. <em>Your call.</em>
             </h1>
             <p className="lede load-in" style={{ ["--d" as string]: 2 }}>
-              AI Job Search is a native desktop command center for a workspace folder you choose.
-              Claude Code or OpenAI Codex runs the real workflows (discover, rank, draft, track) on files you
-              own, and nothing is sent without your approval.
+              AI Job Search Assistant brings job discovery, fit assessment, application drafts and
+              tracking into one desktop workspace. Configure a supported AI provider for advanced workflows,
+              keep your files local, and stay in charge of what you submit.
             </p>
             <div className="cta-row load-in" style={{ ["--d" as string]: 3 }}>
               <Link className="btn btn-primary btn-lg" to="/download">
@@ -142,8 +144,8 @@ export function HomePage() {
               <p className="kicker">Multi-provider</p>
               <h3>Bring your own AI.</h3>
               <p>
-                Switch between Claude Code and OpenAI Codex. Credentials stay with the provider CLI, never inside
-                the app.
+                Use supported AI runtimes for relevant workflows. Credentials are handled by provider
+                tools or the OS credential store, depending on the integration.
               </p>
               <div className="provider-pair" aria-hidden="true">
                 <span>Claude Code</span>
@@ -172,6 +174,11 @@ export function HomePage() {
             </article>
           </div>
         </section>
+
+        <CandidateValueSection />
+        <ApproachSection />
+        <BenchmarksTeaser />
+        <FaqSection compact />
 
         <section className="finale reveal">
           <div className="finale-glow" aria-hidden="true" />
