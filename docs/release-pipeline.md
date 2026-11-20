@@ -32,7 +32,16 @@ EOF
 
 ## CI
 
-`.github/workflows/release.yml` refreshes the GitHub Release for the version in `package.json` (and `market-site/src/lib/releases.ts`) when `main` changes app code, shared packages, or the release scripts. It also runs on `v*` tags and `workflow_dispatch` from `main`.
+`.github/workflows/release.yml` refreshes the GitHub Release for the version in `package.json` when `main` changes **app code**, shared packages, or the release scripts. It also runs on `v*` tags and `workflow_dispatch` from `main`.
+
+### What updates downloads
+
+| Change on `main` | Refreshes release assets? |
+|------------------|---------------------------|
+| `apps/**` or `packages/**` (non-Markdown) | Yes |
+| Release scripts / `package.json` / this workflow | Yes |
+| Root `README.md`, `docs/**`, `market-site/**`, campaign, research notes | No |
+| Markdown-only under `apps/` or `packages/` (e.g. app READMEs) | No |
 
 The download URLs stay on the current tag (`v0.1.1` today). A `main` push does not create a new tag. It replaces the zip assets in place:
 
@@ -40,7 +49,7 @@ The download URLs stay on the current tag (`v0.1.1` today). A `main` push does n
 - **macOS Intel / Windows** — Ubuntu repackages the platform client sources. Those zips are replaced on the same release.
 - **SHA256SUMS.txt** is rewritten for the full set. An asset that was not rebuilt is left in place, and the release notes record which platforms were rebuilt.
 
-The download page constants must match `package.json`. The workflow stops if `RELEASE_TAG` / `RELEASE_VERSION` disagree, so the site cannot keep linking at files this run did not publish.
+When a release *does* run, `market-site/src/lib/releases.ts` must still match `package.json`. Website edits alone never start this workflow; bump the site constants in the same PR as a version cut.
 
 These builds are unsigned. Prefer a local Apple Silicon package when you need to replace the `.app` before CI finishes:
 

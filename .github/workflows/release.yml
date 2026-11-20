@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     tags: ["v*"]
+    # App / package / release-tooling only. README, docs, market-site, and campaign
+    # changes do not match this list, so they never refresh download assets.
     paths:
       - "apps/**"
       - "packages/**"
@@ -13,7 +15,6 @@ on:
       - ".github/workflows/release.yml"
       - "package.json"
       - "package-lock.json"
-      - "market-site/src/lib/releases.ts"
   workflow_dispatch:
 
 permissions:
@@ -32,9 +33,12 @@ jobs:
     outputs:
       tag: ${{ steps.ver.outputs.tag }}
       version: ${{ steps.ver.outputs.version }}
+      ship: ${{ steps.ver.outputs.ship }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -43,6 +47,8 @@ jobs:
 
       - name: Resolve version and check the download page
         id: ver
+        env:
+          EVENT_BEFORE: ${{ github.event.before }}
         run: |
           set -euo pipefail
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
@@ -68,12 +74,49 @@ jobs:
                   "Update market-site/src/lib/releases.ts in the same change."
               )
           PY
+
+          SHIP=true
+          # Tags and manual runs always publish. On main pushes, skip when the
+          # only matching paths were Markdown (e.g. apps/*/README.md).
+          if [[ "${GITHUB_EVENT_NAME}" == "push" && "${GITHUB_REF_TYPE}" == "branch" ]]; then
+            BEFORE="${EVENT_BEFORE:-}"
+            if [[ -n "$BEFORE" && "$BEFORE" != "0000000000000000000000000000000000000000" ]]; then
+              CHANGED="$(git diff --name-only "$BEFORE" "$GITHUB_SHA")"
+              if ! CHANGED="$CHANGED" python3 - <<'PY'
+          import os, sys
+          SHIP_FILES = {
+              "scripts/package-release-assets.sh",
+              "scripts/ci-package-release-assets.sh",
+              "scripts/publish-release-assets.sh",
+              ".github/workflows/release.yml",
+              "package.json",
+              "package-lock.json",
+          }
+          ship = False
+          for path in os.environ.get("CHANGED", "").splitlines():
+              path = path.strip()
+              if not path or path.endswith(".md"):
+                  continue
+              if path.startswith("apps/") or path.startswith("packages/") or path in SHIP_FILES:
+                  ship = True
+                  break
+          sys.exit(0 if ship else 1)
+          PY
+              then
+                SHIP=false
+                echo "No shippable app code in this push (README/docs-only under apps/packages); skipping asset refresh."
+              fi
+            fi
+          fi
+
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "ship=$SHIP" >> "$GITHUB_OUTPUT"
 
   macos-app:
     name: Build macOS Apple Silicon app
     needs: version
+    if: needs.version.outputs.ship == 'true'
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -119,6 +162,7 @@ jobs:
   source-clients:
     name: Package Intel and Windows clients
     needs: version
+    if: needs.version.outputs.ship == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -140,7 +184,7 @@ jobs:
   publish:
     name: Publish GitHub Release assets
     needs: [version, macos-app, source-clients]
-    if: always() && !cancelled() && needs.version.result == 'success' && (needs.macos-app.result == 'success' || needs.source-clients.result == 'success')
+    if: always() && !cancelled() && needs.version.result == 'success' && needs.version.outputs.ship == 'true' && (needs.macos-app.result == 'success' || needs.source-clients.result == 'success')
     runs-on: ubuntu-latest
     permissions:
       contents: write
