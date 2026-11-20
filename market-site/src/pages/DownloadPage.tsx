@@ -11,7 +11,6 @@ import {
   RELEASE_TAG_URL,
   RELEASE_VERSION,
   RELEASES_PAGE,
-  releaseAssetUrl,
   type PlatformDownload,
 } from "../lib/releases";
 import { GITHUB_REPO } from "../lib/site";
@@ -42,8 +41,6 @@ function DownloadGlyph() {
 
 export function DownloadPage() {
   const { hash } = useLocation();
-  const primary = PLATFORM_DOWNLOADS[0];
-  const primaryUrl = releaseAssetUrl(primary.asset);
 
   useEffect(() => {
     applySeo({
@@ -77,17 +74,17 @@ export function DownloadPage() {
 
             <div className="stack wide reveal reveal-delay-1">
               <p className="kicker">Release {RELEASE_TAG}</p>
-              <h1>Install AI Job Search Assistant</h1>
+              <h1>Build AI Job Search Assistant from source</h1>
               <p className="lede">
-                Download the desktop workspace for your platform. Discover, rank, prepare tailored documents,
-                and track outcomes with multi-provider AI support — without auto-submitting applications to
-                employers.
+                The current v0.1.1 GitHub archives contain source/client files, not verified native installers.
+                Until native builds pass release validation, build the desktop app locally using the installation guide.
+                The app helps you discover, rank, prepare and track — it never submits employer applications automatically.
               </p>
               <div className="cta-row">
-                <a className="btn btn-primary btn-lg btn-icon" href={primaryUrl} rel="noopener">
+                <Link className="btn btn-primary btn-lg btn-icon" to="/docs/install">
                   <DownloadGlyph />
-                  Download for Apple Silicon
-                </a>
+                  Build for Apple Silicon
+                </Link>
                 <Link className="btn btn-soft btn-lg" to="/docs/install">
                   Install docs
                 </Link>
@@ -101,7 +98,7 @@ export function DownloadPage() {
                 <a href={RELEASES_PAGE} rel="noopener">
                   GitHub Releases
                 </a>
-                . Unsigned macOS builds may need right-click → Open the first time.
+                . These v0.1.1 archives are source packages; they are not one-click applications.
               </p>
             </div>
           </div>
@@ -110,22 +107,13 @@ export function DownloadPage() {
             <div className="platform-download-head">
               <h2 className="platform-download-title">Choose your platform</h2>
               <p className="platform-download-copy">
-                Each card downloads the {RELEASE_VERSION} package for that client from GitHub Releases.
+                Verified desktop installers are not available yet. Select your platform, then follow the build instructions.
               </p>
             </div>
             <div className="platform-grid" role="list">
               {PLATFORM_DOWNLOADS.map((platform) => {
-                const href = releaseAssetUrl(platform.asset);
                 return (
-                  <a
-                    key={platform.id}
-                    className="platform-card"
-                    href={href}
-                    role="listitem"
-                    download
-                    rel="noopener"
-                    aria-label={`Download ${platform.title} (${platform.asset})`}
-                  >
+                  <div key={platform.id} className="platform-card" role="listitem">
                     <div className="platform-card-top">
                       <span className="platform-card-icon">
                         <PlatformIcon id={platform.id} />
@@ -137,11 +125,11 @@ export function DownloadPage() {
                       <span>{platform.subtitle}</span>
                       {platform.note ? <em className="platform-card-note">{platform.note}</em> : null}
                     </div>
-                    <span className="platform-card-cta">
+                    <Link className="platform-card-cta" to="/docs/install" aria-label={`Build ${platform.title} from source`}>
                       <DownloadGlyph />
-                      Download {RELEASE_TAG}
-                    </span>
-                  </a>
+                      Build instructions
+                    </Link>
+                  </div>
                 );
               })}
             </div>
@@ -211,8 +199,8 @@ export function DownloadPage() {
             <div className="stack reveal reveal-delay-1">
               <h2>Build from source</h2>
               <p className="lede">
-                Prefer compiling locally? Clone the desktop app, install dependencies, and produce an
-                unsigned <code>.app</code> with Tauri.
+                Clone the project, install dependencies, and compile the native app using Tauri.
+                The macOS Apple Silicon client is developed; Intel and Windows are source ports requiring validation.
               </p>
               <div className="cta-row">
                 <a className="btn btn-soft btn-lg" href={GITHUB_REPO} rel="noopener">
