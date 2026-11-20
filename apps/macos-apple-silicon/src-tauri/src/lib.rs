@@ -23,20 +23,21 @@ struct AppState {
 }
 
 fn default_workspace() -> PathBuf {
-    let guess = env::home().join("Desktop/Projects/Automations/Job-Automations/ai-job-search");
-    if guess.join("CLAUDE.md").exists() {
-        guess
-    } else {
-        env::home().join("ai-job-search")
-    }
+    // Never silently bind to a guessed checkout (e.g. a nearby ai-job-search clone).
+    // Workspace must be chosen explicitly via set_workspace / onboarding.
+    PathBuf::new()
 }
 
-fn ws(state: &State<AppState>) -> PathBuf {
+fn configured_workspace(state: &State<AppState>) -> Option<PathBuf> {
     state
         .db
         .get_setting("workspace")
+        .filter(|s| !s.trim().is_empty())
         .map(PathBuf::from)
-        .unwrap_or_else(default_workspace)
+}
+
+fn ws(state: &State<AppState>) -> PathBuf {
+    configured_workspace(state).unwrap_or_else(default_workspace)
 }
 
 fn today() -> String {
@@ -89,25 +90,38 @@ fn watch(app: &AppHandle, state: &AppState, dir: PathBuf) {
 
 #[tauri::command]
 fn get_workspace(state: State<AppState>) -> Value {
-    let p = ws(&state);
-    json!({"path": p, "valid": p.join("CLAUDE.md").exists(), "upstream_version": deps::upstream_version(&p), "data_dir": env::app_data_dir()})
+    let configured = configured_workspace(&state);
+    let p = configured.clone().unwrap_or_else(default_workspace);
+    let valid = configured
+        .as_ref()
+        .map(|path| path.is_dir() && path.join("CLAUDE.md").exists())
+        .unwrap_or(false);
+    json!({
+        "path": p,
+        "valid": valid,
+        "configured": configured.is_some(),
+        "upstream_version": if valid { deps::upstream_version(&p) } else { String::new() },
+        "data_dir": env::app_data_dir(),
+        "created": Value::Array(vec![]),
+    })
 }
 
 #[tauri::command]
 fn set_workspace(app: AppHandle, state: State<AppState>, path: String) -> Result<Value, String> {
     let p = PathBuf::from(&path);
-    if !p.join("CLAUDE.md").exists() || !p.join(".claude/commands").is_dir() {
-        return Err(
-            "That folder is not an AI Job Search checkout (needs CLAUDE.md and .claude/commands)."
-                .into(),
-        );
-    }
+    let created = workspace::ensure_workspace(&p)?;
     state
         .db
         .set_setting("workspace", &path)
         .map_err(|e| e.to_string())?;
-    watch(&app, &state, p);
-    Ok(get_workspace(state))
+    watch(&app, &state, p.clone());
+    Ok(json!({
+        "path": p,
+        "valid": p.join("CLAUDE.md").exists(),
+        "upstream_version": deps::upstream_version(&p),
+        "data_dir": env::app_data_dir(),
+        "created": created,
+    }))
 }
 
 #[tauri::command]
@@ -265,10 +279,21 @@ fn start_run(
         .filter(|s| !s.is_empty())
     });
 
+    let workspace = configured_workspace(&state).ok_or_else(|| {
+        "No workspace connected. Choose a folder in Onboarding or Settings before starting a run."
+            .to_string()
+    })?;
+    if !workspace.join("CLAUDE.md").exists() {
+        return Err(format!(
+            "Workspace at {} is missing CLAUDE.md — reconnect the folder so Jobzuu can scaffold it.",
+            workspace.display()
+        ));
+    }
+
     state.runtime.start(
         app,
         state.db.clone(),
-        providers::start_opts(ws(&state), workflow, prompt, model, resume, provider),
+        providers::start_opts(workspace, workflow, prompt, model, resume, provider),
     )
 }
 
@@ -552,12 +577,14 @@ pub fn run() {
                 runtime: Runtime::default(),
                 watcher: Mutex::new(None),
             };
-            let w = state
+            if let Some(w) = state
                 .db
                 .get_setting("workspace")
+                .filter(|s| !s.trim().is_empty())
                 .map(PathBuf::from)
-                .unwrap_or_else(default_workspace);
-            watch(app.handle(), &state, w);
+            {
+                watch(app.handle(), &state, w);
+            }
             app.manage(state);
             Ok(())
         })

@@ -71,7 +71,7 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
       </nav>
       {!collapsed && <div className="px-4 py-3 text-[11px] text-ink-3 leading-snug border-t border-line">
         <div className="font-medium text-ink-2">Local workspace</div>
-        <div className="truncate font-mono">{ws?.upstream_version ? `ai-job-search ${ws.upstream_version}` : "not connected"}</div>
+        <div className="truncate font-mono">{ws?.valid ? (ws.upstream_version ? `workspace ${ws.upstream_version}` : "connected") : "not connected"}</div>
       </div>}
     </motion.aside>
   );
@@ -179,7 +179,7 @@ function Shell() {
         <NeedsYou />
         {(dataError || (ws && !ws.valid)) && (
           <div className="mx-6 mb-3 rounded-lg border border-line bg-surface-2 text-ink-2 px-3.5 py-2 text-[12.5px] flex items-center gap-2">
-            <Info size={14} className="shrink-0 text-warn" /><span className="flex-1">{ws && !ws.valid ? `No AI Job Search workspace at ${ws.path}.` : dataError}</span>
+            <Info size={14} className="shrink-0 text-warn" /><span className="flex-1">{ws && !ws.valid ? `No workspace connected at ${ws.path}. Choose any folder — Jobzuu will scaffold starter files if needed.` : dataError}</span>
             {ws && !ws.valid && <button className="btn h-6 btn-primary" onClick={() => go("settings")}>Choose workspace</button>}
           </div>)}
         <div className="flex-1 min-h-0 overflow-hidden">

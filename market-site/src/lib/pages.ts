@@ -8,7 +8,7 @@ export const PAGE_SEO = {
   home: {
     title: "AI Job Search Assistant — Local-first job search command center",
     description:
-      "Local-first desktop app with multi-provider AI support (Claude Code or OpenAI Codex) for your ai-job-search workspace — discover, rank, prepare applications, and track outcomes on files you own.",
+      "Local-first desktop app with multi-provider AI support (Claude Code or OpenAI Codex) for a workspace folder you own — discover, rank, prepare applications, and track outcomes on files you keep.",
     path: "/",
   },
   features: {

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/assets/brand/scout-hero.svg" width="100%" alt="AI Job Search Assistant conceptual hero: Scout and a dark desktop workspace showing discovery, application preparation and tracking." />
+  <img src="./docs/assets/brand/scout-hero.svg" width="100%" alt="AI Job Search Assistant conceptual hero: Jobzuu and a dark desktop workspace showing discovery, application preparation and tracking." />
 </p>
 
 <h1 align="center">AI Job Search Assistant</h1>
@@ -43,7 +43,7 @@ Discover aligned roles, prepare tailored documents through the upstream workflow
 |:---|:---|
 | See job discovery, fit ranking, workflow progress, tool activity and the application pipeline in one place. | Review generated CVs and cover letters, inspect PDF output, and approve sensitive file or command actions before proceeding. |
 | **Files remain yours** | **Designed for extensions** |
-| Your candidate profile, tracker and application archives remain in your local upstream workspace. | **Multi-provider AI support** — Claude Code and OpenAI Codex on Apple Silicon, with other engines on the roadmap. |
+| Your candidate profile, tracker and application archives remain in a local workspace folder you choose. | **Multi-provider AI support** — Claude Code and OpenAI Codex on Apple Silicon, with other engines on the roadmap. |
 
 **Need the technical view?** [Architecture](./docs/architecture.md) · [Workflow support](./docs/supported-workflows.md) · [Multi-provider status](./docs/MULTI-PROVIDER-IMPLEMENTATION.md)
 
@@ -53,7 +53,7 @@ Discover aligned roles, prepare tailored documents through the upstream workflow
 
 The upstream framework is powerful: local files, AI-assisted workflows, and a serious job-search pipeline. I wanted that same rigor with a more approachable **visual** experience — one place to see discovery, ranking, Application Studio, the pipeline, and agent activity, with human approval before sensitive tools run and multi-provider AI support.
 
-AI Job Search Assistant is that desktop shell. Scout (the onboarding mascot) walks you through connecting a workspace; the rest stays local-first and under your control.
+AI Job Search Assistant is that desktop shell. Jobzuu (the onboarding AI agent) walks you through connecting a workspace; the rest stays local-first and under your control.
 
 This project’s outcomes are its own. Do **not** treat upstream creator results as evidence for this app.
 
@@ -116,7 +116,7 @@ Primary conversion path until a verified installer ships: **build the macOS Appl
 | Apple Silicon Mac, macOS 13+ | Native arm64 Tauri target |
 | AI provider CLI (Claude Code and/or OpenAI Codex), signed in | Multi-provider AI support for workflows (uses your plan or API credits) |
 | Python ≥ 3.10 | Upstream tools (`brew install python@3.12` recommended) |
-| Local [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) checkout | Unmodified workspace the app drives |
+| Local workspace folder | Any folder; Jobzuu scaffolds starter files on connect |
 | Node.js 20+ + npm | Frontend toolchain |
 | Rust (stable) + Xcode CLT | Tauri native build |
 
@@ -125,28 +125,24 @@ Optional: BasicTeX + LuaLaTeX/XeLaTeX (PDF compile), poppler/`pdftotext` (ATS te
 ### Commands
 
 ```bash
-# 1) Upstream workspace (source of truth)
-git clone https://github.com/ai-job-search-dev/ai-job-search.git
-# Follow upstream SETUP.md for profile / LaTeX as needed
-
-# 2) This repository
+# 1) This repository
 git clone https://github.com/AnkitParekh007/job-search-assistant.git
 cd job-search-assistant/apps/macos-apple-silicon
 
-# 3) Install & verify
+# 2) Install & verify
 npm install
 npm test
 (cd src-tauri && cargo test)
 
-# 4) Development
+# 3) Development
 npm run tauri dev
 
-# 5) Release .app (unsigned personal build)
+# 4) Release .app (unsigned personal build)
 npm run tauri build
 open "src-tauri/target/release/bundle/macos/AI Job Search.app"
 ```
 
-On first launch, select your upstream workspace (or change it in Settings).
+On first launch, choose any workspace folder (empty is fine — Jobzuu scaffolds starter files). Change it later in Settings.
 
 **Gatekeeper:** unsigned builds may need **right-click → Open** the first time. Do not disable system security broadly.
 
@@ -155,7 +151,7 @@ Full guide: [Installation](./docs/installation.md) · First-run walkthrough: [Ge
 ### First five minutes
 
 1. Launch (`tauri dev` or the built `.app`).  
-2. Select your **ai-job-search** workspace.  
+2. Choose a **workspace folder** (any local path).  
 3. Open **Settings → Dependencies** and fix anything red.  
 4. Run **Profile setup** (`/setup`) or confirm an existing profile.  
 5. **Discover** → **Rank** → open **Application Studio** → move cards on the **Pipeline**.
@@ -346,9 +342,7 @@ npm run build:market     # Vite React SPA → market-site/dist (GitHub Pages)
 
 AI Job Search Assistant is released under the [MIT License](./LICENSE).
 
-Inspired by [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search), created by [Mads Lorentzen](https://github.com/MadsLorentzen) and contributors. This is an **independent** graphical desktop companion around that framework — not an official upstream release.
-
-The upstream framework is also MIT-licensed. This repository drives a separate upstream checkout and does not vendor upstream source trees; retain upstream copyright and license notices for any code you copy from that project. See [NOTICE](./NOTICE), [THIRD-PARTY.md](./THIRD-PARTY.md), and [docs/LICENSE-DECISION.md](./docs/LICENSE-DECISION.md).
+Jobzuu / AI Job Search Assistant is an **independent** local-first desktop product. Your workspace is any folder you choose; the app does not require a third-party org checkout. See [NOTICE](./NOTICE), [THIRD-PARTY.md](./THIRD-PARTY.md), and [docs/LICENSE-DECISION.md](./docs/LICENSE-DECISION.md).
 
 ### Maintainer
 

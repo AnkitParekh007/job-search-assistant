@@ -35,7 +35,7 @@ function MoveDialog({ mv, onClose }: { mv: Move; onClose: () => void }) {
         <label className="label block mt-4 mb-1">Note (saved to the tracker, commas removed)</label>
         <input className="input w-full" autoFocus value={note} onChange={(e) => setNote(e.target.value)} placeholder={mv.to === "applied" ? "applied via company careers portal" : "e.g. phone screen booked for Dec 2"} />
         <div className="mt-4 rounded-lg border border-line p-3 text-[12.5px] space-y-1.5">
-          <div><b>Record with /outcome</b> (recommended): Claude follows the upstream workflow: it archives the submitted CV and cover letter, writes outcome.md and asks you anything it needs.</div>
+          <div><b>Record with AI</b> (recommended): the agent archives the submitted CV and cover letter, writes outcome.md and asks you anything it needs.</div>
           <div><b>Quick update</b>: changes only the tracker's status and notes (and the date when leaving drafted), exactly as /outcome Step 4 does, with no AI call. Archiving is skipped.</div>
         </div>
         <div className="flex justify-end gap-2 mt-4">

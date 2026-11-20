@@ -26,7 +26,7 @@ export default function Profile() {
           <button className="btn" onClick={() => run("/setup --section skills")}>Re-run skills</button>
           <button className="btn" onClick={() => run("/setup --section experience")}>Re-run experience</button>
           <button className="btn" onClick={() => run("/setup --section search")}>Re-run search</button>
-          <button className="btn" onClick={() => run("/expand", "expand")}><Wand2 size={14} />Enrich (/expand)</button>
+          <button className="btn" onClick={() => run("/expand", "expand")}><Wand2 size={14} />Enrich profile</button>
           <button className="btn btn-primary" onClick={() => run("/setup")}><UserRoundCog size={14} />Full setup</button>
         </>} /></div>
       <div className="flex-1 min-h-0 flex border-t border-line">
@@ -40,7 +40,7 @@ export default function Profile() {
           <button className="btn btn-ghost w-full mt-2 text-[12px]" onClick={load}><RefreshCw size={12} />Reload</button>
         </div>
         <div className="flex-1 overflow-auto p-6">
-          {f ? <div className="max-w-3xl"><div className="text-[11.5px] text-ink-3 mb-3">Read-only view. Profile changes go through /setup or /expand so upstream's grounding rules apply. Your profile is personal data: never push it to a public fork.</div><Markdown text={f.content.replace(/^---[\s\S]*?---\n/, "")} /></div> : <div className="skeleton h-40" />}
+          {f ? <div className="max-w-3xl"><div className="text-[11.5px] text-ink-3 mb-3">Read-only view. Use the buttons above to run setup or enrichment so grounding rules apply. Your profile is personal data: never push it to a public fork.</div><Markdown text={f.content.replace(/^---[\s\S]*?---\n/, "")} /></div> : <div className="skeleton h-40" />}
         </div>
       </div>
     </div>

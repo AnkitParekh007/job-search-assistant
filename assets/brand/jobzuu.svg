@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" fill="none">
+  <defs>
+    <linearGradient id="aurora" x1="16" y1="68" x2="64" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2EE6FF"/>
+      <stop offset="0.5" stop-color="#7B61FF"/>
+      <stop offset="1" stop-color="#FF4FB8"/>
+    </linearGradient>
+    <linearGradient id="auroraSoft" x1="24" y1="58" x2="58" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5AF0FF"/>
+      <stop offset="0.5" stop-color="#9B84FF"/>
+      <stop offset="1" stop-color="#FF7AD0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="40" cy="42" r="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7B61FF" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#FF4FB8" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#2EE6FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <ellipse cx="40" cy="44" rx="34" ry="32" fill="url(#glow)"/>
+
+  <circle cx="16" cy="50" r="2.3" fill="#2EE6FF"/>
+  <circle cx="20" cy="38" r="2.6" fill="#5AD8FF"/>
+  <circle cx="27" cy="26" r="2.8" fill="#7B61FF"/>
+  <circle cx="38" cy="18" r="3" fill="#B05BFF"/>
+  <circle cx="50" cy="16" r="2.8" fill="#E04FD0"/>
+  <circle cx="61" cy="22" r="2.5" fill="#FF4FB8"/>
+  <circle cx="68" cy="34" r="2.2" fill="#FF8C66"/>
+
+  <rect x="14" y="20" width="52" height="50" rx="18" fill="url(#aurora)"/>
+  <ellipse cx="30" cy="32" rx="14" ry="9" fill="url(#auroraSoft)" opacity="0.55"/>
+
+  <ellipse cx="40" cy="47" rx="18" ry="15.5" fill="#F7F7F8"/>
+  <ellipse cx="40" cy="47" rx="18" ry="15.5" fill="#0D0F22" opacity="0.04"/>
+
+  <ellipse cx="27.5" cy="51" rx="3.6" ry="2.3" fill="#FF8C66" opacity="0.75"/>
+  <ellipse cx="52.5" cy="51" rx="3.6" ry="2.3" fill="#FF8C66" opacity="0.75"/>
+
+  <ellipse cx="32.2" cy="45" rx="5.8" ry="6.8" fill="#0D0F22"/>
+  <ellipse cx="47.8" cy="45" rx="5.8" ry="6.8" fill="#0D0F22"/>
+  <circle cx="30.2" cy="42.6" r="1.7" fill="#ffffff"/>
+  <circle cx="45.8" cy="42.6" r="1.7" fill="#ffffff"/>
+  <circle cx="33.6" cy="47.4" r="1.05" fill="#ffffff" opacity="0.35"/>
+  <circle cx="49.2" cy="47.4" r="1.05" fill="#ffffff" opacity="0.35"/>
+  <circle cx="33.5" cy="46.8" r="2" fill="#2EE6FF"/>
+  <circle cx="49.1" cy="46.8" r="2" fill="#FF4FB8"/>
+
+  <path d="M31.5 54c3 3.6 14 3.6 17 0" stroke="#FF8C66" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+
+  <path d="M36.5 12 L44 4.5 M40.2 4.5 h8.5 v8.5" stroke="#FF8C66" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

@@ -1,6 +1,6 @@
 # AI Job Search — macOS (Apple Silicon)
 
-Local-first **Apple Silicon** (`arm64`) desktop app for macOS. Drives an unmodified [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) workspace with **multi-provider AI support** (Claude Code and/or OpenAI Codex).
+Local-first **Apple Silicon** (`arm64`) desktop app for macOS. Connects to a local workspace folder you choose (scaffolded on connect if empty) with **multi-provider AI support** (Claude Code and/or OpenAI Codex).
 
 This is the primary developed client. Sibling folders under `apps/` hold Intel Mac and Windows variants.
 

@@ -17,7 +17,7 @@ export default function Documents() {
   const kind = (d: string) => (d.startsWith("cv/") ? 2 : 1);
   return (
     <div className="h-full flex flex-col">
-      <div className="px-6"><PageHeader title="Documents" subtitle="Real CV and cover-letter sources in the workspace, compiled with the upstream engines"
+      <div className="px-6"><PageHeader title="Documents" subtitle="Real CV and cover-letter sources in the workspace, compiled with local TeX engines"
         actions={<>
           <button className={clsx("btn", side && "bg-accent-soft text-accent-ink")} onClick={() => setSide(!side)}><Columns2 size={14} />Compare with master CV</button>
           <button className="btn" onClick={() => startWorkflow("add-template", "/add-template").then((r) => r && go("activity"))}><LayoutTemplate size={14} />Add template</button>
@@ -36,7 +36,7 @@ export default function Documents() {
           {!!docs?.reports.length && <div className="label px-2 py-1.5">Reports: {docs.reports.join(", ")}</div>}
         </div>
         <div className="flex-1 min-w-0 flex">
-          {!cur ? <Empty icon={<FileText size={18} />} title="No documents yet" body="Tailored documents appear after /apply." /> : (
+          {!cur ? <Empty icon={<FileText size={18} />} title="No documents yet" body="Tailored documents appear after you draft an application in Studio." action={<button className="btn btn-primary" onClick={() => go("studio")}>Open Studio</button>} /> : (
             <>
               {side && <div className="flex-1 min-w-0 border-r border-line"><PdfView rel="cv/main_example.pdf" source="cv/main_example.tex" expectPages={2} /></div>}
               <div className="flex-1 min-w-0"><PdfView key={cur} rel={cur.replace(/\.tex$/, ".pdf")} source={cur} expectPages={kind(cur)} /></div>

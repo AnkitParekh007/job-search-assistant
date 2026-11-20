@@ -3,8 +3,10 @@ import { AnimatePresence, motion } from "motion/react";
 import clsx from "clsx";
 import { Bot, Check, ChevronRight, CircleAlert, FileText, Globe, Hand, Loader2, RotateCcw, Search, ShieldAlert, Square, Terminal, Users, Wrench, X } from "lucide-react";
 import { api, Pending, RunEvent } from "@ai-job-search/runtime";
+import { buildPrompt, type Workflow } from "@ai-job-search/core";
 import { useStore } from "../store";
 import { Markdown } from "./ui";
+import { AgentComposer } from "./AgentComposer";
 
 const TOOL_ICON: Record<string, any> = { Bash: Terminal, Read: FileText, Write: FileText, Edit: FileText, Grep: Search, Glob: Search, WebSearch: Globe, WebFetch: Globe, Task: Users, Agent: Users };
 
@@ -190,22 +192,43 @@ export function RunConsole({ runId, compact }: { runId: string; compact?: boolea
   const evs = events[runId];
   const items = useMemo(() => buildItems(evs || []), [evs]);
   const pend = pending[runId] || [];
-  const [msg, setMsg] = useState("");
   const [showRaw, setShowRaw] = useState(false);
+  const [optimistic, setOptimistic] = useState<{ key: string; text: string }[]>([]);
   const scroller = useRef<HTMLDivElement>(null);
   const isActive = ACTIVE.has(status);
+  const canResume = !isActive && !!run?.session_id;
   const failedResult = items.find((it) => it.t === "result" && !it.ok);
   const failHint = failedResult?.t === "result" ? failedResult.text : (run?.error || "");
 
   useEffect(() => { if (!evs) loadRun(runId); }, [runId, evs, loadRun]);
+  useEffect(() => { setOptimistic([]); }, [runId]);
+  useEffect(() => {
+    // Drop optimistic bubbles once the bridge echoes the same user text.
+    setOptimistic((prev) => prev.filter((o) => !items.some((it) => it.t === "user" && it.text === o.text)));
+  }, [items]);
   useEffect(() => {
     if (!isActive && (status === "failed" || status === "interrupted")) return; // don't yank scroll off the failure banner
     scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" });
-  }, [items.length, pend.length, isActive, status]);
+  }, [items.length, pend.length, optimistic.length, isActive, status]);
 
-  const send = async () => {
-    if (!msg.trim()) return;
-    try { await api.send(runId, msg.trim()); setMsg(""); } catch (e) { toast(String(e), "bad"); }
+  const sendLive = async (text: string) => {
+    setOptimistic((o) => [...o, { key: `opt-${Date.now()}`, text }]);
+    try {
+      await api.send(runId, text);
+    } catch (e) {
+      setOptimistic((o) => o.filter((x) => x.text !== text));
+      toast(String(e), "bad");
+      throw e;
+    }
+  };
+  const resumeWith = async (text: string) => {
+    if (!run) return;
+    const r = await startWorkflow(run.workflow, text, run.session_id);
+    if (!r) throw new Error("Could not continue session");
+  };
+  const launchWorkflow = async (w: Workflow, arg: string) => {
+    const r = await startWorkflow(w.id, buildPrompt(w, arg));
+    if (!r) throw new Error("Could not start workflow");
   };
   const stderr = (evs || []).filter((e) => e.kind === "stderr").map((e) => e.data.line);
 
@@ -250,7 +273,7 @@ export function RunConsole({ runId, compact }: { runId: string; compact?: boolea
                   {it.t === "text" && <div className="text-[13.5px]"><Markdown text={it.text} /></div>}
                   {it.t === "tool" && <ToolRow it={it} />}
                   {it.t === "step" && <div className="flex items-center gap-2 text-[12px] text-ink-3"><span className="w-1.5 h-1.5 rounded-full bg-accent" />{it.text}</div>}
-                  {it.t === "user" && <div className="ml-auto max-w-[80%] rounded-xl bg-accent-soft px-3 py-2 text-accent-ink w-fit selectable">{it.text}</div>}
+                  {it.t === "user" && <div className="ml-auto max-w-[80%] rounded-2xl bg-accent-soft px-3.5 py-2.5 text-[13.5px] text-accent-ink w-fit selectable whitespace-pre-wrap">{it.text}</div>}
                   {it.t === "denied" && <div className="flex items-start gap-2 text-[12.5px] text-warn"><ShieldAlert size={14} className="mt-0.5" />{it.text}</div>}
                   {it.t === "err" && <div className="flex items-start gap-2 text-[12.5px] text-bad"><CircleAlert size={14} className="mt-0.5" />{it.text}</div>}
                   {it.t === "result" && (
@@ -264,6 +287,11 @@ export function RunConsole({ runId, compact }: { runId: string; compact?: boolea
                 </motion.div>
               ))}
             </AnimatePresence>
+            {optimistic.map((o) => (
+              <div key={o.key} className="ml-auto max-w-[80%] rounded-2xl bg-accent-soft/70 px-3.5 py-2.5 text-[13.5px] text-accent-ink w-fit selectable whitespace-pre-wrap opacity-80">
+                {o.text}
+              </div>
+            ))}
             {status === "running" && <div className="flex items-center gap-2 text-ink-3 text-[12.5px]"><Loader2 size={13} className="animate-spin" />Working…</div>}
             {stderr.length > 0 && !isActive && status === "failed" && (
               <pre className="text-[11.5px] font-mono whitespace-pre-wrap bg-bad-soft text-bad rounded-lg p-2.5 selectable">{stderr.slice(-30).join("\n")}</pre>
@@ -272,12 +300,17 @@ export function RunConsole({ runId, compact }: { runId: string; compact?: boolea
           </div>
         )}
       </div>
-      {isActive && (
-        <div className="border-t border-line p-3 flex gap-2">
-          <textarea rows={1} className="input flex-1 resize-none" placeholder={status === "awaiting_input" ? "Reply to the agent (e.g. yes, proceed)… ⌘↩ to send" : "Send a message to this session… ⌘↩"} value={msg}
-            onChange={(e) => setMsg(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) send(); }} />
-          <button className="btn btn-primary" onClick={send} disabled={!msg.trim()}>Send</button>
-        </div>
+      {!compact && (
+        <AgentComposer
+          status={status}
+          canSend={isActive}
+          canResume={canResume}
+          sessionId={run?.session_id}
+          onSend={sendLive}
+          onResume={resumeWith}
+          onWorkflow={launchWorkflow}
+          onStop={isActive && status !== "awaiting_input" ? () => { void api.cancel(runId); } : undefined}
+        />
       )}
     </div>
   );

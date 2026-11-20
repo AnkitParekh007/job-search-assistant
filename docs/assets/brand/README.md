@@ -4,7 +4,7 @@ These are original, static SVG illustrations for the GitHub README. The drawings
 
 | Asset | Use |
 |-------|-----|
-| `scout-hero.svg` | Editorial dark hero with the Scout mascot, product positioning and a conceptual desktop command center |
+| `scout-hero.svg` | Editorial dark hero (legacy filename) with the Jobzuu agent mark, product positioning and a conceptual desktop command center |
 | `feature-triptych.svg` | Three visual value propositions: discover, prepare, and track |
 
 ## Visual language
@@ -16,6 +16,6 @@ These are original, static SVG illustrations for the GitHub README. The drawings
 - Accessibility: meaningful `alt` text in README, `role="img"` and `aria-label` on SVG roots
 - Security: no scripts, embedded HTML, external images, or external fonts
 
-Scout's face retains the antenna, rounded purple shell and smile from the onboarding mark. Do not describe the conceptual panels as screenshots or evidence of a released installer.
+Jobzuu uses Ascend brand DNA (ink tile, aurora stroke, coral signal). Do not describe the conceptual panels as screenshots or evidence of a released installer.
 
 When sanitized screenshots from the running app become available, feature them prominently alongside (or instead of) the concept illustrations.

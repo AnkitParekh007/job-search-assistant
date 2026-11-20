@@ -14,7 +14,7 @@
 
 1. Interview mode: distraction-free Q&A panel reading `07-interview-prep.md` and the archived prep packs.
 2. Gmail-sync proposal review screen (a structured table instead of console text).
-3. Portal manager: list `.agents/skills`, toggle `enabled:`, review code before copying from community-portals.
+3. Portal manager: list `.agents/skills`, toggle `enabled:`, review code before copying from portal skill packs.
 4. Backup and restore of tracker, archives and profile to a zip in app data.
 5. Skill-gap charts from `/upskill` output.
 6. A `.tex` editor with a live recompile.

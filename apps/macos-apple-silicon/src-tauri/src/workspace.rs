@@ -325,6 +325,197 @@ pub fn list_docs(ws: &Path, sub: &str, ext: &str) -> Vec<String> {
     v
 }
 
+const SCAFFOLD_CLAUDE_MD: &str = r#"# Job Search Workspace for [YOUR_NAME]
+
+<!-- Provider-neutral agent brief. Claude Code reads CLAUDE.md; Codex/Gemini/Ollama
+     use the same files via the desktop app. Fill placeholders with /setup or Profile. -->
+
+## Role
+This folder is a local job-search workspace. Your chosen AI provider helps with:
+1. **Job fit evaluation** — assess postings against your profile
+2. **CV / cover-letter drafting** — tailor documents for specific roles
+3. **Interview preparation** — answers, questions, and talking points
+4. **Tracking** — keep applications and outcomes in plain files you own
+
+## Candidate Profile
+
+### Identity
+- **Name:** [YOUR_NAME]
+- **Location:** [YOUR_CITY], [YOUR_COUNTRY]
+- **Languages:** [LANGUAGE] ([LEVEL])
+- **Status:** [YOUR_EMPLOYMENT_STATUS]
+- **LinkedIn headline:** "[YOUR_LINKEDIN_HEADLINE]"
+
+### Technical Skills
+- **Primary:** [YOUR_PRIMARY_SKILLS]
+- **Secondary:** [YOUR_SECONDARY_SKILLS]
+- **Domain:** [YOUR_DOMAIN_EXPERTISE]
+
+### Target Roles
+- [YOUR_TARGET_ROLE_1]
+- [YOUR_TARGET_ROLE_2]
+
+### Geography
+- [YOUR_GEO_1]
+- [YOUR_GEO_2]
+
+## Workspace layout
+- `job_search_tracker.csv` — application pipeline
+- `job_scraper/seen_jobs.json` — discovered postings
+- `documents/applications/` — per-company application packs
+- `cv/` · `cover_letters/` — document sources
+- `.claude/` — agent skills/commands (used when Claude Code is selected)
+
+Never invent facts that are not in these files. Ask before overwriting confirmed profile data.
+"#;
+
+const SCAFFOLD_AGENTS_MD: &str = r#"# Agent instructions
+
+This is a Jobzuu / AI Job Search workspace. Prefer reading and writing files in this
+folder only. Treat `CLAUDE.md` and the profile markdown under `.claude/skills/` as the
+source of truth for the candidate. Ask before destructive changes.
+"#;
+
+const SCAFFOLD_PROFILE_STUB: &str = r#"# Profile section
+
+<!-- Populated by /setup or the desktop Profile flow. -->
+
+- **Name:** [YOUR_NAME]
+- **Notes:** [YOUR_NOTES]
+"#;
+
+const SCAFFOLD_SEARCH_QUERIES: &str = r#"# Search queries
+
+<!-- Role families and geo priors used during discovery. -->
+
+## Role families
+- [YOUR_TARGET_ROLE_1]
+
+## Geography
+- [YOUR_GEO_1]
+"#;
+
+const SCAFFOLD_SETUP_CMD: &str = r#"# /setup
+
+Populate the candidate profile and search preferences in this workspace.
+Ask before overwriting any values the user has already confirmed.
+Replace `[YOUR_*]` placeholders in `CLAUDE.md` and `.claude/skills/**`.
+"#;
+
+const SCAFFOLD_RANK_CMD: &str = r#"# /rank
+
+Rank unseen jobs in `job_scraper/seen_jobs.json` against the candidate profile.
+Write fit notes; do not apply on the user's behalf.
+"#;
+
+const SCAFFOLD_APPLY_CMD: &str = r#"# /apply
+
+Prepare application materials for a chosen role under `documents/applications/`.
+Ask before sending anything externally.
+"#;
+
+/// Ensure `ws` is a usable job-search workspace. Creates missing starter files only —
+/// never overwrites existing content. Returns the relative paths that were created.
+pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
+    if !ws.exists() {
+        fs::create_dir_all(ws).map_err(|e| format!("could not create folder {}: {}", ws.display(), e))?;
+    }
+    if !ws.is_dir() {
+        return Err(format!("{} is not a folder", ws.display()));
+    }
+
+    let mut created = Vec::new();
+
+    let mkdir = |rel: &str, created: &mut Vec<String>| -> Result<(), String> {
+        let p = ws.join(rel);
+        if !p.exists() {
+            fs::create_dir_all(&p).map_err(|e| format!("mkdir {}: {}", rel, e))?;
+            created.push(rel.to_string());
+        }
+        Ok(())
+    };
+
+    let write_new = |rel: &str, body: &str, created: &mut Vec<String>| -> Result<(), String> {
+        let p = ws.join(rel);
+        if let Some(parent) = p.parent() {
+            fs::create_dir_all(parent).map_err(|e| format!("mkdir {}: {}", parent.display(), e))?;
+        }
+        if !p.exists() {
+            fs::write(&p, body).map_err(|e| format!("write {}: {}", rel, e))?;
+            created.push(rel.to_string());
+        }
+        Ok(())
+    };
+
+    for dir in [
+        ".claude/commands",
+        ".claude/skills/job-application-assistant",
+        ".claude/skills/job-scraper",
+        "job_scraper",
+        "documents/applications",
+        "cv",
+        "cover_letters",
+        "company_research",
+        "templates",
+    ] {
+        mkdir(dir, &mut created)?;
+    }
+
+    write_new("CLAUDE.md", SCAFFOLD_CLAUDE_MD, &mut created)?;
+    write_new("AGENTS.md", SCAFFOLD_AGENTS_MD, &mut created)?;
+    write_new(
+        "job_search_tracker.csv",
+        &(TRACKER_HEADER.join(",") + "\n"),
+        &mut created,
+    )?;
+    write_new("job_scraper/seen_jobs.json", "{\"seen\":{}}\n", &mut created)?;
+    write_new(
+        ".claude/skills/job-application-assistant/01-candidate-profile.md",
+        SCAFFOLD_PROFILE_STUB,
+        &mut created,
+    )?;
+    write_new(
+        ".claude/skills/job-application-assistant/02-behavioral-profile.md",
+        SCAFFOLD_PROFILE_STUB,
+        &mut created,
+    )?;
+    write_new(
+        ".claude/skills/job-application-assistant/03-writing-style.md",
+        SCAFFOLD_PROFILE_STUB,
+        &mut created,
+    )?;
+    write_new(
+        ".claude/skills/job-application-assistant/04-job-evaluation.md",
+        SCAFFOLD_PROFILE_STUB,
+        &mut created,
+    )?;
+    write_new(
+        ".claude/skills/job-application-assistant/05-cv-templates.md",
+        SCAFFOLD_PROFILE_STUB,
+        &mut created,
+    )?;
+    write_new(
+        ".claude/skills/job-application-assistant/06-cover-letter-templates.md",
+        SCAFFOLD_PROFILE_STUB,
+        &mut created,
+    )?;
+    write_new(
+        ".claude/skills/job-application-assistant/07-interview-prep.md",
+        SCAFFOLD_PROFILE_STUB,
+        &mut created,
+    )?;
+    write_new(
+        ".claude/skills/job-scraper/search-queries.md",
+        SCAFFOLD_SEARCH_QUERIES,
+        &mut created,
+    )?;
+    write_new(".claude/commands/setup.md", SCAFFOLD_SETUP_CMD, &mut created)?;
+    write_new(".claude/commands/rank.md", SCAFFOLD_RANK_CMD, &mut created)?;
+    write_new(".claude/commands/apply.md", SCAFFOLD_APPLY_CMD, &mut created)?;
+
+    Ok(created)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -413,5 +604,22 @@ mod tests {
     #[test]
     fn notes_never_contain_commas() {
         assert_eq!(sanitize_note("a, \"b\"\nc"), "a b c");
+    }
+
+    #[test]
+    fn ensure_workspace_scaffolds_empty_folder_once() {
+        let d = tempfile::tempdir().unwrap();
+        let created = ensure_workspace(d.path()).unwrap();
+        assert!(created.iter().any(|p| p == "CLAUDE.md"));
+        assert!(d.path().join("CLAUDE.md").exists());
+        assert!(d.path().join(".claude/commands").is_dir());
+        assert!(d.path().join("job_search_tracker.csv").exists());
+        let again = ensure_workspace(d.path()).unwrap();
+        assert!(again.is_empty(), "second pass must not overwrite: {:?}", again);
+        let original = fs::read_to_string(d.path().join("CLAUDE.md")).unwrap();
+        fs::write(d.path().join("CLAUDE.md"), "custom").unwrap();
+        let _ = ensure_workspace(d.path()).unwrap();
+        assert_eq!(fs::read_to_string(d.path().join("CLAUDE.md")).unwrap(), "custom");
+        assert!(original.contains("[YOUR_NAME]"));
     }
 }

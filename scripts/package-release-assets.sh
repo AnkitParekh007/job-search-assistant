@@ -26,7 +26,7 @@ This archive contains the platform client for AI Job Search Assistant.
 - Node.js 20+
 - Rust (stable) for desktop clients
 - AI provider CLI (Claude Code and/or OpenAI Codex) for multi-provider AI workflows
-- A local checkout of https://github.com/ai-job-search-dev/ai-job-search
+- A local workspace folder (Jobzuu scaffolds starter files on connect)
 
 ## Build
 ${cmds}

@@ -11,17 +11,17 @@ Platform packages are on [GitHub Releases](https://github.com/AnkitParekh007/job
 | Apple Silicon Mac (M1–M4) | Yes (this guide) | Intel / Windows ports exist as source; see [`apps/README.md`](../apps/README.md) |
 | macOS 13.0+ | Yes | `tauri.conf.json` → `minimumSystemVersion` |
 | AI provider CLI (Claude Code and/or OpenAI Codex) | Yes for AI | Multi-provider AI support — see below |
-| Python ≥ 3.10 | Yes for upstream tools | Prefer Homebrew `python@3.12` |
+| Python ≥ 3.10 | Yes for local tools | Prefer Homebrew `python@3.12` |
 | Node.js 20+ and npm | Yes to build UI | |
 | Rust stable + Xcode Command Line Tools | Yes for Tauri | |
-| Upstream [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) checkout | Yes | Unmodified workspace |
+| Local workspace folder | Yes | Any folder; Jobzuu scaffolds starter files on connect |
 | BasicTeX / LuaLaTeX / XeLaTeX | Optional until PDFs | Required for Studio compile |
 | poppler | Optional | ATS `pdftotext` check |
-| Bun | Optional | Community portal CLIs |
+| Bun | Optional | Portal CLIs that need it |
 
 ## 1. Install AI providers (multi-provider support)
 
-**Claude Code** (established path for all workflows, including Gmail/Notion connectors):
+**Claude Code** (full workflow coverage, including Gmail/Notion connectors):
 
 ```bash
 brew install --cask claude-code
@@ -41,16 +41,9 @@ python3.12 --version   # must be ≥ 3.10
 
 ## 3. LaTeX (for PDFs)
 
-Follow upstream `SETUP.md` in your ai-job-search checkout (BasicTeX + required packages). The app’s Settings → Dependencies lists what is missing.
+Install BasicTeX (or a fuller TeX distribution) and the packages your CV templates need. The app’s **Settings → Dependencies** lists what is missing.
 
-## 4. Clone upstream workspace
-
-```bash
-git clone https://github.com/ai-job-search-dev/ai-job-search.git
-# Keep this path handy for the app workspace picker
-```
-
-## 5. Clone and build this app
+## 4. Clone and build this app
 
 ```bash
 git clone https://github.com/AnkitParekh007/job-search-assistant.git
@@ -64,13 +57,9 @@ npm run tauri build
 open "src-tauri/target/release/bundle/macos/AI Job Search.app"
 ```
 
-## 6. Configure workspace path
+## 5. Choose a workspace folder
 
-On first launch, select the upstream checkout. You can change it later in Settings.
-
-Historical default probe path (may not exist on your machine):
-
-`~/Desktop/Projects/Automations/Job-Automations/ai-job-search`
+On first launch, pick any folder. Empty folders are fine — Jobzuu creates `CLAUDE.md` and starter files if needed. Change the path later in Settings.
 
 ## Gatekeeper (unsigned builds)
 
@@ -78,12 +67,4 @@ Personal builds are typically **unsigned**. On first open, use **Finder → righ
 
 ## Other platforms
 
-| Client | Docs |
-|--------|------|
-| macOS Intel | [`apps/macos-intel/README.md`](../apps/macos-intel/README.md) — `npm run build:intel` |
-| Windows | [`apps/windows/README.md`](../apps/windows/README.md) |
-
-## Related
-
-- Marketing install page: https://job-search-assistant.rebound-ops.org/docs/install
-- [Troubleshooting](./troubleshooting.md)
+See [`apps/README.md`](../apps/README.md) for Intel macOS and Windows source ports.

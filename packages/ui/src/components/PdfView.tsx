@@ -51,7 +51,7 @@ export function PdfView({ rel, source, expectPages }: { rel: string; source?: st
       </div>
       {check && (
         <div className="px-4 py-2 border-b border-line text-[12px] space-y-1">
-          {check.pages != null && <div className={expectPages && check.pages !== expectPages ? "text-bad" : "text-good"}>{check.pages} page(s){expectPages ? ` · upstream requires exactly ${expectPages}` : ""}</div>}
+          {check.pages != null && <div className={expectPages && check.pages !== expectPages ? "text-bad" : "text-good"}>{check.pages} page(s){expectPages ? ` · template expects exactly ${expectPages}` : ""}</div>}
           {check.ats && <pre className="font-mono text-[11px] whitespace-pre-wrap text-ink-2 selectable">{check.ats}</pre>}
         </div>
       )}

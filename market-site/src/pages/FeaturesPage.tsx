@@ -63,7 +63,7 @@ export function FeaturesPage() {
             </h1>
             <p className="lede">
               One native surface for discovery, ranking, drafting, tracking, and prep — each action mapped
-              to a real upstream slash command.
+              to a real in-app workflow.
             </p>
           </div>
 
@@ -101,7 +101,7 @@ export function FeaturesPage() {
                 failed runs never pretend they finished.
               </p>
               <p className="lede">
-                Seen jobs and tracker CSV stay in the upstream workspace so other tools and reports keep
+                Seen jobs and tracker CSV stay in your workspace folder so other tools and reports keep
                 working.
               </p>
             </div>
@@ -123,7 +123,7 @@ export function FeaturesPage() {
               <p className="kicker">Apply</p>
               <h2>Studio drafts. You approve. Files stay local.</h2>
               <p className="lede">
-                Application Studio wraps the upstream apply loop with a truthful stage tracker, sticky
+                Application Studio wraps the apply loop with a truthful stage tracker, sticky
                 retry/resume when a run fails, and PDF compile when a TeX source is ready.
               </p>
               <p className="lede">

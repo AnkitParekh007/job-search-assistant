@@ -12,4 +12,6 @@ export declare function open(opts?: {
   directory?: boolean;
   title?: string;
   defaultPath?: string;
+  multiple?: boolean;
+  filters?: { name: string; extensions: string[] }[];
 }): Promise<string | string[] | null>;

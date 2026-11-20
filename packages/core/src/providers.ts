@@ -116,8 +116,6 @@ export const PROVIDER_LABEL: Record<string, string> = Object.fromEntries(
 export const CLAUDE_ONLY_WORKFLOWS = new Set([
   "gmail-sync",
   "notion-sync",
-  "add-portal",
-  "add-template",
   "reset",
 ]);
 
@@ -132,6 +130,8 @@ export const CODEX_SUPPORTED_WORKFLOWS = new Set([
   "html-report",
   "expand",
   "upskill",
+  "add-portal",
+  "add-template",
 ]);
 
 /**

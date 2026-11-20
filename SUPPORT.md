@@ -28,6 +28,6 @@ Use the **Feature request** form. Explain the problem before the solution.
 
 See [SECURITY.md](./SECURITY.md) — do not file public issues for vulnerabilities.
 
-## Upstream engine
+## Scope
 
-Issues in slash-command behavior, portal scrapers, or LaTeX templates may belong in [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) rather than this desktop shell.
+File bugs and questions for this desktop app (UI, providers, workspace scaffolding, packaging) in this repository.

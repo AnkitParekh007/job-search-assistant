@@ -13,7 +13,7 @@ npm test
 npm run tauri dev
 ```
 
-You also need a local [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) workspace and a signed-in AI provider (Claude Code and/or OpenAI Codex) for end-to-end AI workflows. UI-only work can often proceed without live provider runs.
+You also need a local workspace folder (Jobzuu can scaffold one) and a signed-in AI provider (Claude Code and/or OpenAI Codex) for end-to-end AI workflows. UI-only work can often proceed without live provider runs.
 
 Full notes: [docs/development.md](./docs/development.md) · [docs/installation.md](./docs/installation.md)
 

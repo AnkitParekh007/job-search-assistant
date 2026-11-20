@@ -35,8 +35,8 @@ function Launcher({ w, provider }: { w: Workflow; provider: string }) {
       {!supported && reason && <div className="text-[11.5px] text-you mt-2">{reason}</div>}
       {supported && inference && <div className="text-[11.5px] text-ink-3 mt-2">Provider: {PROVIDER_LABEL[provider]} · model from Settings · no tool execution · no auto-submit</div>}
       {w.args?.map((a) => <input key={a.name} className="input w-full mt-3" placeholder={a.placeholder} value={arg} onChange={(e) => setArg(e.target.value)} disabled={!supported} />)}
-      {confirm && <div className="mt-3 rounded-lg bg-bad-soft text-bad px-3 py-2 text-[12px] flex gap-2"><AlertTriangle size={14} className="shrink-0 mt-0.5" />/reset rewrites your profile files. Claude will show exactly what it plans to reset and ask again before changing anything. Back up first from Settings.</div>}
-      <button className={clsx("btn mt-3 w-fit", destructive ? "btn-danger" : "btn-primary")} disabled={!supported || (required && !arg.trim())} onClick={run}><Play size={13} />{confirm ? "I understand, start /reset" : supported ? "Run" : "Unsupported"}</button>
+      {confirm && <div className="mt-3 rounded-lg bg-bad-soft text-bad px-3 py-2 text-[12px] flex gap-2"><AlertTriangle size={14} className="shrink-0 mt-0.5" />Reset rewrites your profile files. The agent will show exactly what it plans to change and ask again before writing. Back up first from Settings.</div>}
+      <button className={clsx("btn mt-3 w-fit", destructive ? "btn-danger" : "btn-primary")} disabled={!supported || (required && !arg.trim())} onClick={run}><Play size={13} />{confirm ? "I understand — start reset" : supported ? "Run in app" : "Unsupported"}</button>
     </div>
   );
 }
@@ -48,7 +48,7 @@ export default function Automations() {
   useEffect(() => { api.getSetting("ai_provider").then((p) => setProvider(p || "claude")).catch(() => {}); }, []);
   return (
     <div className="h-full overflow-auto px-6 pb-8">
-      <PageHeader title="Workflows" subtitle={`Routed through ${PROVIDER_LABEL[provider] || provider}. Claude uses upstream slash commands; Codex uses agentic instructions; OpenAI API / Gemini / Ollama run structured assists only.`} />
+      <PageHeader title="Workflows" subtitle={`Routed through ${PROVIDER_LABEL[provider] || provider}. Claude uses workspace slash commands; Codex uses agentic instructions; OpenAI API / Gemini / Ollama run structured assists only.`} />
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
         {WORKFLOWS.map((w) => <div key={w.id} className={clsx("rounded-[15px] transition-shadow", hl === w.id && "ring-2 ring-accent")}><Launcher w={w} provider={provider} /></div>)}
       </div>

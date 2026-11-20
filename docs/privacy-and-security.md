@@ -4,7 +4,7 @@ Summary of [`apps/macos-apple-silicon/docs/SECURITY-MODEL.md`](../apps/macos-app
 
 ## Principles
 
-- **Local-first:** jobs, applications, and profile live in your upstream workspace files.
+- **Local-first:** jobs, applications, and profile live in the workspace folder you chose.
 - **No product telemetry** and no remote app backend.
 - **No credential storage** in the app; provider / Gmail / Notion auth stay in the provider CLIs and connectors.
 - **Human approvals** for write and exec tools; no permission bypass flags.

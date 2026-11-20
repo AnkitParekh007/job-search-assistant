@@ -1,9 +1,9 @@
 # Upstream Audit
 
-**Upstream:** https://github.com/ai-job-search-dev/ai-job-search
+**Upstream:** (historical reference removed)
 **Baseline:** commit `d2afe00bfc9b7be8ffc2ee41acc22570970b76d4` (2026-11-19), `git describe` = `v2.0.0-4-gd2afe00`
 **License:** upstream `LICENSE` is preserved untouched in the upstream checkout. This desktop app is a separate project that *drives* the upstream checkout; it does not copy or modify upstream source.
-**Community portals:** https://github.com/ai-job-search-dev/community-portals (none installed in the audited workspace; `.agents/` absent).
+**Community portals:** (historical reference removed) (none installed in the audited workspace; `.agents/` absent).
 
 ## What upstream is
 

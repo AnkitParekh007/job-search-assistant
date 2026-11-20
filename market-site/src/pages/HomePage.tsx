@@ -51,7 +51,7 @@ export function HomePage() {
               One shortlist. <em>Your call.</em>
             </h1>
             <p className="lede load-in" style={{ ["--d" as string]: 2 }}>
-              AI Job Search is a native desktop command center for your <em>ai-job-search</em> workspace.
+              AI Job Search is a native desktop command center for a workspace folder you choose.
               Claude Code or OpenAI Codex runs the real workflows (discover, rank, draft, track) on files you
               own, and nothing is sent without your approval.
             </p>
@@ -92,8 +92,8 @@ export function HomePage() {
               Four stages, one loop, <em>zero black boxes.</em>
             </h2>
             <p className="lede">
-              Point the app at your workspace and pick a provider in Settings. Each stage is a real upstream
-              slash command you can watch, pause, or stop.
+              Point the app at your workspace and pick a provider in Settings. Each stage is a real workflow
+              you can watch, pause, or stop.
             </p>
           </div>
           <StoryScroller />
@@ -119,7 +119,7 @@ export function HomePage() {
                 <span className="ring r1" />
                 <span className="ring r2" />
                 <span className="ring r3" />
-                <span className="rings-core mono">~/ai-job-search</span>
+                <span className="rings-core mono">~/jobzuu-workspace</span>
                 {WORKSPACE_FILES.map((f, i) => (
                   <span key={f} className="file-chip mono" style={{ ["--i" as string]: i }}>
                     {f}

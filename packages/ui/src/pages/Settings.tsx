@@ -8,6 +8,7 @@ import type { ProviderStatus } from "@ai-job-search/core";
 import { PROVIDER_LABEL, PROVIDER_META, providerUiStatus, type ProviderId } from "@ai-job-search/core";
 import { useStore } from "../store";
 import { PageHeader } from "../components/ui";
+import { DepFixActions } from "../components/DepFixActions";
 
 type ModelOption = { id: string; name?: string };
 
@@ -50,11 +51,29 @@ export default function Settings() {
   };
 
   const browse = async () => {
-    const dir = await openDialog({ directory: true, title: "Choose your ai-job-search folder", defaultPath: ws?.path });
-    if (typeof dir === "string") setPath(dir);
+    try {
+      const picked = await openDialog({ directory: true, multiple: false, title: "Choose a workspace folder", defaultPath: ws?.path });
+      const dir = Array.isArray(picked) ? picked[0] : picked;
+      if (typeof dir === "string") setPath(dir);
+    } catch (e) {
+      toast(String(e), "bad");
+    }
   };
   const saveWs = async () => {
-    try { await api.setWorkspace(path.trim()); toast("Workspace switched", "good"); reload(); reloadDeps(); } catch (e) { toast(String(e), "bad"); }
+    try {
+      const next = await api.setWorkspace(path.trim());
+      const n = next?.created?.length ?? 0;
+      toast(
+        n > 0
+          ? `Workspace switched — created ${n} starter file${n === 1 ? "" : "s"}`
+          : "Workspace switched",
+        "good",
+      );
+      reload();
+      reloadDeps();
+    } catch (e) {
+      toast(String(e), "bad");
+    }
   };
   const applyTheme = async (t: string) => {
     setTheme(t);
@@ -177,10 +196,10 @@ export default function Settings() {
       <PageHeader title="Settings" />
       <section className="card p-5 mb-4">
         <div className="font-semibold mb-1">Workspace</div>
-        <div className="text-ink-2 text-[12.5px] mb-3">The ai-job-search checkout the app drives. Its files stay authoritative; the app keeps only run history and preferences in its own database.</div>
+        <div className="text-ink-2 text-[12.5px] mb-3">Any local folder you choose. Missing starter files (including <span className="font-mono">CLAUDE.md</span>) are created automatically; existing files stay authoritative. The app keeps only run history and preferences in its own database.</div>
         <div className="flex gap-2"><input className="input flex-1 font-mono text-[12px]" value={path} onChange={(e) => setPath(e.target.value)} /><button className="btn" onClick={browse}><FolderOpen size={14} />Choose…</button><button className="btn btn-primary" onClick={saveWs} disabled={!path.trim() || path === ws?.path}>Switch</button></div>
         <div className="grid grid-cols-2 gap-2 mt-3 text-[12.5px]">
-          <div className="flex justify-between border-b border-line py-1"><span className="text-ink-3">Upstream version</span><span className="font-mono">{ws?.upstream_version || "?"}</span></div>
+          <div className="flex justify-between border-b border-line py-1"><span className="text-ink-3">Workspace version</span><span className="font-mono">{ws?.upstream_version || "?"}</span></div>
           <div className="flex justify-between border-b border-line py-1 gap-2"><span className="text-ink-3">App data</span><button className="font-mono truncate text-accent-ink" onClick={() => ws && revealItemInDir(ws.data_dir)}>{ws?.data_dir}</button></div>
         </div>
         <div className="flex gap-2 mt-3"><button className="btn" onClick={() => ws && revealItemInDir(ws.path)}><FolderOpen size={14} />Reveal workspace</button></div>
@@ -327,7 +346,7 @@ export default function Settings() {
           </div>
         </div>
         <div className="text-[11.5px] text-ink-3 mt-3">
-          Claude uses upstream <span className="font-mono">.claude/settings.json</span> plus in-app approvals.
+          Claude uses workspace <span className="font-mono">.claude/settings.json</span> plus in-app approvals.
           Codex uses app-server <span className="font-mono">approvalPolicy: on-request</span> and <span className="font-mono">workspace-write</span> sandbox.
           OpenAI API / Gemini API / Ollama run structured inference only — they do not execute tools or auto-submit applications.
         </div>
@@ -342,12 +361,15 @@ export default function Settings() {
               <div className="min-w-0 flex-1">
                 <div className="font-medium">{d.name}{!d.required && <span className="text-ink-3 font-normal"> · optional</span>}</div>
                 <div className="text-[12px] text-ink-2 font-mono truncate selectable">{d.detail}</div>
-                {!d.ok && <div className="text-[12px] text-ink-2 mt-1 selectable">{d.fix}</div>}
+                <DepFixActions depId={d.id} ok={d.ok} />
+                {!d.ok && !["portals", "bun", "claude", "claude_auth", "codex", "codex_auth", "ai_provider"].includes(d.id) && (
+                  <div className="text-[12px] text-ink-2 mt-1 selectable">{d.fix}</div>
+                )}
               </div>
             </div>))}
           {!deps && <div className="skeleton h-20" />}
         </div>
-        <div className="text-[11.5px] text-ink-3 mt-2">The app never runs installers on its own. Commands shown are the official install paths; run them yourself in Terminal.</div>
+        <div className="text-[11.5px] text-ink-3 mt-2">Agent workflows (Add portal, setup, scrape, …) run inside the app. System package installs (brew, TeX, …) stay manual in Terminal — the app never runs installers for you.</div>
       </section>
 
       <section className="card p-5 mb-4">

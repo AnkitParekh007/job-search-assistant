@@ -112,7 +112,7 @@ export default function Interview() {
         </div>
 
         {md === null ? <div className="skeleton h-64" /> : data.stories.length === 0 ? (
-          <Empty icon={<GraduationCap size={18} />} title="No STAR stories yet" body="They come from 07-interview-prep.md, which /setup fills from your experience." action={<button className="btn" onClick={() => startWorkflow("setup", "/setup --section experience").then((r) => r && go("activity"))}>Run setup for experience</button>} />
+          <Empty icon={<GraduationCap size={18} />} title="No STAR stories yet" body="They come from 07-interview-prep.md once your experience section is filled in." action={<button className="btn" onClick={() => startWorkflow("setup", "/setup --section experience").then((r) => r && go("activity"))}>Fill experience with AI</button>} />
         ) : (
           <>
             <div className="label mb-2">STAR stories · {data.stories.length}</div>

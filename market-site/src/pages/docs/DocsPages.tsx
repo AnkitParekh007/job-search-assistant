@@ -45,7 +45,7 @@ export function DocsOverview() {
           <h1>Overview</h1>
           <p className="lede">
             AI Job Search Assistant is the local-first desktop shell for your{" "}
-            <em>ai-job-search</em> workspace. Discover, rank, prepare, and track with{" "}
+            local workspace folder. Discover, rank, prepare, and track with{" "}
             <strong>multi-provider AI support</strong> — Claude Code or OpenAI Codex — on files you own.
           </p>
           <div className="cta-row">
@@ -99,7 +99,7 @@ export function DocsOverview() {
             and Windows x64.
           </li>
           <li>
-            <strong>Full workflow catalog</strong> — all 14 upstream commands from Automations, with Codex
+            <strong>Full workflow catalog</strong> — all 14 workflows from Automations, with Codex
             gating for Claude-only connectors.
           </li>
           <li>
@@ -149,7 +149,7 @@ export function DocsQuickstart() {
           <li>
             <div>
               <strong>Point at your workspace</strong>
-              Onboarding asks for your <code>ai-job-search</code> checkout. Change it later in Settings.
+              Onboarding asks for any local workspace folder (scaffolds starter files if empty). Change it later in Settings.
             </div>
           </li>
           <li>
@@ -271,18 +271,15 @@ export function DocsInstall() {
                   <strong>BasicTeX</strong>
                 </td>
                 <td>CV / cover-letter PDFs</td>
-                <td>LuaLaTeX + XeLaTeX packages (see upstream SETUP)</td>
+                <td>LuaLaTeX + XeLaTeX packages for your CV templates</td>
               </tr>
               <tr>
                 <td>
-                  <strong>ai-job-search workspace</strong>
+                  <strong>Workspace folder</strong>
                 </td>
-                <td>Unmodified upstream source of truth</td>
+                <td>Local source of truth for profile, jobs, and applications</td>
                 <td>
-                  <code>git clone</code> the{" "}
-                  <a href="https://github.com/ai-job-search-dev/ai-job-search" rel="noopener">
-                    upstream repo
-                  </a>
+                  Choose any folder in onboarding; Jobzuu scaffolds starter files if needed
                 </td>
               </tr>
               <tr>
@@ -333,7 +330,7 @@ export function DocsFirstRun() {
         <p className="lede">Workspace, AI provider, profile setup, and dependency health.</p>
         <h2>Choose a workspace</h2>
         <p>
-          The app needs a local <strong>ai-job-search</strong> checkout. Onboarding detects a default path
+          The app needs a local <strong>workspace folder</strong>. Onboarding lets you pick any path
           or lets you pick another folder. Settings → Workspace can change it later and reveal it in Finder.
         </p>
         <h2>Pick an AI provider</h2>
@@ -496,7 +493,7 @@ export function DocsDiscover() {
         </p>
         <p>
           Optional focus argument examples: a specialty, <code>broad</code>, or <code>health</code>. Portal
-          health text comes from upstream when portals are installed.
+          health text comes from the workspace when portals are installed.
         </p>
         <h2>Rank matches</h2>
         <p>
@@ -574,7 +571,7 @@ export function DocsTrack() {
         <h2>Pipeline</h2>
         <p>
           Use Pipeline to move applications through statuses with validated transitions.{" "}
-          <strong>Quick update</strong> writes natively with upstream tracker rules; full{" "}
+          <strong>Quick update</strong> writes natively with tracker rules; full{" "}
           <code>/outcome</code> archives what was sent and can draft follow-ups, but never sends email for
           you.
         </p>
@@ -620,7 +617,7 @@ export function DocsSettings() {
         <p className="lede">Workspace path, AI Providers, dependency health, and appearance.</p>
         <h2>Workspace</h2>
         <p>
-          Point the app at your upstream checkout. Reveal opens Finder. Changing the path reloads tracker and
+          Point the app at your workspace folder. Reveal opens Finder. Changing the path reloads tracker and
           documents from the new folder.
         </p>
         <h2>AI Providers</h2>
@@ -657,7 +654,7 @@ export function DocsWorkflows() {
     <>
       <article className="docs-article">
         <h1>Workflows</h1>
-        <p className="lede">Every catalogued upstream command the app can launch — 14 total.</p>
+        <p className="lede">Every catalogued workflow the app can launch — 14 total.</p>
         <div className="docs-table-wrap">
           <table className="docs-table">
             <thead>
@@ -833,10 +830,10 @@ export function DocsSecurity() {
           </li>
           <li>
             <strong>Destructive resets</strong> — <code>/reset</code> needs confirmation in the app and
-            again upstream (Claude only).
+            again with Claude Code only.
           </li>
           <li>
-            <strong>No telemetry backend</strong> — network use is your AI provider and what upstream
+            <strong>No telemetry backend</strong> — network use is your AI provider and what your provider
             workflows fetch.
           </li>
           <li>

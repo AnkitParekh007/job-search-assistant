@@ -1,11 +1,8 @@
 # Third-party attribution
 
-## Upstream engine (required at runtime)
+## Historical inspiration
 
-| Project | URL | License (GitHub metadata) | Relationship |
-|---------|-----|---------------------------|--------------|
-| ai-job-search | https://github.com/ai-job-search-dev/ai-job-search | MIT | Separate checkout driven by this app; not vendored here |
-| community-portals (optional) | https://github.com/ai-job-search-dev/community-portals | See upstream repo | Optional portal skills |
+Early product design was informed by the open-source job-search automation community. Jobzuu is an **independent** desktop product: it does not require cloning or linking to third-party org repositories at runtime. Your workspace is any local folder Jobzuu scaffolds or you already own.
 
 ## Major runtime / build dependencies (non-exhaustive)
 

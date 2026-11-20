@@ -1,14 +1,9 @@
 AI Job Search
 Copyright (c) 2026 Ankit Parekh
 
-This product drives the separate upstream project:
-
-  ai-job-search
-  https://github.com/ai-job-search-dev/ai-job-search
-
-Upstream is reported as MIT-licensed on GitHub. This repository does not copy
-upstream source trees into the git history as a vendored dependency; users keep
-their own upstream checkout.
+This product is an independent local-first desktop application. Workspace
+files live in a folder you choose on your machine; the app does not vendor
+or require a third-party org checkout at runtime.
 
 Third-party package licenses (npm, crates.io) remain under their respective terms.
 See THIRD-PARTY.md for a high-level inventory.

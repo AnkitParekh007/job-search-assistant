@@ -27,7 +27,7 @@ This audit records evidence from the local checkout, public GitHub API metadata,
 | Wiki | API: `has_wiki: true` | Enabled; no content audited in this repo (Wiki is a separate git store) |
 | Topics / description / homepage | API: empty / null / null | Discoverability metadata unset |
 | Screenshots | No product PNGs under repo docs | Marketing site uses CSS mock chrome only |
-| Upstream | https://github.com/ai-job-search-dev/ai-job-search — API license MIT | Driven unmodified; not vendored here |
+| Workspace | Local folder chosen by the user (scaffolded on connect) | Not tied to a third-party org checkout |
 | Shared packages | Untracked local WIP (`packages/`) observed during audit and stashed | Not part of `origin/main` at audit time |
 
 ---

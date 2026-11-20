@@ -115,7 +115,7 @@ export const DOCS_META: Record<
   workflows: {
     section: "reference",
     title: "Workflows — Docs — AI Job Search Assistant",
-    description: "All 14 upstream commands plus Claude vs Codex support.",
+    description: "All 14 workflows plus Claude vs Codex support.",
     path: "/docs/workflows",
   },
   security: {

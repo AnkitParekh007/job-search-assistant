@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { openUrl } from "@ai-job-search/runtime";
 import clsx from "clsx";
-import { Check, Columns2, ExternalLink, HeartPulse, LayoutGrid, ListOrdered, MapPin, Minus, Radar, Rows3, Search, ShieldAlert, Sparkles, X } from "lucide-react";
+import { Check, Columns2, ExternalLink, HeartPulse, LayoutGrid, ListOrdered, MapPin, Minus, Plus, Radar, Rows3, Search, ShieldAlert, Sparkles, X } from "lucide-react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { SeenJob } from "@ai-job-search/runtime";
 import { useStore } from "../store";
 import { ContextMenu, Empty, MenuItem, ScoreRing } from "../components/ui";
+import { AddPortalAction } from "../components/DepFixActions";
 
 const VERDICT: Record<string, string> = { PASS: "bg-good-soft text-good", FLAG: "bg-warn-soft text-warn", FAIL: "bg-bad-soft text-bad" };
 
@@ -97,6 +98,7 @@ export default function Jobs() {
   const [showCmp, setShowCmp] = useState(false);
   const [menu, setMenu] = useState<{ x: number; y: number; j: SeenJob } | null>(null);
   const [focus, setFocus] = useState("");
+  const [showAddPortal, setShowAddPortal] = useState(false);
   useEffect(() => { sessionStorage.removeItem("jobFit"); sessionStorage.removeItem("openJob"); }, []);
   useEffect(() => { try { localStorage.setItem("jobsView", view); } catch { /* storage unavailable */ } }, [view]);
   useEffect(() => { const h = (e: KeyboardEvent) => { if (e.key === "Escape" && !showCmp) setSel(null); }; window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h); }, [showCmp]);
@@ -132,9 +134,19 @@ export default function Jobs() {
             <button className="btn btn-primary" onClick={() => run("scrape", focus.trim() ? `/scrape ${focus.trim()}` : "/scrape")}>Find jobs</button>
           </div>
           {seen.length > 0 && <button className="btn btn-lg" onClick={() => run("rank", "/rank")}><ListOrdered size={14} />Rank new</button>}
+          <button className="btn btn-lg" title="Add a job-board portal scraper" onClick={() => setShowAddPortal((v) => !v)} aria-label="Add portal"><Plus size={14} />Add portal</button>
           <button className="btn btn-lg btn-ghost" title="Probe installed portal CLIs" onClick={() => run("scrape", "/scrape health")} aria-label="Probe installed portal CLIs"><HeartPulse size={14} /></button>
         </div>
       </div>
+      {showAddPortal && (
+        <div className="px-6 pb-3">
+          <div className="card p-4 max-w-xl">
+            <div className="font-medium text-[13px] mb-1">Add a portal</div>
+            <div className="text-ink-3 text-[12px] mb-2">Runs the guided portal workflow with your active AI provider — no Terminal or Claude Code hop required.</div>
+            <AddPortalAction onStarted={() => setShowAddPortal(false)} />
+          </div>
+        </div>
+      )}
       {seen.length > 0 && (
       <div className="px-6 pb-3 flex flex-wrap items-center gap-2">
         <div className="relative"><Search size={13} className="absolute left-2.5 top-[9px] text-ink-3" /><input className="input pl-8 w-56 sm:w-64" placeholder="Filter title, company, place" value={q} onChange={(e) => setQ(e.target.value)} /></div>
@@ -151,7 +163,7 @@ export default function Jobs() {
       <Group orientation="horizontal" className="flex-1 min-h-0 border-t border-line">
         <Panel defaultSize={current ? 58 : 100} minSize={35}>
           <div className="h-full overflow-auto">
-            {list.length === 0 ? <Empty icon={<Radar size={18} />} title={seen.length ? "No jobs match these filters" : "No jobs discovered yet"} body={seen.length ? `${hidden} job${hidden === 1 ? " is" : "s are"} hidden by the current filters.` : "Find jobs searches your installed portals, or the web if you have none, and lists only real postings."} action={seen.length ? <button className="btn" onClick={() => { setQ(""); setFit("all"); setStatus("all"); }}>Clear filters</button> : <button className="btn btn-primary" onClick={() => run("scrape", "/scrape")}>Find jobs</button>} /> :
+            {list.length === 0 ? <Empty icon={<Radar size={18} />} title={seen.length ? "No jobs match these filters" : "No jobs discovered yet"} body={seen.length ? `${hidden} job${hidden === 1 ? " is" : "s are"} hidden by the current filters.` : "Find jobs searches your installed portals, or the web if you have none. Add a portal if you want a board-specific scraper."} action={seen.length ? <button className="btn" onClick={() => { setQ(""); setFit("all"); setStatus("all"); }}>Clear filters</button> : <div className="flex flex-wrap gap-2 justify-center"><button className="btn btn-primary" onClick={() => run("scrape", "/scrape")}>Find jobs</button><button className="btn" onClick={() => setShowAddPortal(true)}><Plus size={14} />Add portal</button></div>} /> :
               view === "cards" ? (
                 <div className="p-5 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
                   {list.map((j, i) => (

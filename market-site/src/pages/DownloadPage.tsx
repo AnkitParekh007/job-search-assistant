@@ -163,7 +163,7 @@ export function DownloadPage() {
             <div className="stack reveal reveal-delay-1">
               <h2>What you need on the Mac</h2>
               <p className="lede">
-                The app is a shell. Your AI provider and upstream workspace do the real work.
+                The app is a shell. Your AI provider and local workspace folder do the real work.
               </p>
               <ul className="req-list">
                 <li>
@@ -174,7 +174,7 @@ export function DownloadPage() {
                 </li>
                 <li>
                   <span>
-                    <strong>Python ≥ 3.10</strong> for upstream tools (Homebrew <code>python@3.12</code>{" "}
+                    <strong>Python ≥ 3.10</strong> for local tools (Homebrew <code>python@3.12</code>{" "}
                     recommended).
                   </span>
                 </li>
@@ -185,13 +185,13 @@ export function DownloadPage() {
                 </li>
                 <li>
                   <span>
-                    <strong>ai-job-search workspace</strong> checked out locally — the unmodified upstream
-                    source of truth.
+                    <strong>A workspace folder</strong> on disk — any path; Jobzuu scaffolds starter files if
+                    the folder is empty.
                   </span>
                 </li>
               </ul>
               <p className="fine-print">
-                Optional: poppler for ATS text checks; Bun only if you install community portal CLIs.
+                Optional: poppler for ATS text checks; Bun only if you install portal CLIs that need it.
               </p>
             </div>
           </div>

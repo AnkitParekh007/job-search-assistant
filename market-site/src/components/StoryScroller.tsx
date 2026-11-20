@@ -66,7 +66,7 @@ export function StoryScroller() {
             <span className="dot" />
             <span className="dot" />
             <span className="dot" />
-            <span className="stage-path mono">~/ai-job-search · {CHAPTERS[active].command}</span>
+            <span className="stage-path mono">~/jobzuu-workspace · {CHAPTERS[active].command}</span>
           </div>
           <div className="stage-rail">
             {CHAPTERS.map((c, i) => (

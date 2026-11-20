@@ -32,7 +32,7 @@ export default function ActivityPage() {
   return (
     <div className="h-full flex flex-col">
       <div className="px-6 pb-3">
-        <h1 className="h-title">Agent Activity</h1><div className="text-ink-2 mt-0.5">What Claude is doing, what it did, and what it's waiting on you for.</div>
+        <h1 className="h-title">Agent Activity</h1><div className="text-ink-2 mt-0.5">Watch the run, approve steps, and steer Jobzuu from the composer — Enter to send, <span className="font-mono text-[12px]">/</span> for workflows.</div>
         {runs.length > 0 && (
           <>
             <div className="flex items-center gap-1 mt-3 overflow-x-auto pb-1">

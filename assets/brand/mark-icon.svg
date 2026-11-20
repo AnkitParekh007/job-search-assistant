@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="g" x1="192" y1="832" x2="832" y2="192" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2EE6FF"/>
+      <stop offset="0.55" stop-color="#7B61FF"/>
+      <stop offset="1" stop-color="#FF4FB8"/>
+    </linearGradient>
+  </defs>
+  <!-- Full-bleed brand ink — Apple masks to squircle -->
+  <rect width="1024" height="1024" fill="#0D0F22"/>
+  <!-- Inset aurora ring (inside safe area, not an outer white box) -->
+  <rect x="56" y="56" width="912" height="912" rx="220" fill="none" stroke="url(#g)" stroke-width="36"/>
+  <!-- Dotted ascend arc -->
+  <path d="M240 784 A544 544 0 0 1 784 240" fill="none" stroke="url(#g)" stroke-width="56" stroke-linecap="round" stroke-dasharray="2 100"/>
+  <!-- Coral arrow -->
+  <path d="M352 672 L678 346 M448 346 h230 v230" fill="none" stroke="#FF8C66" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

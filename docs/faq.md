@@ -1,7 +1,7 @@
 # FAQ
 
 **What is AI Job Search?**  
-A local-first macOS desktop shell that drives the upstream ai-job-search workspace with **multi-provider AI support** (Claude Code or OpenAI Codex).
+A local-first macOS desktop shell (Jobzuu) for your own workspace folder, with **multi-provider AI support** (Claude Code, OpenAI Codex, and more).
 
 **Does it auto-apply to jobs?**  
 No. It helps you discover, rank, prepare documents, and track status. You submit applications yourself.
@@ -13,7 +13,7 @@ Not exclusively. The app has multi-provider AI support: Claude Code and/or OpenA
 The app has no subscription of its own. Claude Code and Codex use your respective plan or API credits. LaTeX and portal tooling may have their own install costs.
 
 **Where is my data?**  
-In your upstream workspace files, plus local SQLite for run history/settings under Application Support.
+In the local workspace folder you chose, plus SQLite for run history/settings under Application Support.
 
 **Is there a Windows / Intel app?**  
 Source ports exist under `apps/macos-intel` and `apps/windows`. Apple Silicon is the developed client. See [apps/README.md](../apps/README.md).

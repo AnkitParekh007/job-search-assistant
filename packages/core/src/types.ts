@@ -1,4 +1,13 @@
-export type Workspace = { path: string; valid: boolean; upstream_version: string; data_dir: string };
+export type Workspace = {
+  path: string;
+  valid: boolean;
+  /** True only after the user explicitly chose a folder via set_workspace. */
+  configured?: boolean;
+  upstream_version: string;
+  data_dir: string;
+  /** Relative paths created by ensure_workspace on the last set_workspace call. */
+  created?: string[];
+};
 export type Dep = { id: string; name: string; ok: boolean; required: boolean; detail: string; fix: string };
 export type TrackerRow = { index: number; fields: Record<string, string> };
 export type Tracker = { header: string[]; rows: TrackerRow[]; exists: boolean };
