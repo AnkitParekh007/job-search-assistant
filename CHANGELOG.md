@@ -4,10 +4,15 @@ All notable changes to this repository are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
-for the application package version (`0.1.0` in `package.json` / `tauri.conf.json`).
+for the application package version (`0.1.1` in `package.json` / `tauri.conf.json`).
 
-> **Note:** No GitHub Release tags have been published yet. Entries below follow
-> git history on `main` and must not invent binary artifacts.
+## [0.1.1] — 2026-11-20
+
+### Fixed
+- Tailwind v4 monorepo source scanning so the desktop UI styles correctly when packages load via Vite `@fs` paths.
+
+### Changed
+- Sidebar and desktop app icons use the market-site Ascend brand mark.
 
 ## [Unreleased]
 

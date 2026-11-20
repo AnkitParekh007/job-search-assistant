@@ -245,7 +245,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 ### Key limitations
 
 - Primary support target is **macOS Apple Silicon**.
-- GitHub Release `v0.1.0` ships platform client packages; notarized installers are not published yet.
+- GitHub Release `v0.1.1` ships platform client packages; notarized installers are not published yet.
 - Does **not** auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
 

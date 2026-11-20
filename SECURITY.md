@@ -15,7 +15,7 @@ Prefer **GitHub Private Vulnerability Reporting** on this repository (Settings â
 
 If private reporting is not yet enabled, contact the maintainer via GitHub (@AnkitParekh007) using a private channel and include:
 
-- Affected commit or package version (`0.1.0` today)
+- Affected commit or package version (`0.1.1` today)
 - Platform (macOS version + CPU architecture)
 - Clear reproduction steps **without** secrets
 - Impact assessment (what an attacker could achieve)

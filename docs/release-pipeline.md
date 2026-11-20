@@ -6,8 +6,8 @@ Downloadable packages are published as GitHub Release assets and linked from the
 
 | Item | Value |
 |------|-------|
-| Tag | `v0.1.0` |
-| Assets | `AI-Job-Search-0.1.0-macos-arm64.zip`, `…-macos-x64.zip`, `…-windows-x64.zip`, `SHA256SUMS.txt` |
+| Tag | `v0.1.1` |
+| Assets | `AI-Job-Search-0.1.1-macos-arm64.zip`, `…-macos-x64.zip`, `…-windows-x64.zip`, `SHA256SUMS.txt` |
 | Site constant | `RELEASE_TAG` in `market-site/src/lib/releases.ts` |
 
 ## Local packaging (preferred for macOS `.app`)
@@ -16,11 +16,11 @@ On an Apple Silicon Mac with a successful Tauri build:
 
 ```bash
 cd apps/macos-apple-silicon && npm run tauri build
-./scripts/package-release-assets.sh 0.1.0
-gh release create v0.1.0 \
-  dist-release/AI-Job-Search-0.1.0-*.zip \
+./scripts/package-release-assets.sh 0.1.1
+gh release create v0.1.1 \
+  dist-release/AI-Job-Search-0.1.1-*.zip \
   dist-release/SHA256SUMS.txt \
-  --title "AI Job Search Assistant v0.1.0" \
+  --title "AI Job Search Assistant v0.1.1" \
   --notes-file - <<'EOF'
 Desktop packages for AI Job Search Assistant.
 
@@ -35,7 +35,7 @@ EOF
 `.github/workflows/release.yml` runs on `v*` tags (and `workflow_dispatch`) and publishes source/client zips from Ubuntu. It cannot produce notarized macOS binaries on this account (macOS runners unavailable). Prefer local packaging for Apple Silicon `.app` assets, then upload/replace release files:
 
 ```bash
-gh release upload v0.1.0 dist-release/AI-Job-Search-0.1.0-macos-arm64.zip --clobber
+gh release upload v0.1.1 dist-release/AI-Job-Search-0.1.1-macos-arm64.zip --clobber
 ```
 
 ## Gatekeeper (unsigned)

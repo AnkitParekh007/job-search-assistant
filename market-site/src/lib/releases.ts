@@ -1,8 +1,8 @@
 import { GITHUB_REPO } from "./site";
 
 /** Keep in sync with the GitHub Release tag created for downloadable assets. */
-export const RELEASE_TAG = "v0.1.0";
-export const RELEASE_VERSION = "0.1.0";
+export const RELEASE_TAG = "v0.1.1";
+export const RELEASE_VERSION = "0.1.1";
 
 export const RELEASES_PAGE = `${GITHUB_REPO}/releases`;
 export const RELEASE_TAG_URL = `${GITHUB_REPO}/releases/tag/${RELEASE_TAG}`;

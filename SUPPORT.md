@@ -12,7 +12,7 @@ Start here:
 
 ## Bugs
 
-Open a GitHub Issue with the **Bug report** form. Include macOS version, CPU architecture, app version (`0.1.0` / commit), sanitized logs, and reproduction steps.
+Open a GitHub Issue with the **Bug report** form. Include macOS version, CPU architecture, app version (`0.1.1` / commit), sanitized logs, and reproduction steps.
 
 **Never** post credentials, full resumes, private employer correspondence, or tracker rows with personal data.
 
