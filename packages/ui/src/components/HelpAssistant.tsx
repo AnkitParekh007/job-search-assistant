@@ -24,10 +24,12 @@ export function HelpAssistant() {
   const input = useRef<HTMLInputElement>(null);
   const transcript = useRef<HTMLDivElement>(null);
   const launcher = useRef<HTMLButtonElement>(null);
+  const previouslyOpen = useRef(false);
 
   useEffect(() => {
     if (open) input.current?.focus();
-    else launcher.current?.focus();
+    else if (previouslyOpen.current) launcher.current?.focus();
+    previouslyOpen.current = open;
   }, [open]);
 
   useEffect(() => {
