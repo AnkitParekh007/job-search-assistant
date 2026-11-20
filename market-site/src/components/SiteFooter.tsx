@@ -26,6 +26,7 @@ export function SiteFooter({
           <Link to="/">About</Link>
           <Link to="/features">Features</Link>
           <Link to="/benchmarks">ATS benchmarks</Link>
+          <Link to="/compare">Compare tools</Link>
           <Link to="/faq">FAQs</Link>
           <Link to="/docs">Docs</Link>
           <Link to="/download">Install</Link>
