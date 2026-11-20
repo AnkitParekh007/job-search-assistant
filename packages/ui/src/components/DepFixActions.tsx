@@ -6,30 +6,32 @@ import { useStore } from "../store";
 /** Inline Add Portal control — runs the in-app workflow instead of sending users to a CLI. */
 export function AddPortalAction({
   onStarted,
-  finishOnboarding,
   dense,
 }: {
   onStarted?: () => void;
-  /** When true, mark onboarding complete so Activity is reachable. */
-  finishOnboarding?: () => void;
   dense?: boolean;
 }) {
   const { startWorkflow, go, toast } = useStore();
   const [board, setBoard] = useState("");
   const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
   const w = byId("add-portal")!;
 
   const run = async () => {
     setBusy(true);
+    setStatus(null);
     try {
       const r = await startWorkflow("add-portal", buildPrompt(w, board));
       if (r) {
-        finishOnboarding?.();
+        setStatus("Portal setup started — stay on this step until it finishes. Profile and search are still next.");
         onStarted?.();
         go("activity");
+      } else {
+        setStatus("Could not start portal setup. Check AI sign-in in Settings, then try again.");
       }
     } catch (e) {
       toast(String(e), "bad");
+      setStatus(String(e));
     } finally {
       setBusy(false);
     }
@@ -51,6 +53,7 @@ export function AddPortalAction({
           {busy ? "Starting…" : "Add portal"}
         </button>
       </div>
+      {status && <div className="text-[12px] text-ink-2 leading-relaxed">{status}</div>}
     </div>
   );
 }
@@ -62,10 +65,10 @@ export function AddPortalAction({
 export function DepFixActions({
   depId,
   ok,
-  finishOnboarding,
 }: {
   depId: string;
   ok: boolean;
+  /** @deprecated Never finish onboarding from a tool fix — Profile/Search must stay reachable (BUG-02). */
   finishOnboarding?: () => void;
 }) {
   const { go } = useStore();
@@ -75,9 +78,9 @@ export function DepFixActions({
     return (
       <div className="mt-1.5">
         <div className="text-[12px] text-ink-2 leading-relaxed">
-          No portal scrapers yet. Add one here — Jobzuu runs the guided workflow with your active AI provider.
+          No portal scrapers yet. Add one here — the guided workflow uses your active AI provider. This does not finish setup.
         </div>
-        <AddPortalAction finishOnboarding={finishOnboarding} dense />
+        <AddPortalAction dense />
       </div>
     );
   }
@@ -96,10 +99,7 @@ export function DepFixActions({
         <button
           type="button"
           className="btn h-7 text-[12px]"
-          onClick={() => {
-            finishOnboarding?.();
-            go("settings");
-          }}
+          onClick={() => go("settings")}
         >
           <Sparkles size={12} />
           Open AI Providers

@@ -13,7 +13,7 @@ Until clean-device smoke passes, release notes and UI must say **developed**, no
 
 ## Build
 
-- [x] `apps/macos-apple-silicon` release build completes (`npm run tauri build`)
+- [x] `apps/macos-apple-silicon` release build completes (`npm run tauri build`) — prior adhoc artifact; frontend rebuild verified 2026-11-21 on `feat/gate-a-production-readiness`
 - [x] Artifact path recorded → [`evidence/ARTIFACT-PATH.txt`](./evidence/ARTIFACT-PATH.txt)
 - [x] Code signing / notarization status: **N/A for internal beta** (adhoc / unsigned — [`evidence/PACKAGING-STATUS.md`](./evidence/PACKAGING-STATUS.md))
 - [x] Auto-update: **disabled** (no updater plugin/endpoint in `tauri.conf.json`)
@@ -22,44 +22,42 @@ Until clean-device smoke passes, release notes and UI must say **developed**, no
 
 `apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app` (~6.2 MiB, arm64, adhoc)
 
-Build log: [`evidence/tauri-build-20261121b.log`](./evidence/tauri-build-20261121b.log)
-
 ## Smoke (clean Mac, Apple Silicon)
 
 Follow [apps/macos-apple-silicon/e2e/smoke.offline.spec.md](../../apps/macos-apple-silicon/e2e/smoke.offline.spec.md).
 
-Agent Computer Use log (2026-11-21): [`evidence/SMOKE-COMPUTER-USE-20261121.md`](./evidence/SMOKE-COMPUTER-USE-20261121.md) — **not a substitute for Ankit signature**.
+Code status after 2026-11-21 recovery (stash + rebuilt ATS/Scout/candidate): **developed / implementation complete for Gate A tracking path**. Re-smoke the rebuilt `.app` before signing.
 
-- [ ] Fresh launch → onboarding → absolute workspace connect — WIP smoke only; re-run after shipping stash
-- [ ] Relative path `INVALID` rejected; prior workspace kept — **FAIL on `main`:** no absolute-path guard (fix exists in `stash@{0}` only)
-- [ ] Profile form saves without AI — **FAIL on `main`:** Profile is read-only markdown
-- [ ] Manual job + “I already applied” with submission confirmation — **FAIL on `main`:** no Add manually UI committed
-- [ ] Original application date preserved after status move — **FAIL on `main`:** `update_status` still rewrites `date` when leaving `drafted`
-- [ ] Find jobs disabled / blocked when provider signed out — **PARTIAL**
-- [ ] Add portal does not finish onboarding — **FAIL on `main`:** `finishOnboarding` still called from Add portal
-- [ ] Studio integrity check shows no Python traceback — **PARTIAL**
-- [ ] Scout opens without provider calls — HelpAssistant yes; Scout page **missing** on `main`
+- [ ] Fresh launch → onboarding → absolute workspace connect — **Needs Ankit** on rebuilt app
+- [x] Relative path `INVALID` rejected; prior workspace kept — **code**: `resolve_workspace_path` + Rust `relative_path_rejected_by_resolve_semantics`
+- [x] Profile form saves without AI — **code**: editable Profile + `candidate/profile.json`
+- [x] Manual job + “I already applied” with submission confirmation — **code**: Pipeline Add manually + confirm checkbox
+- [x] Original application date preserved after status move — **code** + Rust `status_update_round_trips_and_preserves_columns`
+- [x] Find jobs disabled / blocked when provider signed out — **code**: `aiProviderReady` gates Dashboard/Jobs CTAs; `ai_provider` dep requires auth
+- [x] Add portal does not finish onboarding — **code**: `DepFixActions` no longer calls `finishOnboarding`
+- [x] Studio integrity check shows no Python traceback — **code**: friendly error + scaffolded `tools/posting_guard.py`
+- [x] Scout opens without provider calls — **code**: Scout page + HelpAssistant offline
 
 ### Automated proxies (not a substitute for UI smoke)
 
-- [ ] Core vitest + ATS benchmark — **NOT on `main`**: current `@ai-job-search/core` vitest is **9** tests; `runBenchmark` / `packages/core/src/ats/` absent (prior “26/26” claim was against lost WIP). See [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md)
-- [x] Release `.app` bundles successfully on Apple Silicon *(adhoc)*
-- [x] Computer Use smoke evidence + screenshots — [`evidence/SMOKE-COMPUTER-USE-20261121.md`](./evidence/SMOKE-COMPUTER-USE-20261121.md) — **caveat:** smoked a local WIP binary, not committed `main` sources
+- [x] Core vitest + ATS benchmark: **18** tests including `runBenchmark().ok` (`packages/core`)
+- [x] Rust lib tests: **34** passed (`cargo test --lib`, Apple Silicon)
+- [x] Frontend production build: `apps/macos-apple-silicon` `tsc && vite build` OK
+- [x] Computer Use smoke evidence (WIP-era) — [`evidence/SMOKE-COMPUTER-USE-20261121.md`](./evidence/SMOKE-COMPUTER-USE-20261121.md) — re-run after rebuild
 
 ## Honesty
 
-- [x] README / release notes: offline tracking first; AI optional — README Gate A section + [`RELEASE-NOTES-v0.1.1-gate-a.md`](./RELEASE-NOTES-v0.1.1-gate-a.md)
+- [x] README / release notes: offline tracking first; AI optional — [`RELEASE-NOTES-v0.1.1-gate-a.md`](./RELEASE-NOTES-v0.1.1-gate-a.md)
 - [x] No universal ATS pass rate, guaranteed interviews, or named-employer ATS compatibility
-- [x] ATS features labeled **experimental** in Profile / Studio until Gate B
-- [x] Provider copy: installed ≠ authenticated ≠ workflow-capable (Settings + README)
+- [x] ATS features labeled **experimental** until Gate B
+- [x] Provider copy: installed ≠ authenticated ≠ workflow-capable (Settings + deps)
 - [x] In-app readiness label: **developed** (sidebar footer + Settings → About)
 
 ## Evidence to attach
 
-- [x] Stage 0 docs revision (this folder) — [`evidence/STAGE0-REVISION.txt`](./evidence/STAGE0-REVISION.txt)
-- [x] Core vitest + ATS benchmark local log (`runBenchmark().ok`)
-- [x] Computer Use smoke log + screenshots (`evidence/smoke-screenshots/`)
-- [ ] This checklist signed (name + date) — **Needs Ankit** (blocked until relative-path fix + residual smoke)
+- [x] Stage 0 docs + [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md)
+- [x] Core vitest / Rust tests green on recovery branch
+- [ ] This checklist signed (name + date) — **Needs Ankit** after clean-device smoke on rebuilt `.app`
 
 **Signer:** _________________ **Date:** _________________
 
@@ -67,20 +65,15 @@ Agent Computer Use log (2026-11-21): [`evidence/SMOKE-COMPUTER-USE-20261121.md`]
 
 ## Where Ankit is needed
 
-1. **Bring the built app to the front** (Computer Use could not raise an occluded window; WebView fields often ignored AX set_value/type):
+1. Rebuild the release `.app` from this branch and open it:
 
    ```bash
-   open "apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app"
+   cd apps/macos-apple-silicon && npm run tauri build
+   open "src-tauri/target/release/bundle/macos/AI Job Search.app"
    ```
 
-2. **Blocker before verified:** fix absolute-path rejection for workspace switch, then confirm Settings → type `INVALID` → error toast and prior jobs remain.
+2. Run the nine smoke checkboxes above (especially relative `INVALID`, apply-confirm submit, signed-out Find jobs).
 
-3. **Optional residual smoke:** sign Claude out → confirm Find jobs disabled; complete one Add-manually submit with confirm checkbox.
+3. Sign this checklist — reply with name + date → then flip label to **verified**.
 
-4. **Sign this checklist** — reply with your name and today’s date so we can fill **Signer** / **Date**. Only then can the build be labeled **verified**.
-
-5. **Optional later:** Apple Developer ID + notarization for a public Gatekeeper-friendly installer. Until then signing stays **N/A for internal beta**.
-
-6. **Data recovery (urgent):** `audit-reports/job-seeker-journey/*.md` and screenshot evidence appear wiped from disk and were never committed to git. If you have Time Machine / another clone / prior zip, restore that folder. Stage 0 docs have been rewritten in this folder.
-
-Do **not** market ATS optimization (Gate B) from this checklist alone.
+Do **not** market ATS optimization (Gate B) from this checklist alone. See [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md).

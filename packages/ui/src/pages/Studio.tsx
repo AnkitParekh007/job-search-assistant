@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { ExternalLink, FileCheck2, Link2, ShieldCheck, Sparkles, TextQuote } from "lucide-react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { api } from "@ai-job-search/runtime";
+import { extractJobRequirements } from "@ai-job-search/core";
 import { useStore } from "../store";
 import { Empty } from "../components/ui";
 import { RunConsole } from "../components/RunConsole";
@@ -56,12 +57,27 @@ export default function Studio() {
   useEffect(() => { if (!doc && docs.length) setDoc(docs[0]); }, [docs, doc]);
 
   const validUrl = /^https?:\/\/[^\s]+$/.test(url.trim());
+  const reqSummary = useMemo(() => {
+    if (mode !== "text" || !guard || !text.trim()) return [];
+    return extractJobRequirements(text);
+  }, [mode, guard, text]);
   const checkText = async () => {
     try {
       const r = await api.postingGuard(text);
+      const raw = (r.stderr || r.stdout || "").trim();
+      // Never surface a Python traceback — one sentence for the candidate.
+      if (/Traceback \(most recent call last\)/i.test(raw) || /FileNotFoundError|No such file/i.test(raw)) {
+        setGuard({ ok: false, out: "Integrity checker is missing or failed to start. Reconnect this workspace so starter tools are created, then try again." });
+        return;
+      }
       let ok = r.code === 0;
-      try { const j = JSON.parse(r.stdout); ok = ok && !(j.instruction_like?.length || j.invisible_flagged); } catch { /* text output */ }
-      setGuard({ ok, out: (r.stderr || r.stdout).slice(0, 1500) });
+      try {
+        const j = JSON.parse(r.stdout);
+        ok = ok && !(j.instruction_like?.length || j.invisible_flagged);
+        setGuard({ ok, out: ok ? "Posting looks clean." : "Flagged: possible instruction overlay or invisible characters. Review before evaluating." });
+        return;
+      } catch { /* text output */ }
+      setGuard({ ok, out: raw.slice(0, 400) || (ok ? "clean" : "flagged") });
     } catch (e) { toast(String(e), "bad"); }
   };
   const start = async () => {
@@ -75,8 +91,8 @@ export default function Studio() {
       <Panel defaultSize={27} minSize={20}>
         <div className="h-full overflow-auto p-5 space-y-5">
           <div>
-            <div className="h-title !text-[20px]">Studio</div>
-            <div className="text-ink-2 text-[12.5px] mt-1">Evaluate fit first. Documents draft only after you agree — grounded in your profile.</div>
+            <div className="h-title !text-[20px] flex items-center gap-2">Studio <span className="chip bg-sunken text-ink-3 font-normal text-[11px]">experimental match aids</span></div>
+            <div className="text-ink-2 text-[12.5px] mt-1">Evaluate fit first. Documents draft only after you agree — grounded in your profile. Local requirement chips are experimental; not an ATS pass-rate claim.</div>
           </div>
           <div className="flex gap-1 p-1 rounded-lg bg-sunken w-fit">
             <button className={clsx("btn h-7 text-[12px] border-0", mode === "url" ? "bg-surface shadow-sm" : "btn-ghost")} onClick={() => setMode("url")}><Link2 size={12} />Job URL</button>
@@ -85,7 +101,7 @@ export default function Studio() {
           {mode === "url" ? (
             <div className="space-y-2">
               <input className="input w-full" placeholder="https://jobs.ashbyhq.com/…" value={url} onChange={(e) => setUrl(e.target.value)} />
-              <div className="text-[11.5px] text-ink-3">The posting-fetcher agent fetches it and runs the integrity gate before anything is read as content. Official ATS hosts (Greenhouse, Lever, Ashby, Workday…) are verified; other hosts are flagged.</div>
+              <div className="text-[11.5px] text-ink-3">The posting-fetcher agent fetches it and runs the integrity gate before anything is read as content. Known application hosts (Greenhouse, Lever, Ashby, Workday…) are checked for structure; other hosts are flagged. This is not a claim of ATS compatibility or pass rates.</div>
               {validUrl && <button className="btn h-7 text-[12px]" onClick={() => openUrl(url.trim())}><ExternalLink size={12} />Open official page</button>}
             </div>
           ) : (
@@ -93,6 +109,25 @@ export default function Studio() {
               <textarea className="input w-full h-56 font-mono text-[12px]" placeholder="Paste the full posting text" value={text} onChange={(e) => { setText(e.target.value); setGuard(null); }} />
               <button className="btn h-7 text-[12px]" disabled={!text.trim()} onClick={checkText}><ShieldCheck size={12} />Run integrity check</button>
               {guard && <pre className={clsx("text-[11px] font-mono whitespace-pre-wrap rounded-lg p-2.5 selectable", guard.ok ? "bg-good-soft text-good" : "bg-warn-soft text-warn")}>{guard.out || (guard.ok ? "clean" : "flagged")}</pre>}
+              {guard && !!reqSummary.length && (
+                <div className="rounded-lg border border-line bg-surface-2 p-2.5 space-y-2">
+                  <div className="label">Requirements (local extract · no AI)</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {reqSummary.map((r) => (
+                      <span
+                        key={r.id}
+                        className={clsx(
+                          "chip font-normal max-w-full",
+                          r.kind === "must" ? "bg-warn-soft text-warn" : "bg-sunken text-ink-2",
+                        )}
+                        title={r.text}
+                      >
+                        {r.kind === "must" ? "Must" : "Nice"} · {r.text.length > 48 ? `${r.text.slice(0, 48)}…` : r.text}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
           <button className="btn btn-primary w-full justify-center h-9" disabled={mode === "url" ? !validUrl : !text.trim()} onClick={start}><Sparkles size={14} />Evaluate fit</button>

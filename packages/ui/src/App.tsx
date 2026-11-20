@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Command } from "cmdk";
 import clsx from "clsx";
-import { Activity, BriefcaseBusiness, CircleCheck, CircleX, FileText, GraduationCap, Hand, Info, PanelLeft, Search, Settings as Cog, Sparkles, SquareKanban, Sun, User, Workflow as Flow } from "lucide-react";
+import { Activity, BriefcaseBusiness, CircleCheck, CircleHelp, CircleX, FileText, GraduationCap, Hand, Info, PanelLeft, Search, Settings as Cog, Sparkles, SquareKanban, Sun, User, Workflow as Flow } from "lucide-react";
 import { StoreProvider, useStore } from "./store";
 import { WORKFLOWS } from "@ai-job-search/core";
 import { api, inTauri } from "@ai-job-search/runtime";
@@ -21,15 +21,20 @@ import Documents from "./pages/Documents";
 import Settings from "./pages/Settings";
 import Interview from "./pages/Interview";
 import Onboarding from "./pages/Onboarding";
+import Scout from "./pages/Scout";
 
-type NavItem = { id: string; label: string; icon: any; key: string };
+type NavItem = { id: string; label: string; icon: any; key: string; /** Extra palette search tokens */ aliases?: string[] };
 export const NAV_GROUPS: { title: string | null; items: NavItem[] }[] = [
   { title: null, items: [{ id: "dashboard", label: "Today", icon: Sun, key: "1" }] },
   { title: "Find", items: [{ id: "jobs", label: "Jobs", icon: BriefcaseBusiness, key: "2" }] },
-  { title: "Apply", items: [{ id: "studio", label: "Studio", icon: Sparkles, key: "3" }, { id: "documents", label: "Documents", icon: FileText, key: "4" }] },
-  { title: "Track", items: [{ id: "pipeline", label: "Pipeline", icon: SquareKanban, key: "5" }, { id: "interview", label: "Interview Prep", icon: GraduationCap, key: "6" }] },
+  { title: "Apply", items: [{ id: "studio", label: "Studio", icon: Sparkles, key: "3", aliases: ["ATS", "apply", "tailor", "integrity"] }, { id: "documents", label: "Documents", icon: FileText, key: "4" }] },
+  { title: "Track", items: [{ id: "pipeline", label: "Pipeline", icon: SquareKanban, key: "5", aliases: ["follow-up", "follow up", "applications", "submitted"] }, { id: "interview", label: "Interview Prep", icon: GraduationCap, key: "6" }] },
   { title: "Automation", items: [{ id: "activity", label: "Agent Activity", icon: Activity, key: "7" }, { id: "automations", label: "Workflows", icon: Flow, key: "8" }] },
-  { title: "You", items: [{ id: "profile", label: "Profile", icon: User, key: "9" }, { id: "settings", label: "Settings", icon: Cog, key: "," }] },
+  { title: "You", items: [
+    { id: "profile", label: "Profile", icon: User, key: "9", aliases: ["resume", "CV", "facts", "ATS"] },
+    { id: "scout", label: "Scout", icon: CircleHelp, key: "0", aliases: ["scout", "help", "FAQ", "match score", "ATS"] },
+    { id: "settings", label: "Settings", icon: Cog, key: "," },
+  ] },
 ];
 export const NAV = NAV_GROUPS.flatMap((g) => g.items);
 
@@ -73,6 +78,8 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
       {!collapsed && <div className="px-4 py-3 text-[11px] text-ink-3 leading-snug border-t border-line">
         <div className="font-medium text-ink-2">Local workspace</div>
         <div className="truncate font-mono">{ws?.valid ? (ws.upstream_version ? `workspace ${ws.upstream_version}` : "connected") : "not connected"}</div>
+        <div className="mt-1.5 text-[10.5px] uppercase tracking-wide text-ink-3">App v0.1.1 · developed</div>
+        <div className="text-[10.5px] text-ink-3 leading-snug">Not a verified public beta until Gate A packaging smoke is signed.</div>
       </div>}
     </motion.aside>
   );
@@ -93,7 +100,16 @@ function Palette({ open, setOpen }: { open: boolean; setOpen: (b: boolean) => vo
               <Command.List className="max-h-[400px] overflow-auto p-1.5">
                 <Command.Empty className="p-6 text-center text-ink-3">Nothing matches.</Command.Empty>
                 <Command.Group heading="Go to" className={group}>
-                  {NAV.map((n) => <Command.Item key={n.id} onSelect={() => pick(() => go(n.id))} className={item}><n.icon size={14} /><span className="flex-1">{n.label}</span><span className="text-[11px] opacity-60">⌘{n.key}</span></Command.Item>)}
+                  {NAV.map((n) => (
+                    <Command.Item
+                      key={n.id}
+                      value={[n.label, n.id, ...(n.aliases || [])].join(" ")}
+                      onSelect={() => pick(() => go(n.id))}
+                      className={item}
+                    >
+                      <n.icon size={14} /><span className="flex-1">{n.label}</span><span className="text-[11px] opacity-60">⌘{n.key}</span>
+                    </Command.Item>
+                  ))}
                 </Command.Group>
                 <Command.Group heading="Run with Claude" className={group}>
                   {WORKFLOWS.filter((w) => !w.args?.some((a) => !a.optional)).map((w) => <Command.Item key={w.id} value={`run ${w.command} ${w.title}`} onSelect={() => pick(() => { if (w.id === "reset") { sessionStorage.setItem("wf", w.id); go("automations"); } else startWorkflow(w.id, w.command).then((r) => r && go("activity")); })} className={item}><Flow size={14} /><span className="font-mono text-[12px] opacity-70 w-24">{w.command}</span>{w.title}</Command.Item>)}
@@ -169,7 +185,7 @@ function Shell() {
     api.getSetting("onboarded").then((o) => setOnboard(o !== "1"));
   }, []);
   useEffect(() => { prev.current = route; }, [route]);
-  const Page = ({ dashboard: Dashboard, jobs: Jobs, pipeline: Pipeline, studio: Studio, activity: ActivityPage, automations: Automations, profile: Profile, documents: Documents, settings: Settings, interview: Interview } as Record<string, React.ComponentType>)[route] || Dashboard;
+  const Page = ({ dashboard: Dashboard, jobs: Jobs, pipeline: Pipeline, studio: Studio, activity: ActivityPage, automations: Automations, profile: Profile, documents: Documents, settings: Settings, interview: Interview, scout: Scout } as Record<string, React.ComponentType>)[route] || Dashboard;
   if (onboard && !loading) return <Onboarding onDone={() => { api.setSetting("onboarded", "1"); setOnboard(false); }} />;
   return (
     <div className="h-full flex">

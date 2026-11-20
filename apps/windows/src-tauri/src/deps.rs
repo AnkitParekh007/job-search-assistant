@@ -34,6 +34,26 @@ pub fn check(ws: &Path) -> Vec<Dep> {
     v.push(Dep { id: "claude_auth".into(), name: "Claude sign-in".into(), ok: logged, required: true,
         detail: auth.map(|a| format!("{} via {}", if logged { "signed in" } else { "signed out" }, a.get("authMethod").and_then(|s| s.as_str()).unwrap_or("?"))).unwrap_or("unknown".into()),
         fix: "Run `claude` in Terminal once and complete sign-in.".into() });
+    // Installed ≠ authenticated. Require Claude CLI signed in before runs can proceed.
+    let any_ready = claude.is_some() && logged;
+    v.push(Dep {
+        id: "ai_provider".into(),
+        name: "At least one AI provider".into(),
+        ok: any_ready,
+        required: true,
+        detail: if any_ready {
+            "Claude Code is installed and signed in".into()
+        } else if claude.is_some() {
+            "Claude Code found but not signed in — open Settings → Dependencies".into()
+        } else {
+            "Claude Code CLI not found".into()
+        },
+        fix: if claude.is_some() {
+            "Sign in to Claude Code from Terminal (`claude`) — installed is not the same as ready.".into()
+        } else {
+            "Install Claude Code, then run `claude` once to sign in.".into()
+        },
+    });
     let py = env::python();
     v.push(Dep { id: "python".into(), name: "Python >= 3.10".into(), ok: py.is_some(), required: true,
         detail: py.as_ref().map(|(p, s)| format!("{} ({})", s, p.display())).unwrap_or("only Python < 3.10 found — install Python 3.12+".into()),

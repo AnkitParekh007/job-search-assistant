@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { openUrl } from "@ai-job-search/runtime";
 import clsx from "clsx";
-import { CalendarClock, ExternalLink, GraduationCap, MailPlus, NotebookPen, X } from "lucide-react";
+import { CalendarClock, ExternalLink, GraduationCap, MailPlus, NotebookPen, Plus, X } from "lucide-react";
 import { api, AppFolder, canonical, STATUSES, TrackerRow } from "@ai-job-search/runtime";
 import { useStore } from "../store";
 import { canTransition, daysBetween, lastContact } from "@ai-job-search/core";
@@ -11,13 +11,104 @@ import { PdfView } from "../components/PdfView";
 
 type Move = { row: TrackerRow; to: string; hint?: string };
 
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function ManualApplicationDialog({ onClose }: { onClose: () => void }) {
+  const { toast, reload } = useStore();
+  const [company, setCompany] = useState("");
+  const [role, setRole] = useState("");
+  const [source, setSource] = useState("");
+  const [date, setDate] = useState(todayIso);
+  const [status, setStatus] = useState<"applied" | "drafted">("applied");
+  const [note, setNote] = useState("");
+  const [confirmedSubmit, setConfirmedSubmit] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    if (!company.trim() || !role.trim()) {
+      toast("Company and role are required.", "bad");
+      return;
+    }
+    if (status === "applied" && !confirmedSubmit) {
+      toast("Confirm you submitted this application before marking it applied.", "bad");
+      return;
+    }
+    setBusy(true);
+    try {
+      const stamped =
+        status === "applied"
+          ? `${note.trim() ? note.trim() + " · " : ""}user confirmed submitted`
+          : note.trim();
+      await api.addApplication({
+        company: company.trim(),
+        role: role.trim(),
+        source: source.trim(),
+        date: date.trim() || todayIso(),
+        status,
+        notes: stamped.replace(/,/g, " "),
+      });
+      await reload();
+      toast(`${company.trim()}: added as ${status}`, "good");
+      onClose();
+    } catch (e) {
+      toast(String(e), "bad");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <motion.div className="fixed inset-0 z-40 bg-black/40 grid place-items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={onClose} onKeyDown={(e) => e.key === "Escape" && onClose()}>
+      <motion.div className="sheet w-[540px] p-6" initial={{ scale: 0.97, y: 8 }} animate={{ scale: 1, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 32 }} onClick={(e) => e.stopPropagation()}>
+        <div className="font-semibold text-[16px]">Add application manually</div>
+        <div className="text-ink-2 mt-1 text-[12.5px]">Record a role you already drafted or submitted — no AI required.</div>
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="col-span-2 sm:col-span-1"><label className="label block mb-1">Company</label><input className="input w-full" autoFocus value={company} onChange={(e) => setCompany(e.target.value)} /></div>
+          <div className="col-span-2 sm:col-span-1"><label className="label block mb-1">Role</label><input className="input w-full" value={role} onChange={(e) => setRole(e.target.value)} /></div>
+          <div className="col-span-2"><label className="label block mb-1">Source URL</label><input className="input w-full" type="url" value={source} onChange={(e) => setSource(e.target.value)} placeholder="https://…" /></div>
+          <div><label className="label block mb-1">Date</label><input className="input w-full" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></div>
+          <div>
+            <label className="label block mb-1">Status</label>
+            <select className="input w-full" value={status} onChange={(e) => setStatus(e.target.value as "applied" | "drafted")}>
+              <option value="applied">Applied</option>
+              <option value="drafted">Drafted</option>
+            </select>
+          </div>
+          <div className="col-span-2"><label className="label block mb-1">Note</label><input className="input w-full" value={note} onChange={(e) => setNote(e.target.value)} placeholder="applied via company careers portal" /></div>
+        </div>
+        {status === "applied" && (
+          <label className="mt-3 flex items-start gap-2 text-[12.5px] text-ink-2">
+            <input type="checkbox" className="mt-0.5" checked={confirmedSubmit} onChange={(e) => setConfirmedSubmit(e.target.checked)} />
+            <span>I confirm I actually submitted this application (source and date stay accurate).</span>
+          </label>
+        )}
+        <div className="flex justify-end gap-2 mt-4">
+          <button className="btn" onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary" disabled={busy || (status === "applied" && !confirmedSubmit)} onClick={submit}>{busy ? "Saving…" : "Add application"}</button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function MoveDialog({ mv, onClose }: { mv: Move; onClose: () => void }) {
   const { toast, startWorkflow, go } = useStore();
   const [note, setNote] = useState("");
+  const [confirmedSubmit, setConfirmedSubmit] = useState(false);
   const from = canonical(mv.row.fields.status);
+  const needsSubmitConfirm = from === "drafted" && ["applied", "interview", "offer", "hired", "rejected", "no_response", "offer_declined"].includes(mv.to);
   const quick = async () => {
+    if (needsSubmitConfirm && !confirmedSubmit) {
+      toast("Confirm you submitted this application before marking it applied.", "bad");
+      return;
+    }
     try {
-      await api.updateStatus(mv.row.index, from, mv.to, note);
+      const stamped = needsSubmitConfirm
+        ? `${note.trim() ? note.trim() + " · " : ""}user confirmed submitted`
+        : note;
+      await api.updateStatus(mv.row.index, from, mv.to, stamped);
       toast(`${mv.row.fields.company}: ${from} → ${mv.to}`, "good");
       onClose();
     } catch (e) { toast(String(e), "bad"); }
@@ -34,14 +125,20 @@ function MoveDialog({ mv, onClose }: { mv: Move; onClose: () => void }) {
         {mv.hint && <div className="mt-3 text-[12px] rounded-lg bg-info-soft text-info px-3 py-2">{mv.hint}</div>}
         <label className="label block mt-4 mb-1">Note (saved to the tracker, commas removed)</label>
         <input className="input w-full" autoFocus value={note} onChange={(e) => setNote(e.target.value)} placeholder={mv.to === "applied" ? "applied via company careers portal" : "e.g. phone screen booked for Dec 2"} />
+        {needsSubmitConfirm && (
+          <label className="mt-3 flex items-start gap-2 text-[12.5px] text-ink-2">
+            <input type="checkbox" className="mt-0.5" checked={confirmedSubmit} onChange={(e) => setConfirmedSubmit(e.target.checked)} />
+            <span>I confirm I actually submitted this application (source and date stay accurate; we will not rewrite the original date).</span>
+          </label>
+        )}
         <div className="mt-4 rounded-lg border border-line p-3 text-[12.5px] space-y-1.5">
-          <div><b>Record with AI</b> (recommended): the agent archives the submitted CV and cover letter, writes outcome.md and asks you anything it needs.</div>
-          <div><b>Quick update</b>: changes only the tracker's status and notes (and the date when leaving drafted), exactly as /outcome Step 4 does, with no AI call. Archiving is skipped.</div>
+          <div><b>Record with AI</b>: archives CV/cover letter and writes outcome.md when your provider is ready.</div>
+          <div><b>Quick update</b>: changes status and notes only. Original application date is preserved.</div>
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <button className="btn" onClick={onClose}>Cancel</button>
-          <button className="btn" onClick={quick}>Quick update</button>
-          <button className="btn btn-primary" onClick={viaOutcome}>Record with /outcome</button>
+          <button className="btn" disabled={needsSubmitConfirm && !confirmedSubmit} onClick={quick}>Quick update</button>
+          <button className="btn btn-primary" onClick={viaOutcome}>Record with AI</button>
         </div>
       </motion.div>
     </motion.div>
@@ -65,7 +162,7 @@ function AppDrawer({ row, onClose }: { row: TrackerRow; onClose: () => void }) {
         <div className="flex-1 min-w-0">
           <div className="text-ink-3 text-[12px]">{f.company}</div>
           <div className="font-semibold text-[17px] selectable">{f.role}</div>
-          <div className="flex items-center gap-2 mt-1"><StatusChip s={f.status} /><span className="text-ink-3 text-[12px]">{canonical(f.status) === "drafted" ? "drafted" : "applied"} {f.date}</span>{f.fit_rating && <span className="chip bg-sunken text-ink-2">fit {f.fit_rating}</span>}</div>
+          <div className="flex items-center gap-2 mt-1"><StatusChip s={f.status} /><span className="text-ink-3 text-[12px]">{STATUS_META[canonical(f.status)]?.label || canonical(f.status)} · {f.date}</span>{f.fit_rating && <span className="chip bg-sunken text-ink-2">fit {f.fit_rating}</span>}</div>
         </div>
         <button className="btn btn-ghost h-7 w-7 p-0 justify-center" onClick={onClose} aria-label="Close"><X size={14} /></button>
       </div>
@@ -85,7 +182,7 @@ function AppDrawer({ row, onClose }: { row: TrackerRow; onClose: () => void }) {
             <div>
               <div className="label mb-2">Timeline</div>
               <ol className="border-l border-line ml-1.5 space-y-2.5">
-                <li className="pl-4 relative"><span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent" /><div className="text-[12.5px]"><b>{f.date}</b> · row {canonical(f.status) === "drafted" ? "drafted" : "submitted"}</div></li>
+                <li className="pl-4 relative"><span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent" /><div className="text-[12.5px]"><b>{f.date}</b> · row {STATUS_META[canonical(f.status)]?.label || canonical(f.status)}{(f.notes || "").includes("user confirmed submitted") ? " · submission confirmed" : ""}</div></li>
                 {notes.map((n, i) => <li key={i} className="pl-4 relative"><span className="absolute -left-[4px] top-1.5 w-2 h-2 rounded-full bg-line-strong" /><div className="text-[12.5px] text-ink-2 selectable">{n}</div></li>)}
               </ol>
             </div>
@@ -105,15 +202,15 @@ function AppDrawer({ row, onClose }: { row: TrackerRow; onClose: () => void }) {
 }
 
 export default function Pipeline() {
-  const { tracker, startWorkflow, go } = useStore();
+  const { tracker, startWorkflow, go, toast } = useStore();
   const rows = tracker?.rows || [];
   const [mv, setMv] = useState<Move | null>(null);
+  const [manual, setManual] = useState(false);
   const [open, setOpen] = useState<number | null>(() => { const v = sessionStorage.getItem("openApp"); return v ? Number(v) : null; });
   const [dragging, setDragging] = useState<number | null>(null);
   const [over, setOver] = useState<string | null>(null);
   const [menu, setMenu] = useState<{ x: number; y: number; row: TrackerRow } | null>(null);
   const [filter] = useState(sessionStorage.getItem("pipeFilter"));
-  const { toast } = useStore();
   useEffect(() => { sessionStorage.removeItem("openApp"); sessionStorage.removeItem("pipeFilter"); }, []);
   const cols = useMemo(() => STATUSES.map((s) => ({ s, items: rows.filter((r) => canonical(r.fields.status) === s) })), [rows]);
   const visible = cols.filter((c) => c.items.length || ["drafted", "applied", "interview", "offer"].includes(c.s));
@@ -142,8 +239,12 @@ export default function Pipeline() {
   return (
     <div className="h-full flex flex-col">
       <div className="px-6"><PageHeader title="Pipeline" subtitle={rows.length ? `${rows.length} application${rows.length === 1 ? "" : "s"} · drag a card to change status` : "Track drafted and submitted applications"}
-        actions={rows.length > 0 ? <><button className="btn" onClick={() => startWorkflow("outcome", "/outcome").then((r) => r && go("activity"))}>Review open apps</button><button className="btn" onClick={() => startWorkflow("outcome", "/outcome stale").then((r) => r && go("activity"))}>Stale sweep</button></> : <button className="btn btn-primary" onClick={() => go("studio")}><GraduationCap size={14} />Start in Studio</button>} /></div>
-      {rows.length === 0 ? <Empty icon={<NotebookPen size={18} />} title="No tracked applications" body="When Studio drafts a CV and cover letter for a role, it shows up here so you can track submission and interviews." action={<button className="btn btn-primary" onClick={() => go("studio")}>Open Studio</button>} /> : (
+        actions={rows.length > 0 ? <>
+          <button className="btn" onClick={() => setManual(true)}><Plus size={14} />Add manually</button>
+          <button className="btn" onClick={() => startWorkflow("outcome", "/outcome").then((r) => r && go("activity"))}>Review open apps</button>
+          <button className="btn" onClick={() => startWorkflow("outcome", "/outcome stale").then((r) => r && go("activity"))}>Stale sweep</button>
+        </> : <button className="btn btn-primary" onClick={() => setManual(true)}>I already applied</button>} /></div>
+      {rows.length === 0 ? <Empty icon={<NotebookPen size={18} />} title="No tracked applications" body="Add a role you already applied to, or draft one in Studio — both land here for status tracking." action={<><button className="btn btn-primary" onClick={() => setManual(true)}>I already applied</button><button className="btn" onClick={() => go("studio")}><GraduationCap size={14} />Open Studio</button></>} /> : (
         <div className="flex-1 min-h-0 overflow-x-auto px-6 pb-6">
           <div className="flex gap-3 h-full">
             {visible.map(({ s, items }) => (
@@ -171,6 +272,7 @@ export default function Pipeline() {
           </div>
         </div>)}
       {mv && <MoveDialog mv={mv} onClose={() => setMv(null)} />}
+      {manual && <ManualApplicationDialog onClose={() => setManual(false)} />}
       <AnimatePresence>{openRow && <AppDrawer key={openRow.index} row={openRow} onClose={() => setOpen(null)} />}</AnimatePresence>
       {menu && <ContextMenu x={menu.x} y={menu.y} items={menuItems(menu.row)} onClose={() => setMenu(null)} />}
     </div>

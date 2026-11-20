@@ -27,6 +27,7 @@ describe("metrics", () => {
     expect(m.discovered).toBe(2);
     expect(m.byStatus.no_response).toBe(1);
     expect(m.open).toBe(3);
+    expect(m.funnel.find((f) => f.label === "Drafted")!.value).toBe(1);
     expect(m.funnel.find((f) => f.label === "Submitted")!.value).toBe(3);
   });
   it("follow-ups use the latest dated note, never drafted rows", () => {

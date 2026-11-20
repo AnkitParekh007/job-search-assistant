@@ -43,9 +43,9 @@ Discover aligned roles, prepare tailored documents through the upstream workflow
 |:---|:---|
 | See job discovery, fit ranking, workflow progress, tool activity and the application pipeline in one place. | Review generated CVs and cover letters, inspect PDF output, and approve sensitive file or command actions before proceeding. |
 | **Files remain yours** | **Designed for extensions** |
-| Your candidate profile, tracker and application archives remain in a local workspace folder you choose. | **Multi-provider AI support** — Claude Code and OpenAI Codex on Apple Silicon, with other engines on the roadmap. |
+| Your candidate profile, tracker and application archives remain in a local workspace folder you choose. | **Multi-provider AI** — Claude Code, Codex, OpenAI API, Gemini, and Ollama (capability varies; installed ≠ signed in ≠ workflow-capable). Track applications offline without AI. |
 
-**Need the technical view?** [Architecture](./docs/architecture.md) · [Workflow support](./docs/supported-workflows.md) · [Multi-provider status](./docs/MULTI-PROVIDER-IMPLEMENTATION.md)
+**Need the technical view?** [Architecture](./docs/architecture.md) · [Provider capability matrix](./docs/providers/01-provider-capability-matrix.md) · [Workflow support](./docs/supported-workflows.md) · [Multi-provider status](./docs/MULTI-PROVIDER-IMPLEMENTATION.md)
 
 ---
 
@@ -88,7 +88,7 @@ flowchart LR
 
 - **Upstream workspace files** own jobs, applications, profile, CVs, and the tracker CSV.
 - **SQLite** stores run history and app preferences only.
-- **Multi-provider AI support:** Claude Code (stream-json) and OpenAI Codex (app-server). There is no independent local-LLM backend. See the [provider implementation report](./docs/MULTI-PROVIDER-IMPLEMENTATION.md).
+- **Multi-provider AI:** Claude Code, Codex, OpenAI API, Gemini, and Ollama — support differs by workflow (see [`providers.ts`](./packages/core/src/providers.ts)). You can still track applications and confirm profile facts offline with no provider. See the [capability matrix](./docs/providers/01-provider-capability-matrix.md).
 
 Deep dive: [Architecture](./docs/architecture.md) · [App architecture](./apps/macos-apple-silicon/docs/ARCHITECTURE.md)
 
@@ -233,10 +233,17 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 
 | Item | Detail |
 |------|--------|
-| Providers | **Multi-provider AI support** — Claude Code CLI and OpenAI Codex (Apple Silicon; expand to more engines on the roadmap) |
-| Cost | Depends on selected provider and authentication: Claude plan/API usage or Codex ChatGPT plan/API usage |
-| Local LLM | Not supported in this product today |
+| Providers | Claude Code, Codex, OpenAI API, Gemini, Ollama — capability varies by workflow ([matrix](./docs/providers/01-provider-capability-matrix.md); runtime: [`providers.ts`](./packages/core/src/providers.ts)) |
+| Ready means | **Installed ≠ signed in ≠ workflow-capable.** Sign in (or configure keys/local service) before Find jobs / Rank / Evaluate look ready |
+| Cost | Cloud providers bill your plan/API; Ollama is local unless you point at a remote endpoint |
+| Offline | Profile, manual jobs, applications, and follow-up tracking work with **no** AI provider |
 | Disclosure | AI workflows consume the selected provider's usage allowances or credits; review its billing and limits |
+
+### Release honesty (Gate A)
+
+- macOS Apple Silicon builds are labeled **developed** until Gate A packaging smoke is signed ([checklist](./audit-reports/production-readiness/GATE-A-PACKAGING.md)).
+- Auto-update is **disabled**. Notarized installers are **not** claimed for the internal beta channel.
+- Local resume parse / match helpers are **experimental** — we do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
 
 ### Key limitations
 
@@ -312,7 +319,7 @@ Authoritative engineering specs: [`apps/macos-apple-silicon/docs/`](./apps/macos
 No. It prepares documents and tracks status. You submit applications yourself.
 
 **Do I need Claude Code?**  
-You need **multi-provider AI support**: Claude Code and/or OpenAI Codex (pick a default in Settings). Some connector workflows (Gmail / Notion) still require Claude Code. Provider usage is not free by default.
+Not for offline tracking and profile work. AI workflows need a configured provider (Claude Code, Codex, OpenAI API, Gemini, or Ollama — capability varies; see the [provider matrix](./docs/providers/01-provider-capability-matrix.md)). Some connector workflows (Gmail / Notion) still require Claude Code. Provider usage is not free by default.
 
 **Is there a downloadable `.dmg`?**  
 Not yet. Build from source. Releases will be announced when artifacts exist.

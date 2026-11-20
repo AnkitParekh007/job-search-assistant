@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
+  aiProviderBlockedReason, aiProviderReady,
   byId, buildPromptForProvider, providerSupportsWorkflow, unsupportedReason,
 } from "@ai-job-search/core";
 import {
@@ -102,6 +103,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const startWorkflow = useCallback(async (workflow: string, prompt: string, resume?: string) => {
     try {
+      if (!resume && !aiProviderReady(deps)) {
+        toast(aiProviderBlockedReason(deps) || "Sign in to an AI provider in Settings first.", "bad");
+        setRoute("settings");
+        return null;
+      }
       const provider = ((await api.getSetting("ai_provider")) || "claude").trim();
       if (!resume && !providerSupportsWorkflow(provider, workflow)) {
         toast(unsupportedReason(provider, workflow) || "Unsupported workflow for this provider", "bad");
@@ -141,7 +147,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       toast(String(e), "bad");
       return null;
     }
-  }, [toast, runs]);
+  }, [toast, runs, deps]);
 
   useEffect(() => {
     reload();

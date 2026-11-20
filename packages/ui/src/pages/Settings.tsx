@@ -195,6 +195,17 @@ export default function Settings() {
     <div className="h-full overflow-auto"><div className="max-w-[820px] mx-auto px-8 pb-12">
       <PageHeader title="Settings" />
       <section className="card p-5 mb-4">
+        <div className="font-semibold mb-1">About this build</div>
+        <div className="text-ink-2 text-[12.5px] mb-2">
+          Version <span className="font-mono">0.1.1</span> · readiness label <span className="chip bg-sunken text-ink-2">developed</span>
+        </div>
+        <div className="text-ink-3 text-[12px] leading-relaxed">
+          This is a developer / internal build. It is not a <b>verified</b> public beta until Gate A packaging smoke is signed.
+          Auto-update is <b>disabled</b>. Code signing / notarization for this channel: <b>N/A for internal beta</b> (unsigned local build).
+          Offline tracking works without AI. Match/parse helpers are experimental until Gate B — we do not claim ATS pass rates or guaranteed interviews.
+        </div>
+      </section>
+      <section className="card p-5 mb-4">
         <div className="font-semibold mb-1">Workspace</div>
         <div className="text-ink-2 text-[12.5px] mb-3">Any local folder you choose. Missing starter files (including <span className="font-mono">CLAUDE.md</span>) are created automatically; existing files stay authoritative. The app keeps only run history and preferences in its own database.</div>
         <div className="flex gap-2"><input className="input flex-1 font-mono text-[12px]" value={path} onChange={(e) => setPath(e.target.value)} /><button className="btn" onClick={browse}><FolderOpen size={14} />Choose…</button><button className="btn btn-primary" onClick={saveWs} disabled={!path.trim() || path === ws?.path}>Switch</button></div>
@@ -210,6 +221,7 @@ export default function Settings() {
         <div className="text-ink-2 text-[12.5px] mb-3">
           Configure Claude Code, OpenAI Codex, OpenAI Platform API, Gemini, or Ollama. API keys stay in the OS keychain — never SQLite or the UI bundle.
           Cloud usage bills against your provider plan. Ollama stays local unless you set a remote endpoint.
+          <span className="block mt-1.5 text-ink-3">Installed ≠ signed in ≠ workflow-capable. A CLI on PATH alone does not make Find jobs / Rank / Evaluate ready.</span>
         </div>
         <div className="space-y-3">
           {(providers || []).map((p) => {

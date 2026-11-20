@@ -33,8 +33,8 @@ const HELP = {
     id: "profile-help-tip",
     title: "What is the agent profile?",
     body: [
-      "Your profile is a set of markdown files in the workspace (experience, skills, search prefs) that every workflow reads when ranking jobs or drafting applications.",
-      "Template placeholders mean those sections are still empty. Your AI provider can fill them from a CV or a short interview — then ask only for what documents don't cover.",
+      "Your profile is editable in the Profile form and as markdown files in the workspace (experience, skills, search prefs).",
+      "Template placeholders mean those sections are still empty. Import a CV, use a short guided interview, or edit the form yourself — then confirm facts before they count toward match scores.",
       "Confirmed profile data is reused across scrape, rank, Studio, and interview prep, so you are not re-explaining yourself on every run.",
     ],
   },
@@ -197,7 +197,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       <div className="flex justify-center"><Jobzuu size={92} /></div>
       <h1 className="h-title !text-[30px] mt-5">Hi, I'm Jobzuu.</h1>
       <p className="text-ink-2 text-[15px] mt-3 max-w-lg mx-auto leading-relaxed">
-        Your AI agent for the search. I wire this desktop shell to Claude Code, Codex, and your other providers — discover, rank, draft, and track against a workspace you own. Every write and send waits for your yes.
+        Your guide for a local job-search workspace. Discover, rank, and draft with the AI provider you choose — or track applications offline. Sensitive writes wait for your approval.
       </p>
       <div className="grid grid-cols-3 gap-3 mt-8 text-left">
         {pillars.map(({ icon: Icon, title, body: desc }) => (
@@ -242,7 +242,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
                 <>
                   <div className="text-ink-3 text-[12px] selectable">{d.detail}</div>
                   {/* Prefer in-app actions over sending people to Terminal / Claude Code */}
-                  <DepFixActions depId={d.id} ok={d.ok} finishOnboarding={onDone} />
+                  <DepFixActions depId={d.id} ok={d.ok} />
                   {!["portals", "bun", "claude", "claude_auth", "codex", "codex_auth", "ai_provider"].includes(d.id) && (
                     <div className="text-ink-3 text-[12px] selectable mt-1">{d.fix}</div>
                   )}
@@ -255,16 +255,17 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       <button className="btn mt-3" onClick={reloadDeps}>Re-scan</button>
     </div>,
     <div key="3">
-      <StepHeading help={HELP.profile}>Seed the agent profile</StepHeading>
+      <StepHeading help={HELP.profile}>Build your profile</StepHeading>
       {profile === null ? <div className="skeleton h-24 mt-6" /> : placeholders === 0 ? (
-        <div className="card p-5 mt-6 flex items-center gap-4"><Jobzuu size={52} mood="done" /><div><div className="font-medium">Profile context is ready</div><div className="text-ink-3 text-[12.5px]">Refine any section later from Profile — the agent will reuse what you confirm.</div></div></div>
+        <div className="card p-5 mt-6 flex items-center gap-4"><Jobzuu size={52} mood="done" /><div><div className="font-medium">Profile context is ready</div><div className="text-ink-3 text-[12.5px]">Edit anytime in the Profile form — confirmed facts stay grounded for ranking and drafts.</div></div></div>
       ) : (
         <>
-          <p className="text-ink-2 mt-2">{placeholders} fields are still template placeholders. Your AI provider can hydrate them from a CV, then ask only for what documents don't cover.</p>
+          <p className="text-ink-2 mt-2">{placeholders} fields are still template placeholders. Import a CV, run a short interview, or fill the editable Profile form after setup — confirm facts before they affect match scores.</p>
           <div className="grid grid-cols-2 gap-3 mt-6">
-            <button className="card p-5 text-left hover:border-accent" onClick={() => void importFromCv()}><div className="font-medium">Import from CV</div><div className="text-ink-3 text-[12px] mt-1">Pick a CV file; the agent fills your profile in the connected workspace.</div></button>
-            <button className="card p-5 text-left hover:border-accent" onClick={() => void guidedInterview()}><div className="font-medium">Guided interview</div><div className="text-ink-3 text-[12px] mt-1">Section-by-section Q&amp;A with the active provider.</div></button>
+            <button className="card p-5 text-left hover:border-accent" onClick={() => void importFromCv()}><div className="font-medium">Import from CV</div><div className="text-ink-3 text-[12px] mt-1">Pick a CV file; we fill your profile in the connected workspace.</div></button>
+            <button className="card p-5 text-left hover:border-accent" onClick={() => void guidedInterview()}><div className="font-medium">Guided interview</div><div className="text-ink-3 text-[12px] mt-1">Section-by-section Q&amp;A with your active AI provider.</div></button>
           </div>
+          <p className="text-ink-3 text-[12px] mt-3 leading-relaxed">You can also skip and edit the Profile form later — Add portal on the previous step never finishes setup.</p>
         </>)}
     </div>,
     <div key="4">
@@ -279,7 +280,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     <div key="5" className="text-center">
       <div className="flex justify-center"><Jobzuu size={84} mood="done" /></div>
       <h2 className="h-title mt-5">Jobzuu is ready</h2>
-      <p className="text-ink-2 mt-2 max-w-md mx-auto">Today surfaces what needs you next. Press <span className="font-mono">⌘K</span> anywhere to jump pages or launch an agent workflow.</p>
+      <p className="text-ink-2 mt-2 max-w-md mx-auto">Today surfaces what needs you next. Press <span className="font-mono">⌘K</span> to jump pages, open Scout for local help, or start a workflow when you are ready.</p>
     </div>,
   ];
 

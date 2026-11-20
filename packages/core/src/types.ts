@@ -16,6 +16,14 @@ export type SeenJob = {
   posted_date?: string | null; deadline?: string | null; employment_type?: string | null; fit?: string;
   status?: string; portal?: string; source?: string; rank_score?: number; rank_verdict?: string; rank_date?: string;
   location_verdict?: string; language_gate?: string; language_note?: string; strengths?: string[]; gaps?: string[];
+  /** Optional filter/provenance fields (manual entry or enriched scrape). */
+  remote?: boolean | null;
+  seniority?: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  source_url?: string;
+  last_verified?: string;
+  user_entered?: boolean;
 };
 export type RunSummary = {
   id: string; workflow: string; prompt: string; session_id: string; status: string; started_at: number;

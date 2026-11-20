@@ -91,20 +91,27 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         },
         fix: "Use Connect in Settings to start ChatGPT sign-in for Codex.".into(),
     });
-    let any_ai = claude.is_some() || codex.is_some();
+    // Installed ≠ authenticated. Require at least one provider that can actually run.
+    let any_ready = (claude.is_some() && logged) || (codex.is_some() && codex_cfg);
     v.push(Dep {
         id: "ai_provider".into(),
         name: "At least one AI provider".into(),
-        ok: any_ai,
+        ok: any_ready,
         required: true,
-        detail: if any_ai {
-            "Claude Code and/or Codex CLI detected".into()
+        detail: if any_ready {
+            "At least one provider is installed and signed in".into()
+        } else if claude.is_some() || codex.is_some() {
+            "Provider CLI found but not signed in — open Settings → AI Providers".into()
         } else {
             "neither Claude Code nor Codex CLI found".into()
         },
-        fix:
-            "Install Claude Code and/or the Codex CLI, then choose a default provider in Settings."
-                .into(),
+        fix: if claude.is_some() || codex.is_some() {
+            "Sign in to your AI account from Settings → AI Providers (installed is not the same as ready)."
+                .into()
+        } else {
+            "Install Claude Code and/or the Codex CLI, then sign in and choose a default provider in Settings."
+                .into()
+        },
     });
     let py = env::python();
     v.push(Dep {

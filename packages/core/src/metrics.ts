@@ -29,7 +29,12 @@ export function computeMetrics(rows: TrackerRow[], seen: SeenJob[], now = new Da
     const s = canonical(r.fields.status);
     byStatus[s] = (byStatus[s] || 0) + 1;
   }
-  const submitted = rows.filter((r) => canonical(r.fields.status) !== "drafted" && canonical(r.fields.status) !== "withdrawn").length;
+  // "Submitted" = user-confirmed applied (or later). Drafted count is status===drafted only (BUG-04).
+  const drafted = rows.filter((r) => canonical(r.fields.status) === "drafted").length;
+  const submitted = rows.filter((r) => {
+    const s = canonical(r.fields.status);
+    return s !== "drafted" && s !== "withdrawn";
+  }).length;
   const reachedInterview = rows.filter((r) => ["interview", "offer", "hired", "offer_declined"].includes(canonical(r.fields.status)) || /interview/i.test(r.fields.notes || "")).length;
   const offers = rows.filter((r) => ["offer", "hired", "offer_declined"].includes(canonical(r.fields.status))).length;
 
@@ -67,7 +72,7 @@ export function computeMetrics(rows: TrackerRow[], seen: SeenJob[], now = new Da
     funnel: [
       { label: "Discovered", value: seen.length },
       { label: "Ranked", value: seen.filter((j) => j.rank_score != null).length },
-      { label: "Drafted", value: rows.length },
+      { label: "Drafted", value: drafted },
       { label: "Submitted", value: submitted },
       { label: "Interview", value: reachedInterview },
       { label: "Offer", value: offers },
@@ -90,7 +95,9 @@ export function canTransition(from: string, to: string): { ok: boolean; reason?:
   if (t === "drafted") return { ok: false, reason: "An application can't move back to drafted." };
   const order = ["drafted", "applied", "interview", "offer"];
   if (order.includes(t) && order.indexOf(t) < order.indexOf(f)) return { ok: false, reason: "Upstream never moves a row backwards." };
+  if (f === "drafted" && t === "applied")
+    return { ok: true, reason: "Confirm you actually submitted this application. The original date is kept; submission is recorded as a separate event." };
   if (f === "drafted" && ["interview", "offer", "hired", "rejected", "no_response", "offer_declined"].includes(t))
-    return { ok: true, reason: "Moving straight from drafted means it was submitted; the date becomes today." };
+    return { ok: true, reason: "Skipping Applied still requires confirming a real submission happened. The original date is kept." };
   return { ok: true };
 }

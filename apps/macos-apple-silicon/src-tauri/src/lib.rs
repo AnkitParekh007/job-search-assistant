@@ -1,4 +1,5 @@
 mod bridge;
+mod candidate;
 mod db;
 mod deps;
 mod env;
@@ -106,13 +107,53 @@ fn get_workspace(state: State<AppState>) -> Value {
     })
 }
 
+/// Accept only an absolute existing directory (or absolute path the user explicitly creates).
+/// Relative names are rejected so we never scaffold under the process cwd and orphan the prior workspace.
+fn resolve_workspace_path(path: &str) -> Result<PathBuf, String> {
+    let trimmed = path.trim();
+    if trimmed.is_empty() {
+        return Err("Choose a folder path first.".into());
+    }
+    let p = PathBuf::from(trimmed);
+    if !p.is_absolute() {
+        return Err(
+            "Use an absolute folder path (or Browse). Relative names like \"INVALID\" are rejected so your current workspace stays connected."
+                .into(),
+        );
+    }
+    if p.exists() && !p.is_dir() {
+        return Err(format!("{} exists but is not a folder", p.display()));
+    }
+    // Canonicalize when the path exists; for a new folder keep the absolute path as given.
+    if p.exists() {
+        p.canonicalize()
+            .map_err(|e| format!("could not resolve {}: {}", p.display(), e))
+    } else {
+        Ok(p)
+    }
+}
+
 #[tauri::command]
 fn set_workspace(app: AppHandle, state: State<AppState>, path: String) -> Result<Value, String> {
-    let p = PathBuf::from(&path);
-    let created = workspace::ensure_workspace(&p)?;
+    let _prior = state.db.get_setting("workspace");
+    let p = match resolve_workspace_path(&path) {
+        Ok(p) => p,
+        Err(e) => {
+            // Keep prior workspace setting intact on validation failure.
+            return Err(e);
+        }
+    };
+    let created = match workspace::ensure_workspace(&p) {
+        Ok(c) => c,
+        Err(e) => {
+            // prior setting never overwritten below
+            return Err(e);
+        }
+    };
+    let stored = p.to_string_lossy().to_string();
     state
         .db
-        .set_setting("workspace", &path)
+        .set_setting("workspace", &stored)
         .map_err(|e| e.to_string())?;
     watch(&app, &state, p.clone());
     Ok(json!({
@@ -169,6 +210,144 @@ fn profile(state: State<AppState>) -> Vec<workspace::ProfileFile> {
 }
 
 #[tauri::command]
+fn candidate_profile(state: State<AppState>) -> Result<Value, String> {
+    candidate::read_candidate_profile(&ws(&state))
+}
+
+#[tauri::command]
+fn save_candidate_profile(state: State<AppState>, profile: Value) -> Result<Value, String> {
+    candidate::write_candidate_profile(&ws(&state), &profile)
+}
+
+#[tauri::command]
+fn add_application(
+    state: State<AppState>,
+    fields: std::collections::BTreeMap<String, String>,
+) -> Result<workspace::TrackerRow, String> {
+    workspace::add_tracker_row(&ws(&state), fields, &today())
+}
+
+#[tauri::command]
+fn upsert_job(state: State<AppState>, job: Value) -> Result<Value, String> {
+    let mut job = job;
+    if let Some(obj) = job.as_object_mut() {
+        let day = today();
+        if !obj.contains_key("last_verified") && !day.is_empty() {
+            obj.insert("last_verified".into(), Value::String(day.clone()));
+        }
+        if !obj.contains_key("first_seen") && !day.is_empty() {
+            obj.insert("first_seen".into(), Value::String(day));
+        }
+    }
+    workspace::upsert_seen_job(&ws(&state), job)
+}
+
+#[tauri::command]
+fn migrate_workspace(state: State<AppState>) -> Result<Value, String> {
+    workspace::migrate_legacy_to_canonical(&ws(&state))
+}
+
+#[tauri::command]
+fn restore_workspace_backup(state: State<AppState>, backup_folder_name: String) -> Result<Value, String> {
+    workspace::restore_workspace_backup(&ws(&state), &backup_folder_name)
+}
+
+/// Extract plain text from a local resume file (PDF via pdftotext, DOCX via unzip, or text).
+/// Absolute paths only. Used by Profile offline parse (ATS-01) — no AI, no network.
+#[tauri::command]
+fn extract_resume_text(state: State<AppState>, path: String) -> Result<Value, String> {
+    let p = PathBuf::from(path.trim());
+    if !p.is_absolute() {
+        return Err("Resume path must be absolute.".into());
+    }
+    if !p.is_file() {
+        return Err(format!("File not found: {}", p.display()));
+    }
+    let ext = p
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("")
+        .to_ascii_lowercase();
+    let text = match ext.as_str() {
+        "txt" | "md" | "markdown" => std::fs::read_to_string(&p).map_err(|e| e.to_string())?,
+        "pdf" => {
+            let bin = env::which("pdftotext").ok_or(
+                "pdftotext not found. Install poppler (brew install poppler), or paste resume text instead.",
+            )?;
+            let out = std::process::Command::new(bin)
+                .args(["-layout", "-enc", "UTF-8"])
+                .arg(&p)
+                .arg("-")
+                .env("PATH", env::child_path())
+                .output()
+                .map_err(|e| e.to_string())?;
+            if !out.status.success() {
+                return Err(format!(
+                    "pdftotext failed: {}",
+                    String::from_utf8_lossy(&out.stderr).trim()
+                ));
+            }
+            String::from_utf8_lossy(&out.stdout).to_string()
+        }
+        "docx" => {
+            let out = std::process::Command::new("unzip")
+                .args(["-p"])
+                .arg(&p)
+                .arg("word/document.xml")
+                .output()
+                .map_err(|e| format!("unzip failed (needed for DOCX): {e}"))?;
+            if !out.status.success() {
+                return Err("Could not read DOCX (unzip word/document.xml failed).".into());
+            }
+            let xml = String::from_utf8_lossy(&out.stdout);
+            let mut plain = String::new();
+            let mut in_tag = false;
+            for c in xml.chars() {
+                match c {
+                    '<' => in_tag = true,
+                    '>' => {
+                        in_tag = false;
+                        plain.push(' ');
+                    }
+                    _ if !in_tag => plain.push(c),
+                    _ => {}
+                }
+            }
+            plain.split_whitespace().collect::<Vec<_>>().join(" ")
+        }
+        _ => {
+            return Err(
+                "Supported resume types: .pdf, .docx, .txt, .md. Or paste plain text in Profile."
+                    .into(),
+            )
+        }
+    };
+    let w = ws(&state);
+    let art = w.join("candidate/resume_artifacts");
+    let _ = std::fs::create_dir_all(&art);
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    let dest = art.join(format!(
+        "import-{}{}",
+        stamp,
+        p.extension()
+            .and_then(|e| e.to_str())
+            .map(|e| format!(".{e}"))
+            .unwrap_or_default()
+    ));
+    let _ = std::fs::copy(&p, &dest);
+    let _ = std::fs::write(art.join("last-extract.txt"), &text);
+    Ok(json!({
+        "text": text,
+        "chars": text.chars().count(),
+        "source_path": p.to_string_lossy(),
+        "artifact": dest.to_string_lossy(),
+    }))
+}
+
+#[tauri::command]
 fn documents(state: State<AppState>) -> Value {
     let w = ws(&state);
     json!({"cv": workspace::list_docs(&w, "cv", ".tex"), "cover": workspace::list_docs(&w, "cover_letters", ".tex"),
@@ -218,6 +397,14 @@ fn verify_pdf(state: State<AppState>, rel: String) -> Result<Value, String> {
 #[tauri::command]
 fn posting_guard(state: State<AppState>, text: String) -> Result<Value, String> {
     let w = ws(&state);
+    let script = w.join("tools/posting_guard.py");
+    if !script.is_file() {
+        return Ok(json!({
+            "code": 1,
+            "stdout": "",
+            "stderr": "Integrity checker is not installed in this workspace. Reconnect the folder or create a new workspace so starter tools are scaffolded."
+        }));
+    }
     let tmp = env::app_data_dir().join(format!("guard-{}.txt", uuid::Uuid::new_v4()));
     std::fs::write(&tmp, text).map_err(|e| e.to_string())?;
     let r = deps::run_tool(
@@ -231,8 +418,14 @@ fn posting_guard(state: State<AppState>, text: String) -> Result<Value, String> 
         ],
     );
     let _ = std::fs::remove_file(&tmp);
-    let (code, out, err) = r?;
-    Ok(json!({"code": code, "stdout": out, "stderr": err}))
+    match r {
+        Ok((code, out, err)) => Ok(json!({"code": code, "stdout": out, "stderr": err})),
+        Err(e) => Ok(json!({
+            "code": 1,
+            "stdout": "",
+            "stderr": format!("Integrity check could not run: {}. Install Python 3.10+ from Settings → Dependencies.", e)
+        })),
+    }
 }
 
 #[tauri::command]
@@ -597,6 +790,13 @@ pub fn run() {
             update_status,
             application_folder,
             profile,
+            candidate_profile,
+            save_candidate_profile,
+            add_application,
+            upsert_job,
+            migrate_workspace,
+            restore_workspace_backup,
+            extract_resume_text,
             documents,
             read_text,
             abs_path,

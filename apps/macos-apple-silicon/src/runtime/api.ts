@@ -1,7 +1,7 @@
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 export type {
-  Workspace, Dep, TrackerRow, Tracker, SeenJob, RunSummary, RunEvent, Pending, AppFolder, ProfileFile,
+  Workspace, Dep, TrackerRow, Tracker, SeenJob, RunSummary, RunEvent, Pending, AppFolder, ProfileFile, CandidateProfile,
 } from "@ai-job-search/core";
 export { STATUSES, FINAL, canonical, TRACKER_HEADER } from "@ai-job-search/core";
 
@@ -15,6 +15,26 @@ export const api = {
     invoke<import("@ai-job-search/core").TrackerRow>("update_status", { index, expected, status, note }),
   appFolder: (company: string, role: string) => invoke<import("@ai-job-search/core").AppFolder>("application_folder", { company, role }),
   profile: () => invoke<import("@ai-job-search/core").ProfileFile[]>("profile"),
+  candidateProfile: () => invoke<import("@ai-job-search/core").CandidateProfile | Record<string, unknown>>("candidate_profile"),
+  saveCandidateProfile: (profile: import("@ai-job-search/core").CandidateProfile | Record<string, unknown>) =>
+    invoke<import("@ai-job-search/core").CandidateProfile | Record<string, unknown>>("save_candidate_profile", { profile }),
+  addApplication: (fields: Record<string, string>) =>
+    invoke<import("@ai-job-search/core").TrackerRow>("add_application", { fields }),
+  upsertJob: (job: Record<string, unknown>) => invoke<Record<string, unknown>>("upsert_job", { job }),
+  migrateWorkspace: () =>
+    invoke<{
+      migrated: boolean;
+      already_current?: boolean;
+      schema_version: number;
+      backup: string | null;
+      applications_written: number;
+    }>("migrate_workspace"),
+  restoreWorkspaceBackup: (backupFolderName: string) =>
+    invoke<{ restored: boolean; backup: string; files: string[] }>("restore_workspace_backup", {
+      backupFolderName,
+    }),
+  extractResumeText: (path: string) =>
+    invoke<{ text: string; chars: number; source_path: string; artifact: string }>("extract_resume_text", { path }),
   documents: () => invoke<{ cv: string[]; cover: string[]; cv_pdf: string[]; cover_pdf: string[]; reports: string[] }>("documents"),
   readText: (rel: string) => invoke<string>("read_text", { rel }),
   absPath: (rel: string) => invoke<string>("abs_path", { rel }),

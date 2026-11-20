@@ -2,6 +2,8 @@
 
 Statuses must match application capability definitions in `packages/core/src/providers.ts` and Rust `providers/registry.rs`.
 
+**Installed ≠ authenticated ≠ workflow-capable.** A CLI present on disk does not mean the user is signed in, and sign-in does not mean every workflow can run on that provider. Runtime truth for support checks, readiness chips, and UI gating lives in [`packages/core/src/providers.ts`](../../packages/core/src/providers.ts) (`providerSupportsWorkflow`, `providerUiStatus`, `unsupportedReason`).
+
 Legend: **Verified** = mock or live evidence · **Implemented** = code present, not live-proved · **Partial** · **Unsupported** · **Blocked**
 
 | Capability | Claude Code | OpenAI Codex | OpenAI API | Gemini | Ollama |
