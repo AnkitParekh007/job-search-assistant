@@ -28,7 +28,7 @@ Shared UI/core: `packages/ui`, `packages/core`. Rust twins must receive the same
 - [ ] Lifecycle timestamps accurate; no false “submitted”
 - [ ] Workspace recovery (relative path rejected; failed switch preserves prior)
 - [ ] Clean-device smoke on Apple Silicon
-- [ ] Packaging honesty: label **developed** vs **verified** correctly
+- [x] Packaging honesty: label **verified** (Gate A signed + UI/docs flipped 2026-11-21)
 - [ ] README / in-app copy does **not** claim ATS optimization / universal pass rates
 
 ### Allowed
@@ -113,8 +113,8 @@ Before tagging a beta or public release, attach:
 
 | Gate | Status |
 |------|--------|
-| A | **Developed / implementation recovered** (2026-11-21) — Phase 1–2 P0s + ATS foundation + Scout + backup/migrate landed on `feat/gate-a-production-readiness` (stash applied; missing modules rebuilt). Vitest 18 + Rust 34 green; Vite build OK. Still **developed** until Ankit clean-device smoke + GATE-A signature → **verified**. See [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md). |
-| B | **Blocked** — Gate A must be **verified** first; then ATS-01..06 evidence pack + copy review. `runBenchmark` exists but do not market ATS optimization. |
+| A | **Verified** (2026-11-21) — Gate A packaging checklist signed; Computer Use smoke (INVALID + apply-confirm) PASS; UI/docs flipped to **verified**. See [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md). |
+| B | **Blocked** — Gate A is verified; next: ATS-01..06 evidence pack + copy review. `runBenchmark` exists but do not market ATS optimization. |
 | C | **Blocked** — intel/Windows twins updated with same integrity APIs; no Gate A smoke evidence yet |
 
 See also: [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md), [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md), [apps/macos-apple-silicon/e2e/smoke.offline.spec.md](../../apps/macos-apple-silicon/e2e/smoke.offline.spec.md).

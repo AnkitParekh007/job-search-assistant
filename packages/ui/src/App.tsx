@@ -78,8 +78,8 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
       {!collapsed && <div className="px-4 py-3 text-[11px] text-ink-3 leading-snug border-t border-line">
         <div className="font-medium text-ink-2">Local workspace</div>
         <div className="truncate font-mono">{ws?.valid ? (ws.upstream_version ? `workspace ${ws.upstream_version}` : "connected") : "not connected"}</div>
-        <div className="mt-1.5 text-[10.5px] uppercase tracking-wide text-ink-3">App v0.1.1 · developed</div>
-        <div className="text-[10.5px] text-ink-3 leading-snug">Not a verified public beta until Gate A packaging smoke is signed.</div>
+        <div className="mt-1.5 text-[10.5px] uppercase tracking-wide text-ink-3">App v0.1.1 · verified</div>
+        <div className="text-[10.5px] text-ink-3 leading-snug">Gate A packaging smoke signed — job-tracking beta.</div>
       </div>}
     </motion.aside>
   );

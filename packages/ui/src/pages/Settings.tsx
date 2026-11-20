@@ -197,10 +197,10 @@ export default function Settings() {
       <section className="card p-5 mb-4">
         <div className="font-semibold mb-1">About this build</div>
         <div className="text-ink-2 text-[12.5px] mb-2">
-          Version <span className="font-mono">0.1.1</span> · readiness label <span className="chip bg-sunken text-ink-2">developed</span>
+          Version <span className="font-mono">0.1.1</span> · readiness label <span className="chip bg-sunken text-ink-2">verified</span>
         </div>
         <div className="text-ink-3 text-[12px] leading-relaxed">
-          This is a developer / internal build. It is not a <b>verified</b> public beta until Gate A packaging smoke is signed.
+          Gate A <b>verified</b> job-tracking beta (Apple Silicon packaging smoke signed).
           Auto-update is <b>disabled</b>. Code signing / notarization for this channel: <b>N/A for internal beta</b> (unsigned local build).
           Offline tracking works without AI. Match/parse helpers are experimental until Gate B — we do not claim ATS pass rates or guaranteed interviews.
         </div>

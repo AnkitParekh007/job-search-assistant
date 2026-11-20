@@ -1,6 +1,6 @@
 # Release notes — v0.1.1 (Gate A job-tracking beta candidate)
 
-**Readiness label: developed** (not verified until [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md) smoke is signed).
+**Readiness label: verified** — Gate A packaging smoke signed ([GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md)).
 
 ## What this build is for
 

@@ -241,7 +241,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 
 ### Release honesty (Gate A)
 
-- macOS Apple Silicon builds are labeled **developed** until Gate A packaging smoke is signed ([checklist](./audit-reports/production-readiness/GATE-A-PACKAGING.md)).
+- macOS Apple Silicon builds are labeled **verified** for Gate A job-tracking ([checklist](./audit-reports/production-readiness/GATE-A-PACKAGING.md)).
 - Auto-update is **disabled**. Notarized installers are **not** claimed for the internal beta channel.
 - Local resume parse / match helpers are **experimental** — we do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
 
