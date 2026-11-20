@@ -9,6 +9,7 @@ import { WORKFLOWS } from "@ai-job-search/core";
 import { api, inTauri } from "@ai-job-search/runtime";
 import { Kbd } from "./components/ui";
 import { BrandMark } from "./components/BrandMark";
+import { HelpAssistant } from "./components/HelpAssistant";
 import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
 import Pipeline from "./pages/Pipeline";
@@ -115,7 +116,7 @@ function Palette({ open, setOpen }: { open: boolean; setOpen: (b: boolean) => vo
 function Toasts() {
   const { toasts } = useStore();
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 w-[360px] pointer-events-none" aria-live="polite">
+    <div className="fixed bottom-20 right-4 z-50 flex flex-col gap-2 w-[360px] max-w-[calc(100vw-32px)] pointer-events-none" aria-live="polite">
       <AnimatePresence>
         {toasts.map((t) => (
           <motion.div key={t.id} layout initial={{ opacity: 0, y: 12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, x: 24 }} transition={{ type: "spring", stiffness: 500, damping: 38 }} className="sheet !rounded-xl px-3.5 py-2.5 flex items-start gap-2.5 pointer-events-auto" role="status">
@@ -189,6 +190,7 @@ function Shell() {
           </motion.div>
         </div>
       </main>
+      <HelpAssistant />
       <Palette open={palette} setOpen={setPalette} />
       <Toasts />
     </div>
