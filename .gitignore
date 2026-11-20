@@ -11,3 +11,7 @@ apps/*/package-lock.json
 # market-site prerender (SSR bundle)
 dist-ssr/
 dist-release/
+
+# Local smoke / journey sandboxes (never commit)
+audit-reports/**/sandbox-home/
+audit-reports/job-seeker-journey/
