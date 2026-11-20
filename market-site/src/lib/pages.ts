@@ -23,6 +23,12 @@ export const PAGE_SEO = {
       "How Job Search Assistant plans to test resume readability, evidence-backed matching, truthful tailoring and recruiter outcomes. No unverified ATS pass-rate claims.",
     path: "/benchmarks",
   },
+  compare: {
+    title: "Job Search App Comparison — Job Search Assistant",
+    description:
+      "Compare published features of Job Search Assistant, Ronin, Finds You Jobs and JobSifter. Transparent sourcing, honest product scope and no fabricated claims.",
+    path: "/compare",
+  },
   faq: {
     title: "FAQs — Job Search Assistant",
     description:
