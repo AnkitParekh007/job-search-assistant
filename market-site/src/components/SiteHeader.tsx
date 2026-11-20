@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
 import { BrandLockup } from "./BrandMark";
 
@@ -15,6 +15,7 @@ export function SiteHeader({
   ghostCta,
 }: Props) {
   const { theme, toggle } = useTheme();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -27,7 +28,15 @@ export function SiteHeader({
 
   useEffect(() => {
     setMenuOpen(false);
-  }, [active]);
+  }, [location.pathname, location.search, location.hash]);
+
+  useEffect(() => {
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", dismiss);
+    return () => window.removeEventListener("keydown", dismiss);
+  }, []);
 
   return (
     <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
@@ -35,7 +44,7 @@ export function SiteHeader({
         <Link className="brand" to="/" aria-label="AI Job Search home">
           <BrandLockup />
         </Link>
-        <nav className={`nav-links${menuOpen ? " is-open" : ""}`} aria-label="Primary">
+        <nav id="site-primary-navigation" className={`nav-links${menuOpen ? " is-open" : ""}`} aria-label="Primary">
           <NavLink to="/" end className={({ isActive }) => (isActive || active === "about" ? "is-active" : undefined)}>
             About
           </NavLink>
@@ -96,6 +105,7 @@ export function SiteHeader({
             type="button"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
+            aria-controls="site-primary-navigation"
             onClick={() => setMenuOpen((o) => !o)}
           >
             <span />
