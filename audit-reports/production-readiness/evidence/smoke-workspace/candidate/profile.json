@@ -1,0 +1,31 @@
+{
+  "email": "alex@example.com",
+  "facts": [
+    {
+      "confidence": 1,
+      "confirmed": true,
+      "field": "name",
+      "id": "f1",
+      "source": "user",
+      "value": "Alex Morgan"
+    }
+  ],
+  "headline": "Senior Frontend Engineer",
+  "location": "Berlin",
+  "name": "Alex Morgan",
+  "phone": "",
+  "preferences": {
+    "countries": [
+      "DE"
+    ],
+    "remote": true,
+    "salaryMax": 120000,
+    "salaryMin": 90000,
+    "seniority": [
+      "senior"
+    ]
+  },
+  "schema_version": 1,
+  "updatedAt": "2026-11-20T21:01:55.291Z",
+  "workAuthorization": "unknown"
+}

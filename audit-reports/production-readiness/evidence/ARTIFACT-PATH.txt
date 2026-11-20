@@ -1,0 +1,15 @@
+Artifact (2026-11-21, Apple Silicon, this machine)
+
+Path:
+  apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app
+
+Size: ~6.2 MiB
+Arch: Mach-O 64-bit executable arm64
+Signing: adhoc (linker-signed) — N/A for internal beta
+Auto-update: disabled
+
+Binary:
+  Contents/MacOS/ai-job-search-desktop
+
+Build log:
+  evidence/tauri-build-20261121b.log

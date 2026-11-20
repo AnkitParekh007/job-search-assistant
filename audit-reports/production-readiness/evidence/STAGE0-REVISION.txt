@@ -1,0 +1,5 @@
+captured_at=2026-11-20T20:45:50Z
+restored_note=Stage 0 markdown rewritten 2026-11-21 after accidental wipe; journey audit markdown missing from disk (never git-tracked)
+git_head_at_evidence=e09bf5c43779fdadae92a4d11874b07d205210fe
+branch=main
+stage0_files=VERIFIED-AUDIT GAP-ANALYSIS TARGET-ARCHITECTURE IMPLEMENTATION-BACKLOG ACCEPTANCE-MATRIX RELEASE-READINESS GATE-A-PACKAGING RELEASE-NOTES
