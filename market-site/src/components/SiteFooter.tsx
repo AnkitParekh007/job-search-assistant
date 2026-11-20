@@ -25,6 +25,9 @@ export function SiteFooter({
           <h4>Product</h4>
           <Link to="/">About</Link>
           <Link to="/features">Features</Link>
+          <Link to="/benchmarks">ATS benchmarks</Link>
+          <Link to="/compare">Compare tools</Link>
+          <Link to="/faq">FAQs</Link>
           <Link to="/docs">Docs</Link>
           <Link to="/download">Install</Link>
         </div>
@@ -36,7 +39,8 @@ export function SiteFooter({
         </div>
         <div className="footer-col">
           <h4>Notes</h4>
-          <Link to="/download#requirements">Multi-provider AI support</Link>
+          <Link to="/download#requirements">AI provider setup</Link>
+          <Link to="/benchmarks">Evidence & limitations</Link>
           <a href={GITHUB_REPO} rel="noopener">
             GitHub
           </a>

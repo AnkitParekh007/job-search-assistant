@@ -1,0 +1,31 @@
+name: CI — marketing site
+
+on:
+  pull_request:
+    paths:
+      - "market-site/**"
+      - "packages/core/**"
+      - ".github/workflows/ci-market-site.yml"
+  push:
+    branches: [main]
+    paths:
+      - "market-site/**"
+      - "packages/core/**"
+      - ".github/workflows/ci-market-site.yml"
+
+jobs:
+  site-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Export real feature catalog
+        run: npm run build:features
+      - name: Typecheck, prerender and validate website routes
+        run: npm run build:market

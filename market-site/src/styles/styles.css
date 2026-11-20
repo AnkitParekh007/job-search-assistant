@@ -3014,7 +3014,7 @@ a.platform-card:focus-visible {
   }
 }
 
-@media (max-width: 920px) {
+@media (max-width: 1040px) {
   .nav-inner {
     grid-template-columns: 1fr auto;
   }

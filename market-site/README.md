@@ -11,6 +11,9 @@ Vite + React + React Router, deployed to GitHub Pages at:
 | `/` | About / home |
 | `/features` | Features |
 | `/download` | Download / install |
+| `/benchmarks` | ATS methodology & evidence status (no fabricated metrics) |
+| `/faq` | Frequently asked questions |
+| `/compare` | Sourced comparison with related job-search tools |
 | `/docs` | Docs overview |
 | `/docs/providers` | AI Providers (Claude Code / Codex) |
 | `/docs/*` | Docs guides (install, quickstart, workflows, …) |

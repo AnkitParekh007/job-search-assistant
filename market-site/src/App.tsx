@@ -4,6 +4,9 @@ import { useReveal } from "./hooks/useReveal";
 import { DownloadPage } from "./pages/DownloadPage";
 import { FeaturesPage } from "./pages/FeaturesPage";
 import { HomePage } from "./pages/HomePage";
+import { BenchmarksPage } from "./pages/BenchmarksPage";
+import { FaqPage } from "./pages/FaqPage";
+import { ComparePage } from "./pages/ComparePage";
 import { DocsLayout } from "./pages/docs/DocsLayout";
 import {
   DocsApply,
@@ -38,6 +41,9 @@ export function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/download" element={<DownloadPage />} />
+        <Route path="/benchmarks" element={<BenchmarksPage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/compare" element={<ComparePage />} />
 
         <Route path="/docs" element={<DocsLayout />}>
           <Route index element={<DocsOverview />} />
@@ -57,6 +63,9 @@ export function App() {
         <Route path="/index.html" element={<Navigate to="/" replace />} />
         <Route path="/features.html" element={<Navigate to="/features" replace />} />
         <Route path="/download.html" element={<Navigate to="/download" replace />} />
+        <Route path="/benchmarks.html" element={<Navigate to="/benchmarks" replace />} />
+        <Route path="/faq.html" element={<Navigate to="/faq" replace />} />
+        <Route path="/compare.html" element={<Navigate to="/compare" replace />} />
         <Route path="/docs/index.html" element={<Navigate to="/docs" replace />} />
         <Route path="/docs/quickstart.html" element={<Navigate to="/docs/quickstart" replace />} />
         <Route path="/docs/install.html" element={<Navigate to="/docs/install" replace />} />

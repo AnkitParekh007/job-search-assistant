@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import "./styles/styles.css";
 import "./styles/docs.css";
+import "./styles/marketing-expansion.css";
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
 const container = document.getElementById("root")!;
