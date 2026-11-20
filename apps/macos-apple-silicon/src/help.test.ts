@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findHelpTopic, suggestedHelpTopics, HELP_TOPICS } from "@ai-job-search/ui/components/helpContent";
+import { answerHelpQuestion, findHelpTopic, suggestedHelpTopics, HELP_TOPICS } from "@ai-job-search/ui/components/helpContent";
 
 describe("Ask Scout offline app guide", () => {
   it.each([
@@ -14,6 +14,12 @@ describe("Ask Scout offline app guide", () => {
     ["Do I need AI to use Scout?", "providers"],
     ["Where is my resume PDF?", "documents"],
     ["How do I prepare for an interview?", "interviews"],
+    ["Where do I see Claude approvals?", "approvals"],
+    ["How do approvals work when ranking?", "approvals"],
+    ["How do I change the theme?", "appearance"],
+    ["How do I submit the application?", "auto-apply"],
+    ["Can I use a local LLM?", "providers"],
+    ["What are the keyboard shortcuts?", "navigate"],
   ])("matches %s to %s using bundled content", (question, expectedId) => {
     expect(findHelpTopic(question)?.id).toBe(expectedId);
   });
@@ -21,6 +27,17 @@ describe("Ask Scout offline app guide", () => {
   it("does not invent answers for unknown questions", () => {
     expect(findHelpTopic("What is the capital of Saturn?")).toBeNull();
     expect(findHelpTopic("")).toBeNull();
+    expect(findHelpTopic("jobs")).toBeNull();
+    expect(findHelpTopic("help")).toBeNull();
+  });
+
+  it("opens a named screen without calling a workflow", () => {
+    const opened = answerHelpQuestion("open settings");
+    expect(opened.openRoute).toBe("settings");
+    expect(opened.topic?.id).toBe("appearance");
+    const followUp = answerHelpQuestion("open it", { previous: findHelpTopic("How do I find jobs?") });
+    expect(followUp.openRoute).toBe("jobs");
+    expect(answerHelpQuestion("show me how rankings work").openRoute).toBeUndefined();
   });
 
   it("offers contextual help based on the active app screen", () => {

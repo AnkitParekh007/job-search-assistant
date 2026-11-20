@@ -20,7 +20,7 @@ export const HELP_TOPICS: HelpTopic[] = [
     answer: "Start by connecting your local ai-job-search workspace, checking tools and configuring your profile. Then discover, rank, prepare, review and track applications.",
     steps: ["Open Settings to check your workspace and dependencies.", "Open Profile to review your candidate details.", "Go to Jobs to begin discovering opportunities."],
     route: "settings", action: "Open Settings",
-    triggers: ["get started", "start using", "new here", "first time", "where do i start", "how it works", "begin"],
+    triggers: ["get started", "start using", "new here", "first time", "where do i start", "where do i begin", "how it works"],
     contexts: ["dashboard"],
   },
   {
@@ -31,6 +31,22 @@ export const HELP_TOPICS: HelpTopic[] = [
     route: "settings", action: "Open Settings",
     triggers: ["workspace", "connect folder", "choose folder", "upstream", "not connected", "missing workspace"],
     contexts: ["settings", "dashboard"],
+  },
+  {
+    id: "appearance",
+    question: "How do I change the theme or open Settings?",
+    answer: "Settings is where you connect a workspace, choose an AI provider, and switch the theme. The choices are System, Light, and Dark, and they apply immediately on this Mac.",
+    steps: ["Open Settings.", "Choose System, Light, or Dark.", "Connect a workspace or a provider from the same screen."],
+    route: "settings", action: "Open Settings",
+    triggers: ["open settings", "change the theme", "change theme", "dark mode", "light mode", "system theme", "appearance", "switch theme"],
+    contexts: ["settings", "dashboard"],
+  },
+  {
+    id: "navigate",
+    question: "How do I get around the app?",
+    answer: "Use the sidebar to change screens. Command-K opens the command palette to jump to a page, run a workflow, or find a job or application. Command-backslash collapses the sidebar. Command-1 through Command-9 and Command-comma open the numbered sidebar items. Settings is Command-comma.",
+    triggers: ["keyboard shortcut", "keyboard shortcuts", "command palette", "search or run", "toggle sidebar", "how do i navigate", "get around"],
+    contexts: ["dashboard"],
   },
   {
     id: "discover",
@@ -55,7 +71,7 @@ export const HELP_TOPICS: HelpTopic[] = [
     question: "Does the app automatically apply for me?",
     answer: "No. The app helps discover and rank jobs, prepare materials and track progress. It does not submit applications to employers. You review and submit them yourself.",
     route: "studio", action: "Open Studio",
-    triggers: ["auto apply", "auto-apply", "automatically apply", "automatically submit", "submit for me", "send applications automatically", "does it apply", "does it submit"],
+    triggers: ["auto apply", "auto-apply", "automatically apply", "automatically submit", "submit for me", "send applications automatically", "does it apply", "does it submit", "apply for me", "submit the application", "submit an application", "submit my application"],
     contexts: ["studio", "pipeline"],
   },
   {
@@ -127,9 +143,9 @@ export const HELP_TOPICS: HelpTopic[] = [
   {
     id: "providers",
     question: "Do I need an AI provider?",
-    answer: "Not for Scout! This help guide works completely offline. The app's AI-powered job-search workflows may require a supported provider configured in Settings, with its own usage limits or costs.",
+    answer: "Not for Scout. This guide is bundled and never calls a model. Job-search workflows use the provider you choose in Settings. Claude Code and Codex can run the agent workflows. OpenAI API, Gemini, and Ollama handle structured assists such as ranking, drafts, and interview prep; they do not run portal discovery or submit applications. Gmail and Notion sync need Claude Code. Ollama runs on your machine. The others use your own account or API key.",
     route: "settings", action: "Open Settings",
-    triggers: ["ai provider", "claude", "codex", "openai", "gemini", "ollama", "api key", "need ai", "without ai", "no ai", "models"],
+    triggers: ["ai provider", "claude", "codex", "openai", "gemini", "ollama", "api key", "need ai", "without ai", "no ai", "models", "local llm", "local model", "which model", "what models"],
     contexts: ["settings", "automations"],
   },
   {
@@ -137,7 +153,7 @@ export const HELP_TOPICS: HelpTopic[] = [
     question: "Is my data stored locally?",
     answer: "The app keeps workspace data in your local upstream folder and run history/settings in local app storage. External AI workflows may send relevant content to a configured provider. Scout never sends your question to a server.",
     route: "settings", action: "Open Settings",
-    triggers: ["privacy", "local data", "stored locally", "where is data stored", "offline", "data security", "private"],
+    triggers: ["privacy", "local data", "stored locally", "where is data stored", "work offline", "data security", "private"],
     contexts: ["settings"],
   },
   {
@@ -153,7 +169,7 @@ export const HELP_TOPICS: HelpTopic[] = [
     answer: "Start with Settings to check your connected workspace, provider and dependencies. Use Agent Activity for workflow errors. Scout can explain the screens, but it cannot inspect logs or repair your system.",
     steps: ["Check Settings and the workspace connection.", "Review Agent Activity for the failed run.", "Consult the project's troubleshooting guide for your error."],
     route: "settings", action: "Open Settings",
-    triggers: ["not working", "error", "failed", "broken", "troubleshoot", "stuck", "missing dependency", "something wrong"],
+    triggers: ["not working", "application failed", "workflow failed", "troubleshoot", "missing dependency", "something wrong", "something failed"],
     contexts: ["settings", "activity"],
   },
 ];
@@ -161,26 +177,129 @@ export const HELP_TOPICS: HelpTopic[] = [
 const normalize = (text: string) =>
   text.toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 
-const STOP_WORDS = new Set(["how", "what", "where", "when", "which", "why", "does", "do", "the", "this", "that", "for", "can", "you", "me", "my", "i", "a", "an", "to", "is", "it", "in", "on", "and", "with"]);
+const STOP_WORDS = new Set(["how", "what", "where", "when", "which", "why", "does", "do", "the", "this", "that", "for", "can", "you", "me", "my", "i", "a", "an", "to", "is", "it", "in", "on", "and", "with", "of", "or", "be", "am"]);
+
+/** Words that show up in ordinary sentences and must not win a match by themselves. */
+const GENERIC = new Set(["job", "jobs", "app", "help", "work", "file", "files", "data", "open", "show", "need", "make", "cost", "free", "score", "model", "models", "error", "failed", "broken", "stuck", "begin", "using", "used", "scout", "screen", "thing", "something", "please", "just", "like", "want", "from", "your", "about", "have", "has"]);
+
+const isContent = (word: string) => (word.length > 2 || word === "ai") && !STOP_WORDS.has(word);
+
+const contentWords = (text: string) => normalize(text).split(" ").filter(isContent);
+
+const RAW_WORDS = new Set(HELP_TOPICS.flatMap((topic) => contentWords([topic.question, ...topic.triggers].join(" "))));
+
+const stemToken = (word: string) => {
+  if (word.length > 4 && word.endsWith("s") && !word.endsWith("ss")) {
+    const stem = word.slice(0, -1);
+    if (RAW_WORDS.has(stem)) return stem;
+  }
+  return word;
+};
+
+const stemText = (text: string) => normalize(text).split(" ").map(stemToken).join(" ").replace(/\s+/g, " ").trim();
+
+const DOC_FREQ = new Map<string, number>();
+for (const topic of HELP_TOPICS) {
+  const words = new Set(stemText([topic.question, ...topic.triggers].join(" ")).split(" ").filter(isContent));
+  for (const word of words) DOC_FREQ.set(word, (DOC_FREQ.get(word) || 0) + 1);
+}
+
+const containsPhrase = (haystack: string, phrase: string) =>
+  ` ${haystack} `.includes(` ${phrase} `);
+
+/** Best whole-phrase score for one topic. Keyword hits are not summed across triggers. */
+function scoreTopic(stemQuery: string, topic: HelpTopic): number {
+  let best = 0;
+  for (const variantRaw of [topic.question, ...topic.triggers]) {
+    const variant = stemText(variantRaw);
+    if (!variant) continue;
+    if (stemQuery === variant) return 1000;
+    if (!containsPhrase(stemQuery, variant)) continue;
+    const words = variant.split(" ").filter(isContent);
+    if (!words.length) continue;
+    if (words.length === 1) {
+      const word = words[0];
+      if (word.length < 5 || GENERIC.has(word)) continue;
+      best = Math.max(best, 80 + variant.length);
+      continue;
+    }
+    const idf = words.reduce((sum, word) => sum + Math.log((HELP_TOPICS.length + 1) / (1 + (DOC_FREQ.get(word) || 0))), 0);
+    best = Math.max(best, 200 + words.length * 20 + idf * 12);
+  }
+  return best;
+}
 
 export function findHelpTopic(input: string): HelpTopic | null {
-  const query = normalize(input);
+  const query = stemText(input);
   if (!query) return null;
-  const queryWords = new Set(query.split(" ").filter((word) => word.length > 2 && !STOP_WORDS.has(word)));
-  const matches = HELP_TOPICS.map((topic) => {
-    const variants = [topic.question, ...topic.triggers].map(normalize);
-    let score = 0;
-    for (const variant of variants) {
-      if (query === variant) score += 100;
-      else if (variant.length >= 5 && query.includes(variant)) score += 18;
-      else if (query.length >= 8 && variant.includes(query)) score += 12;
-      for (const token of variant.split(" ")) {
-        if (token.length > 3 && queryWords.has(token)) score += 1;
-      }
+  let best: HelpTopic | null = null;
+  let bestScore = 0;
+  for (const topic of HELP_TOPICS) {
+    const score = scoreTopic(query, topic);
+    if (score > bestScore) {
+      best = topic;
+      bestScore = score;
     }
-    return { topic, score };
-  }).sort((a, b) => b.score - a.score);
-  return matches[0]?.score >= 3 ? matches[0].topic : null;
+  }
+  return bestScore >= 80 ? best : null;
+}
+
+const THANKS = /^(?:thanks|thank you|thx|ok|okay|got it|great|cool)(?: scout)?$/;
+const FOLLOW_UP_OPEN = /^(?:please )?(?:open it|open that|open this|go there|take me there|show me that|take me to it|open the screen)$/;
+const OPEN_REQUEST = /^(?:please )?(?:open|go to|take me to|show me) (?:the )?(.+)$/;
+
+const DESTINATIONS: Record<string, string> = {
+  today: "dashboard",
+  dashboard: "dashboard",
+  jobs: "jobs",
+  studio: "studio",
+  documents: "documents",
+  pipeline: "pipeline",
+  "interview prep": "interview",
+  interview: "interview",
+  "agent activity": "activity",
+  activity: "activity",
+  workflows: "automations",
+  automations: "automations",
+  profile: "profile",
+  settings: "settings",
+};
+
+const ROUTE_TOPIC: Record<string, string> = {
+  dashboard: "start",
+  jobs: "discover",
+  studio: "prepare",
+  documents: "documents",
+  pipeline: "pipeline",
+  interview: "interviews",
+  activity: "activity",
+  automations: "workflows",
+  profile: "profile",
+  settings: "appearance",
+};
+
+export const HELP_FALLBACK = "I'm not sure how to answer that yet. I can explain the app's screens and common workflows, but I don't have AI or access to your personal data. Try one of the help topics below.";
+
+export type HelpAnswer = { text: string; topic: HelpTopic | null; openRoute?: string };
+
+export function answerHelpQuestion(input: string, context: { previous?: HelpTopic | null } = {}): HelpAnswer {
+  const query = normalize(input);
+  if (!query) return { text: "", topic: null };
+  if (THANKS.test(query)) return { text: "Anytime. Ask another question whenever you want.", topic: null };
+  if (context.previous?.route && FOLLOW_UP_OPEN.test(query)) {
+    return { text: context.previous.answer, topic: context.previous, openRoute: context.previous.route };
+  }
+  const request = query.match(OPEN_REQUEST);
+  if (request) {
+    const route = DESTINATIONS[request[1]];
+    if (route) {
+      const topic = HELP_TOPICS.find((item) => item.id === ROUTE_TOPIC[route]) || null;
+      return { text: topic?.answer || "Opening that screen.", topic, openRoute: route };
+    }
+  }
+  const topic = findHelpTopic(input);
+  if (!topic) return { text: HELP_FALLBACK, topic: null };
+  return { text: topic.answer, topic };
 }
 
 export function suggestedHelpTopics(route: string): HelpTopic[] {

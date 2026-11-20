@@ -6,7 +6,7 @@ Ask Scout is a deterministic, in-app guide mounted in the shared React desktop s
 
 - Accessible via the bottom-right help button after onboarding.
 - Reuses the existing Scout onboarding mascot and shared UI design.
-- Accepts free-text questions, recognizes bundled phrases/keywords, and returns vetted responses.
+- Accepts free-text questions, matches the best bundled phrase (not a sum of loose keywords), and returns a vetted response.
 - Shows screen-specific suggested questions based on the current desktop route.
 - Offers concise steps and a button that navigates to the relevant app screen.
 - Gives an honest fallback for questions it cannot match.
@@ -25,8 +25,9 @@ Add knowledge by defining a new topic in HELP_TOPICS. Maintain consistency with 
 
 ## Design
 
-- Buttons navigate to screens only, never trigger AI workflows or sensitive actions.
-- Scout is separate from the command palette, job-search AI and approvals.
+- Buttons navigate to screens only, never trigger AI workflows or sensitive actions. "Open settings" or "open jobs" navigates the same way. "Open it" repeats the previous answer's screen.
+- Scout sits under the command palette. Opening the palette closes Scout. Escape closes whichever one is in front.
+- Toasts sit above the launcher. While the panel is open they move under the window toolbar so the transcript does not cover them.
 - Intel and Windows builds use the shared component but require their own smoke tests.
 - Scout doesn't pop up unsolicited. Users close it whenever they like.
 - Suggestions change with the route; messages remain during the shell session.
@@ -43,4 +44,4 @@ On a development machine with dependencies installed:
 4. Test keyboard navigation, light/dark themes, narrow windows, and Reduce Motion.
 5. Verify Scout answers with all AI providers disconnected and no network access.
 
-Tests or desktop builds were not executed when preparing this branch via the connected GitHub API. CI and local validation remain required.
+Run the frontend test and typecheck before merging. Intel and Windows shells share this component and still need their own smoke test.

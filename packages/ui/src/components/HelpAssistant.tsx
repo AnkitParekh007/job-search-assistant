@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRight, HelpCircle, MessageCircleQuestion, Send, X } from "lucide-react";
 import { Scout } from "../pages/Onboarding";
 import { useStore } from "../store";
-import { findHelpTopic, HELP_TOPICS, suggestedHelpTopics, type HelpTopic } from "./helpContent";
+import { answerHelpQuestion, HELP_TOPICS, suggestedHelpTopics, type HelpTopic } from "./helpContent";
 
 type HelpMessage = {
   id: number;
@@ -14,8 +14,9 @@ type HelpMessage = {
 
 const GREETING = "Hi! I'm Scout, your offline app guide. Ask me how to use a feature, or choose a question below. I never use AI or send your questions anywhere.";
 
-export function HelpAssistant() {
+export function HelpAssistant({ paletteOpen = false, onOpenChange }: { paletteOpen?: boolean; onOpenChange?: (open: boolean) => void }) {
   const { route, go } = useStore();
+  const reduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [messages, setMessages] = useState<HelpMessage[]>([{ id: 0, sender: "scout", text: GREETING }]);
@@ -26,11 +27,17 @@ export function HelpAssistant() {
   const launcher = useRef<HTMLButtonElement>(null);
   const previouslyOpen = useRef(false);
 
+  useEffect(() => { onOpenChange?.(open); }, [open, onOpenChange]);
+
+  useEffect(() => {
+    if (paletteOpen) setOpen(false);
+  }, [paletteOpen]);
+
   useEffect(() => {
     if (open) input.current?.focus();
-    else if (previouslyOpen.current) launcher.current?.focus();
+    else if (previouslyOpen.current && !paletteOpen) launcher.current?.focus();
     previouslyOpen.current = open;
-  }, [open]);
+  }, [open, paletteOpen]);
 
   useEffect(() => {
     if (open && transcript.current) transcript.current.scrollTop = transcript.current.scrollHeight;
@@ -39,28 +46,42 @@ export function HelpAssistant() {
   useEffect(() => {
     if (!open) return;
     const escape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        setOpen(false);
-      }
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(false);
     };
-    window.addEventListener("keydown", escape);
-    return () => window.removeEventListener("keydown", escape);
+    window.addEventListener("keydown", escape, true);
+    return () => window.removeEventListener("keydown", escape, true);
   }, [open]);
+
+  const previousTopic = () => {
+    for (let index = messages.length - 1; index >= 0; index -= 1) {
+      const topicId = messages[index].topicId;
+      if (!topicId) continue;
+      return HELP_TOPICS.find((topic) => topic.id === topicId) || null;
+    }
+    return null;
+  };
 
   const answer = (rawQuestion: string, selected?: HelpTopic) => {
     const question = rawQuestion.trim().slice(0, 240);
     if (!question) return;
-    const topic = selected || findHelpTopic(question);
-    const response = topic?.answer ||
-      "I'm not sure how to answer that yet. I can explain the app's screens and common workflows, but I don't have AI or access to your personal data. Try one of the help topics below.";
+    const reply = selected
+      ? { text: selected.answer, topic: selected, openRoute: undefined }
+      : answerHelpQuestion(question, { previous: previousTopic() });
+    if (!reply.text) return;
     setMessages((current) => [
       ...current,
       { id: nextId.current++, sender: "user", text: question },
-      { id: nextId.current++, sender: "scout", text: response, topicId: topic?.id },
+      { id: nextId.current++, sender: "scout", text: reply.text, topicId: reply.topic?.id },
     ]);
     setDraft("");
-    setShowTopics(!topic);
+    setShowTopics(!reply.topic);
+    if (reply.openRoute) {
+      go(reply.openRoute);
+      setOpen(false);
+    }
   };
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -74,6 +95,8 @@ export function HelpAssistant() {
   };
 
   const suggestions = suggestedHelpTopics(route);
+  const spoken = messages.filter((message) => message.sender === "scout");
+  const latestReply = spoken.length ? spoken[spoken.length - 1].text : "";
 
   return (
     <>
@@ -84,11 +107,11 @@ export function HelpAssistant() {
             role="dialog"
             aria-modal="false"
             aria-label="Ask Scout app guide"
-            initial={{ opacity: 0, y: 16, scale: 0.97 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.97 }}
-            transition={{ duration: 0.18 }}
-            className="fixed bottom-20 right-4 z-[70] flex h-[min(550px,calc(100vh-112px))] w-[min(390px,calc(100vw-32px))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl"
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.97 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.18 }}
+            className="fixed bottom-20 right-4 z-40 flex h-[min(460px,calc(100vh-240px))] w-[min(390px,calc(100vw-32px))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl"
           >
             <div className="relative flex shrink-0 items-center gap-2.5 border-b border-line bg-surface-2 px-4 py-3">
               <Scout size={38} />
@@ -101,7 +124,8 @@ export function HelpAssistant() {
               </button>
             </div>
 
-            <div ref={transcript} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3.5 py-4" aria-live="polite" aria-relevant="additions">
+            <div className="sr-only" aria-live="polite">{open ? latestReply : ""}</div>
+            <div ref={transcript} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3.5 py-4">
               {messages.map((message) => {
                 const topic = message.topicId ? HELP_TOPICS.find((item) => item.id === message.topicId) : undefined;
                 return (
@@ -131,7 +155,7 @@ export function HelpAssistant() {
                 <div className="space-y-1.5 pt-1">
                   <p className="px-1 text-[11px] font-medium text-ink-3">Suggested questions for this screen</p>
                   {suggestions.map((topic) => (
-                    <button key={topic.id} onClick={() => answer(topic.question, topic)}
+                    <button key={topic.id} type="button" onClick={() => answer(topic.question, topic)}
                       className="flex w-full items-center justify-between gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-left text-[12px] text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
                       <span>{topic.question}</span><ArrowRight size={13} className="shrink-0 text-ink-3" />
                     </button>
@@ -176,7 +200,7 @@ export function HelpAssistant() {
         aria-expanded={open}
         aria-controls="ask-scout-panel"
         title="Ask Scout — offline app help"
-        className="fixed bottom-4 right-4 z-[70] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-accent text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-accent text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {open ? <X size={22} /> : <MessageCircleQuestion size={22} />}
       </button>
