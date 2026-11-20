@@ -1,54 +1,67 @@
-# The Way Back In · LinkedIn films
+# The Way Back In · launch films
 
-Three 4:5 (1080×1350) launch films, built in code with [Remotion](https://www.remotion.dev):
+Three 4:5 (1080×1350, 30 fps) films for AI Job Search Assistant, each with a short cut and a cover, built in code
+with [Remotion](https://www.remotion.dev).
 
-| Composition | Film | Length | Presenter |
-|---|---|---|---|
-| `Film1` | Commit History | 40 s | Daniel |
-| `Film2` | Return Date | 35 s | Priya |
-| `Film3` | Parsed | 30 s | Tomás |
+| Composition | Film | Length | Presenter (fictional) | Product on screen from |
+|---|---|---|---|---|
+| `Film2` | Return Date (lead) | 34.6 s | Priya | 0:07.5 (Jobs, found) |
+| `Film1` | Commit History | 37.5 s | Daniel | 0:11.3 (workspace setup) |
+| `Film3` | Parsed | 31.6 s | Tomás | 0:06.1 (ATS text check) |
+| `Film2Short` · `Film1Short` · `Film3Short` | cutdowns | 16–23 s | | first third |
 
-Each film has a lip-synced 3D presenter in the corner, a local voiceover, burned-in captions, a placeholder score, and a mix mastered to about −16 LUFS. Live-action shots are labelled placeholder frames ("LIVE-ACTION SLOT") until real or AI-generated footage is dropped in. Pass `showSlates: false` to hide the labels.
+Every scene carries a top-left label: **In the app · sample data** for recreations of real, shipping screens
+(labels copied from `packages/ui`), or **Story / Dramatization** for everything else. No film shows an offer, a
+recruiter call, an ATS score or a response metric, and every film ends with the person submitting their own
+applications.
+
+## How it fits together
+
+`src/films.json` is the single source of truth: scene lengths, labels, voiceover lines, the cutdowns and the
+end-card claims. Everything else is generated from it.
+
+```
+films.json ─┬─ tools/voiceover.py  → public/audio/<slug>-vo.wav, src/generated/<slug>.cues.json, captions/<slug>.srt
+            ├─ tools/visemes.py    → src/generated/<slug>.visemes.json   (lip-sync from the voice audio)
+            ├─ tools/score.py      → public/audio/<slug>-score.wav       (original score, timed to the scenes)
+            ├─ tools/mix.py        → public/audio/<slug>-mix.wav         (duck 12 dB, master −16 LUFS / −1.5 dBTP)
+            └─ src/*.tsx           → the films (FilmShell lays scenes out from the same file)
+```
+
+Each caption phrase is synthesised on its own, so caption times come from the real audio. Captions are pre-wrapped
+(≤ 2 lines, ≤ 32 characters, ≤ 20 characters per second) and the SRT files are written from the same cues as the
+burned-in captions.
 
 ## Setup
 
 ```bash
 npm install
-python3.12 -m venv .venv && .venv/bin/pip install kokoro-onnx soundfile
+python3.12 -m venv .venv && .venv/bin/pip install kokoro-onnx soundfile numpy
 mkdir -p models && cd models
 curl -LO https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx
 curl -LO https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin
 ```
 
-## Build the audio (the WAVs are generated, not committed)
+`ffmpeg`/`ffprobe` and the authenticated `gh` CLI must be on the PATH.
+
+## Build
 
 ```bash
-python3 tools/score.py public/film1-score-raw.wav
-python3 tools/score23.py film2 public/film2-score-raw.wav
-python3 tools/score23.py film3 public/film3-score-raw.wav
-for f in film1 film2 film3; do
-  ffmpeg -y -i public/$f-score-raw.wav -af "loudnorm=I=-18:TP=-1.5:LRA=11" -ar 48000 -ac 2 public/$f-score.wav
-  .venv/bin/python tools/voiceover.py $f          # writes public/$f-vo.wav and src/$f-vo.json
-  .venv/bin/python tools/visemes.py public/$f-vo.wav src/$f-visemes.json
-done
+npm run build          # everything below, in order; stops at the first failure
+npm run verify:release # end-card claims vs the latest GitHub release  → out/checks/release.json
+npm run audio          # voice, captions + SRT, visemes, score, mix
+npm run check:source   # assets, claims lint, scene labels, product timing, captions/SRT, voice under captions, mix balance
+npm run render         # out/<slug>.mp4 for all six, out/covers/*.png
+npm run check:render   # spec, black/blank frames, loudness, true peak, dead air  → out/checks/report.md
+npm run studio         # preview
 ```
 
-The voiceover lines, voices and timing windows are in `tools/voiceover.py`. The mouth shapes come from the voiceover audio itself (`tools/visemes.py`), so re-run it whenever a voiceover changes.
+The rendered MP4s, WAVs and check reports are generated, not committed. `ACCEPTANCE.md` records the last full run.
 
-## Render
+## Changing a film
 
-```bash
-npm run render:film1   # out/film1-commit-history-4x5.mp4
-npm run render:film2   # out/film2-return-date-4x5.mp4
-npm run render:film3   # out/film3-parsed-4x5.mp4
-npm run studio         # preview, including the AvatarLineup composition
-```
+Edit the line or scene length in `src/films.json`, then `npm run audio`. The voiceover build fails if a line cannot
+fit before the next one. If a release adds a Windows or Intel Mac app, `verify:release` fails until the
+`availability` claim is updated.
 
-`tools/master.sh` masters loudness to −16 LUFS and keeps the video stream as it is. `captions/film1-vo.srt` is a plain SRT for LinkedIn's caption upload.
-
-## Before publishing
-
-- Film 1 names Anthropic. It needs Anthropic's written sign-off, or set `company` to the fallback.
-- LinkedIn recommends 15–30 s for every ad placement. Cut Films 1 and 2 down for paid use.
-- Fonts are Google stand-ins (Bricolage Grotesque, Figtree) for Cabinet Grotesk and Satoshi.
-- The score is a synthesised placeholder. Replace it with licensed music for paid use.
+Launch copy for each platform is in `launch/copy.md`; asset licences are in `LICENSES.md`.

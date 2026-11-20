@@ -1,0 +1,64 @@
+1
+00:00:00,000 --> 00:00:01,755
+142 applications.
+
+2
+00:00:01,785 --> 00:00:02,920
+Zero replies.
+
+3
+00:00:02,950 --> 00:00:04,572
+The reports I used to build?
+
+4
+00:00:04,602 --> 00:00:06,188
+They build themselves now.
+
+5
+00:00:06,250 --> 00:00:08,537
+So I ran a text
+check on my résumé.
+
+6
+00:00:08,567 --> 00:00:10,506
+The extracted text was noise.
+
+7
+00:00:11,150 --> 00:00:13,726
+Fine. I know how
+to fix bad data.
+
+8
+00:00:13,850 --> 00:00:15,947
+One column. Real text.
+
+9
+00:00:15,977 --> 00:00:17,432
+Now it reads in order.
+
+10
+00:00:18,700 --> 00:00:20,091
+Then roles that fit.
+
+11
+00:00:20,121 --> 00:00:22,749
+Fewer applications,
+each one sent by me.
+
+12
+00:00:23,200 --> 00:00:26,202
+No one can promise what
+every screening system does.
+
+13
+00:00:26,232 --> 00:00:27,220
+But I can check.
+
+14
+00:00:27,250 --> 00:00:28,770
+AI changed the market.
+
+15
+00:00:28,800 --> 00:00:30,493
+It didn't change what I'm worth.
+

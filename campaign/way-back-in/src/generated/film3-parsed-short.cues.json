@@ -1,0 +1,83 @@
+[
+ {
+  "speechStart": 0.05,
+  "speechEnd": 1.595,
+  "text": "142 applications.",
+  "lines": [
+   "142 applications."
+  ],
+  "start": 0.0,
+  "end": 1.755
+ },
+ {
+  "speechStart": 1.835,
+  "speechEnd": 2.82,
+  "text": "Zero replies.",
+  "lines": [
+   "Zero replies."
+  ],
+  "start": 1.785,
+  "end": 3.02
+ },
+ {
+  "speechStart": 3.1,
+  "speechEnd": 5.177,
+  "text": "So I ran a text check on my résumé.",
+  "lines": [
+   "So I ran a text",
+   "check on my résumé."
+  ],
+  "start": 3.05,
+  "end": 5.337
+ },
+ {
+  "speechStart": 5.417,
+  "speechEnd": 7.056,
+  "text": "The extracted text was noise.",
+  "lines": [
+   "The extracted text was noise."
+  ],
+  "start": 5.367,
+  "end": 7.306
+ },
+ {
+  "speechStart": 8.2,
+  "speechEnd": 10.087,
+  "text": "One column. Real text.",
+  "lines": [
+   "One column. Real text."
+  ],
+  "start": 8.15,
+  "end": 10.247
+ },
+ {
+  "speechStart": 10.327,
+  "speechEnd": 11.482,
+  "text": "Now it reads in order.",
+  "lines": [
+   "Now it reads in order."
+  ],
+  "start": 10.277,
+  "end": 11.732
+ },
+ {
+  "speechStart": 13.1,
+  "speechEnd": 14.41,
+  "text": "AI changed the market.",
+  "lines": [
+   "AI changed the market."
+  ],
+  "start": 13.05,
+  "end": 14.57
+ },
+ {
+  "speechStart": 14.65,
+  "speechEnd": 16.043,
+  "text": "It didn't change what I'm worth.",
+  "lines": [
+   "It didn't change what I'm worth."
+  ],
+  "start": 14.6,
+  "end": 16.293
+ }
+]

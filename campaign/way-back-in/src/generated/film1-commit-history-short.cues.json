@@ -1,0 +1,106 @@
+[
+ {
+  "speechStart": 1.2,
+  "speechEnd": 4.052,
+  "text": "14 months. Not because of my code.",
+  "lines": [
+   "14 months. Not",
+   "because of my code."
+  ],
+  "start": 1.15,
+  "end": 4.212
+ },
+ {
+  "speechStart": 4.292,
+  "speechEnd": 5.383,
+  "text": "I was getting better.",
+  "lines": [
+   "I was getting better."
+  ],
+  "start": 4.242,
+  "end": 5.52
+ },
+ {
+  "speechStart": 5.6,
+  "speechEnd": 6.611,
+  "text": "So I stopped.",
+  "lines": [
+   "So I stopped."
+  ],
+  "start": 5.55,
+  "end": 6.771
+ },
+ {
+  "speechStart": 6.851,
+  "speechEnd": 8.608,
+  "text": "And treated it like a project.",
+  "lines": [
+   "And treated it like a project."
+  ],
+  "start": 6.801,
+  "end": 8.72
+ },
+ {
+  "speechStart": 8.8,
+  "speechEnd": 10.516,
+  "text": "I looked at where I actually fit,",
+  "lines": [
+   "I looked at where",
+   "I actually fit,"
+  ],
+  "start": 8.75,
+  "end": 10.556
+ },
+ {
+  "speechStart": 10.636,
+  "speechEnd": 11.862,
+  "text": "and where I didn't yet.",
+  "lines": [
+   "and where I didn't yet."
+  ],
+  "start": 10.586,
+  "end": 12.112
+ },
+ {
+  "speechStart": 13.65,
+  "speechEnd": 14.854,
+  "text": "Every draft tailored.",
+  "lines": [
+   "Every draft tailored."
+  ],
+  "start": 13.6,
+  "end": 15.014
+ },
+ {
+  "speechStart": 15.094,
+  "speechEnd": 17.765,
+  "text": "My words. Nothing saved without me.",
+  "lines": [
+   "My words. Nothing",
+   "saved without me."
+  ],
+  "start": 15.044,
+  "end": 17.82
+ },
+ {
+  "speechStart": 17.9,
+  "speechEnd": 19.637,
+  "text": "The gap's still on my résumé.",
+  "lines": [
+   "The gap's still on my résumé."
+  ],
+  "start": 17.85,
+  "end": 19.797
+ },
+ {
+  "speechStart": 19.877,
+  "speechEnd": 21.979,
+  "text": "It's just not the headline anymore.",
+  "lines": [
+   "It's just not the",
+   "headline anymore."
+  ],
+  "start": 19.827,
+  "end": 22.229
+ }
+]

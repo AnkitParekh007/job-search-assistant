@@ -1,0 +1,156 @@
+[
+ {
+  "speechStart": 0.05,
+  "speechEnd": 1.595,
+  "text": "142 applications.",
+  "lines": [
+   "142 applications."
+  ],
+  "start": 0.0,
+  "end": 1.755
+ },
+ {
+  "speechStart": 1.835,
+  "speechEnd": 2.82,
+  "text": "Zero replies.",
+  "lines": [
+   "Zero replies."
+  ],
+  "start": 1.785,
+  "end": 2.92
+ },
+ {
+  "speechStart": 3.0,
+  "speechEnd": 4.412,
+  "text": "The reports I used to build?",
+  "lines": [
+   "The reports I used to build?"
+  ],
+  "start": 2.95,
+  "end": 4.572
+ },
+ {
+  "speechStart": 4.652,
+  "speechEnd": 5.938,
+  "text": "They build themselves now.",
+  "lines": [
+   "They build themselves now."
+  ],
+  "start": 4.602,
+  "end": 6.188
+ },
+ {
+  "speechStart": 6.3,
+  "speechEnd": 8.377,
+  "text": "So I ran a text check on my résumé.",
+  "lines": [
+   "So I ran a text",
+   "check on my résumé."
+  ],
+  "start": 6.25,
+  "end": 8.537
+ },
+ {
+  "speechStart": 8.617,
+  "speechEnd": 10.256,
+  "text": "The extracted text was noise.",
+  "lines": [
+   "The extracted text was noise."
+  ],
+  "start": 8.567,
+  "end": 10.506
+ },
+ {
+  "speechStart": 11.2,
+  "speechEnd": 13.476,
+  "text": "Fine. I know how to fix bad data.",
+  "lines": [
+   "Fine. I know how",
+   "to fix bad data."
+  ],
+  "start": 11.15,
+  "end": 13.726
+ },
+ {
+  "speechStart": 13.9,
+  "speechEnd": 15.787,
+  "text": "One column. Real text.",
+  "lines": [
+   "One column. Real text."
+  ],
+  "start": 13.85,
+  "end": 15.947
+ },
+ {
+  "speechStart": 16.027,
+  "speechEnd": 17.182,
+  "text": "Now it reads in order.",
+  "lines": [
+   "Now it reads in order."
+  ],
+  "start": 15.977,
+  "end": 17.432
+ },
+ {
+  "speechStart": 18.75,
+  "speechEnd": 19.931,
+  "text": "Then roles that fit.",
+  "lines": [
+   "Then roles that fit."
+  ],
+  "start": 18.7,
+  "end": 20.091
+ },
+ {
+  "speechStart": 20.171,
+  "speechEnd": 22.499,
+  "text": "Fewer applications, each one sent by me.",
+  "lines": [
+   "Fewer applications,",
+   "each one sent by me."
+  ],
+  "start": 20.121,
+  "end": 22.749
+ },
+ {
+  "speechStart": 23.25,
+  "speechEnd": 26.042,
+  "text": "No one can promise what every screening system does.",
+  "lines": [
+   "No one can promise what",
+   "every screening system does."
+  ],
+  "start": 23.2,
+  "end": 26.202
+ },
+ {
+  "speechStart": 26.282,
+  "speechEnd": 27.172,
+  "text": "But I can check.",
+  "lines": [
+   "But I can check."
+  ],
+  "start": 26.232,
+  "end": 27.22
+ },
+ {
+  "speechStart": 27.3,
+  "speechEnd": 28.61,
+  "text": "AI changed the market.",
+  "lines": [
+   "AI changed the market."
+  ],
+  "start": 27.25,
+  "end": 28.77
+ },
+ {
+  "speechStart": 28.85,
+  "speechEnd": 30.243,
+  "text": "It didn't change what I'm worth.",
+  "lines": [
+   "It didn't change what I'm worth."
+  ],
+  "start": 28.8,
+  "end": 30.493
+ }
+]

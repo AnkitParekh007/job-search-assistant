@@ -1,12 +1,16 @@
 {
   "name": "way-back-in-films",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "studio": "remotion studio",
-    "render:film1": "remotion render Film1 out/mix1.mp4 --gl=angle --crf=18 && sh tools/master.sh out/mix1.mp4 out/film1-commit-history-4x5.mp4",
-    "render:film2": "remotion render Film2 out/mix2.mp4 --gl=angle --crf=18 && sh tools/master.sh out/mix2.mp4 out/film2-return-date-4x5.mp4",
-    "render:film3": "remotion render Film3 out/mix3.mp4 --gl=angle --crf=18 && sh tools/master.sh out/mix3.mp4 out/film3-parsed-4x5.mp4"
+    "audio": ".venv/bin/python tools/voiceover.py all && .venv/bin/python tools/visemes.py all && .venv/bin/python tools/score.py all && .venv/bin/python tools/mix.py all",
+    "verify:release": ".venv/bin/python tools/verify_release.py",
+    "check:source": ".venv/bin/python tools/check.py source",
+    "render": "sh tools/render.sh",
+    "check:render": ".venv/bin/python tools/check.py render",
+    "build": "npm run verify:release && npm run audio && npm run check:source && npm run render && npm run check:render",
+    "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
     "@react-three/fiber": "^9.8.2",

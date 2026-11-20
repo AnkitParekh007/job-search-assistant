@@ -1,5 +1,7 @@
-node_modules/
+node_modules
 out/
-.venv/
-models/
+.venv
+models
+.cache/
+public/audio/
 public/*.wav

@@ -1,0 +1,491 @@
+{
+  "_doc": "Single source of truth for timing. Scene frames drive the Remotion sequences, the voiceover placement, captions, SRT files, the score and the render checks. vo = [offset seconds inside the scene, spoken text, optional caption text]. tag = [story|app, label shown top-left].",
+  "fps": 30,
+  "films": {
+    "film1": {
+      "title": "Commit History",
+      "presenter": "daniel",
+      "voice": "am_michael",
+      "lift": [
+        "decision",
+        "fit"
+      ],
+      "scenes": {
+        "grid": {
+          "frames": 54,
+          "tag": [
+            "story",
+            "Dramatization · fictional character"
+          ],
+          "vo": [
+            [
+              1.2,
+              "Fourteen months. Not because of my code. I was getting better.",
+              "14 months. Not because of my code. I was getting better."
+            ]
+          ]
+        },
+        "kitchen": {
+          "frames": 111,
+          "tag": [
+            "story",
+            "Story · dramatized"
+          ],
+          "vo": []
+        },
+        "stack": {
+          "frames": 96,
+          "tag": [
+            "story",
+            "Story · dramatized"
+          ],
+          "vo": [
+            [
+              0.15,
+              "Nine résumés. Nothing back."
+            ]
+          ]
+        },
+        "night": {
+          "frames": 78,
+          "tag": [
+            "story",
+            "Story · dramatized"
+          ],
+          "vo": [
+            [
+              0.1,
+              "Honestly? The gap was in my head."
+            ]
+          ]
+        },
+        "decision": {
+          "frames": 90,
+          "tag": [
+            "app",
+            "In the app · Connect a workspace"
+          ],
+          "vo": [
+            [
+              0.1,
+              "So I stopped. And treated it like a project."
+            ]
+          ]
+        },
+        "fit": {
+          "frames": 150,
+          "tag": [
+            "app",
+            "In the app · Jobs, ranked · sample data"
+          ],
+          "vo": [
+            [
+              0.3,
+              "I looked at where I actually fit, and where I didn't yet."
+            ]
+          ]
+        },
+        "words": {
+          "frames": 126,
+          "tag": [
+            "app",
+            "In the app · Studio + approvals · sample data"
+          ],
+          "vo": [
+            [
+              0.15,
+              "Every draft tailored. My words. Nothing saved without me."
+            ]
+          ]
+        },
+        "pipeline": {
+          "frames": 120,
+          "tag": [
+            "app",
+            "In the app · Interview + Pipeline · sample data"
+          ],
+          "vo": [
+            [
+              0.15,
+              "I practiced. Tracked everything. Drafted every follow-up."
+            ]
+          ]
+        },
+        "send": {
+          "frames": 135,
+          "tag": [
+            "story",
+            "Story · an employer's site, not the app"
+          ],
+          "vo": [
+            [
+              0.3,
+              "And I hit submit myself. This time, I knew it was ready."
+            ]
+          ]
+        },
+        "end": {
+          "frames": 165,
+          "tag": [
+            "story",
+            "Dramatization · fictional character"
+          ],
+          "vo": [
+            [
+              0.2,
+              "The gap's still on my résumé. It's just not the headline anymore."
+            ]
+          ]
+        }
+      }
+    },
+    "film2": {
+      "title": "Return Date",
+      "presenter": "priya",
+      "voice": "af_heart",
+      "lift": [
+        "note",
+        "fit"
+      ],
+      "scenes": {
+        "advice": {
+          "frames": 105,
+          "tag": [
+            "story",
+            "Dramatization · fictional character"
+          ],
+          "vo": [
+            [
+              0.15,
+              "For eleven years, I said a career break isn't a red flag.",
+              "For 11 years, I said a career break isn't a red flag."
+            ]
+          ]
+        },
+        "took": {
+          "frames": 45,
+          "tag": [
+            "story",
+            "Story · her own email, not the app"
+          ],
+          "vo": [
+            [
+              0.05,
+              "Then I took one."
+            ]
+          ]
+        },
+        "months": {
+          "frames": 75,
+          "tag": [
+            "story",
+            "Story · dramatized"
+          ],
+          "vo": [
+            [
+              0.05,
+              "Eighteen months. I'd do it again.",
+              "18 months. I'd do it again."
+            ]
+          ]
+        },
+        "ret": {
+          "frames": 84,
+          "tag": [
+            "app",
+            "In the app · Jobs, found · sample data"
+          ],
+          "vo": [
+            [
+              0.05,
+              "But coming back was harder than leaving."
+            ]
+          ]
+        },
+        "note": {
+          "frames": 99,
+          "tag": [
+            "story",
+            "Story · dramatized"
+          ],
+          "vo": [
+            [
+              0.1,
+              "So I took my own advice. Lead with what you can do."
+            ]
+          ]
+        },
+        "fit": {
+          "frames": 135,
+          "tag": [
+            "app",
+            "In the app · Jobs, ranked · sample data"
+          ],
+          "vo": [
+            [
+              0.2,
+              "My experience still fit. One gap was real, so I worked on it."
+            ]
+          ]
+        },
+        "story": {
+          "frames": 135,
+          "tag": [
+            "app",
+            "In the app · Studio + approvals · sample data"
+          ],
+          "vo": [
+            [
+              0.2,
+              "I wrote the break into my story, in my own words."
+            ]
+          ]
+        },
+        "prep": {
+          "frames": 135,
+          "tag": [
+            "app",
+            "In the app · Interview + Pipeline · sample data"
+          ],
+          "vo": [
+            [
+              0.15,
+              "I practiced the hard questions. And I sent every application myself."
+            ]
+          ]
+        },
+        "back": {
+          "frames": 105,
+          "tag": [
+            "story",
+            "Story · her own email, not the app"
+          ],
+          "vo": [
+            [
+              1.0,
+              "I'm back."
+            ]
+          ]
+        },
+        "end": {
+          "frames": 120,
+          "tag": [
+            "story",
+            "Dramatization · fictional character"
+          ],
+          "vo": [
+            [
+              0.3,
+              "A pause isn't a full stop."
+            ]
+          ]
+        }
+      }
+    },
+    "film3": {
+      "title": "Parsed",
+      "presenter": "tomas",
+      "voice": "am_fenrir",
+      "lift": [
+        "bad",
+        "clean"
+      ],
+      "scenes": {
+        "kpi": {
+          "frames": 87,
+          "tag": [
+            "story",
+            "Dramatization · his spreadsheet, fictional numbers"
+          ],
+          "vo": [
+            [
+              0.05,
+              "One forty-two applications. Zero replies.",
+              "142 applications. Zero replies."
+            ]
+          ]
+        },
+        "cons": {
+          "frames": 96,
+          "tag": [
+            "story",
+            "Story · dramatized"
+          ],
+          "vo": [
+            [
+              0.1,
+              "The reports I used to build? They build themselves now."
+            ]
+          ]
+        },
+        "parse": {
+          "frames": 150,
+          "tag": [
+            "app",
+            "In the app · Studio · ATS text check · sample PDF"
+          ],
+          "vo": [
+            [
+              0.2,
+              "So I ran a text check on my résumé. The extracted text was noise."
+            ]
+          ]
+        },
+        "bad": {
+          "frames": 75,
+          "tag": [
+            "story",
+            "Story · dramatized"
+          ],
+          "vo": [
+            [
+              0.1,
+              "Fine. I know how to fix bad data."
+            ]
+          ]
+        },
+        "clean": {
+          "frames": 150,
+          "tag": [
+            "app",
+            "In the app · Studio · ATS text check · sample PDF"
+          ],
+          "vo": [
+            [
+              0.3,
+              "One column. Real text. Now it reads in order."
+            ]
+          ]
+        },
+        "fit": {
+          "frames": 135,
+          "tag": [
+            "app",
+            "In the app · Jobs, ranked · sample data"
+          ],
+          "vo": [
+            [
+              0.15,
+              "Then roles that fit. Fewer applications, each one sent by me."
+            ]
+          ]
+        },
+        "honest": {
+          "frames": 120,
+          "tag": [
+            "story",
+            "Straight answer"
+          ],
+          "vo": [
+            [
+              0.15,
+              "No one can promise what every screening system does. But I can check."
+            ]
+          ]
+        },
+        "end": {
+          "frames": 135,
+          "tag": [
+            "story",
+            "Dramatization · fictional character"
+          ],
+          "vo": [
+            [
+              0.2,
+              "AI changed the market. It didn't change what I'm worth."
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "compositions": {
+    "Film1": {
+      "slug": "film1-commit-history",
+      "film": "film1",
+      "scenes": [
+        "grid",
+        "kitchen",
+        "stack",
+        "night",
+        "decision",
+        "fit",
+        "words",
+        "pipeline",
+        "send",
+        "end"
+      ]
+    },
+    "Film2": {
+      "slug": "film2-return-date",
+      "film": "film2",
+      "scenes": [
+        "advice",
+        "took",
+        "months",
+        "ret",
+        "note",
+        "fit",
+        "story",
+        "prep",
+        "back",
+        "end"
+      ]
+    },
+    "Film3": {
+      "slug": "film3-parsed",
+      "film": "film3",
+      "scenes": [
+        "kpi",
+        "cons",
+        "parse",
+        "bad",
+        "clean",
+        "fit",
+        "honest",
+        "end"
+      ]
+    },
+    "Film1Short": {
+      "slug": "film1-commit-history-short",
+      "film": "film1",
+      "scenes": [
+        "grid",
+        "kitchen",
+        "decision",
+        "fit",
+        "words",
+        "end"
+      ]
+    },
+    "Film2Short": {
+      "slug": "film2-return-date-short",
+      "film": "film2",
+      "scenes": [
+        "advice",
+        "took",
+        "ret",
+        "fit",
+        "end"
+      ]
+    },
+    "Film3Short": {
+      "slug": "film3-parsed-short",
+      "film": "film3",
+      "scenes": [
+        "kpi",
+        "parse",
+        "clean",
+        "end"
+      ]
+    }
+  },
+  "claims": {
+    "_doc": "Every end-card claim. tools/verify_release.py checks these against the latest GitHub release before render.",
+    "price": "Free and open source (MIT)",
+    "availability": "Mac app for Apple Silicon · Windows and Intel Mac: build from source",
+    "requirement": "AI features use your own Claude Code or Codex setup",
+    "url": "job-search-assistant.rebound-ops.org",
+    "disclaimer": "Dramatization with fictional characters. App screens use sample data. You submit your own applications. No outcome is guaranteed."
+  }
+}
