@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 # Linux-friendly packager used by .github/workflows/release.yml
+# Optional: ONLY=macos-arm64,macos-x64,windows-x64
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="${VERSION:-0.1.1}"
+ONLY="${ONLY:-all}"
 OUT="$ROOT/dist-release"
+
+want() {
+  [[ "$ONLY" == "all" || ",$ONLY," == *",$1,"* ]]
+}
 
 rm -rf "$OUT"
 mkdir -p "$OUT/stage"
@@ -39,17 +45,23 @@ EOF
   echo "Wrote $asset"
 }
 
-pack_client macos-arm64 "$ROOT/apps/macos-apple-silicon" \
-  "AI-Job-Search-${VERSION}-macos-arm64.zip" "macOS Apple Silicon" \
-  "cd app && npm install && npm run tauri build"
+if want macos-arm64; then
+  pack_client macos-arm64 "$ROOT/apps/macos-apple-silicon" \
+    "AI-Job-Search-${VERSION}-macos-arm64.zip" "macOS Apple Silicon" \
+    "cd app && npm install && npm run tauri build"
+fi
 
-pack_client macos-x64 "$ROOT/apps/macos-intel" \
-  "AI-Job-Search-${VERSION}-macos-x64.zip" "macOS Intel" \
-  "cd app && npm install && npm run build:intel"
+if want macos-x64; then
+  pack_client macos-x64 "$ROOT/apps/macos-intel" \
+    "AI-Job-Search-${VERSION}-macos-x64.zip" "macOS Intel" \
+    "cd app && npm install && npm run build:intel"
+fi
 
-pack_client windows-x64 "$ROOT/apps/windows" \
-  "AI-Job-Search-${VERSION}-windows-x64.zip" "Windows x64" \
-  "cd app && npm install && npm run tauri build"
+if want windows-x64; then
+  pack_client windows-x64 "$ROOT/apps/windows" \
+    "AI-Job-Search-${VERSION}-windows-x64.zip" "Windows x64" \
+    "cd app && npm install && npm run tauri build"
+fi
 
 (cd "$OUT" && sha256sum AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt)
 ls -lh "$OUT"

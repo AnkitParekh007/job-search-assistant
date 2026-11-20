@@ -32,7 +32,17 @@ EOF
 
 ## CI
 
-`.github/workflows/release.yml` runs on `v*` tags (and `workflow_dispatch`) and publishes source/client zips from Ubuntu. It cannot produce notarized macOS binaries on this account (macOS runners unavailable). Prefer local packaging for Apple Silicon `.app` assets, then upload/replace release files:
+`.github/workflows/release.yml` refreshes the GitHub Release for the version in `package.json` (and `market-site/src/lib/releases.ts`) when `main` changes app code, shared packages, or the release scripts. It also runs on `v*` tags and `workflow_dispatch` from `main`.
+
+The download URLs stay on the current tag (`v0.1.1` today). A `main` push does not create a new tag. It replaces the zip assets in place:
+
+- **macOS Apple Silicon** — `macos-latest` builds the unsigned `.app` and replaces `AI-Job-Search-<version>-macos-arm64.zip`.
+- **macOS Intel / Windows** — Ubuntu repackages the platform client sources. Those zips are replaced on the same release.
+- **SHA256SUMS.txt** is rewritten for the full set. An asset that was not rebuilt is left in place, and the release notes record which platforms were rebuilt.
+
+The download page constants must match `package.json`. The workflow stops if `RELEASE_TAG` / `RELEASE_VERSION` disagree, so the site cannot keep linking at files this run did not publish.
+
+These builds are unsigned. Prefer a local Apple Silicon package when you need to replace the `.app` before CI finishes:
 
 ```bash
 gh release upload v0.1.1 dist-release/AI-Job-Search-0.1.1-macos-arm64.zip --clobber
@@ -51,6 +61,6 @@ Users may need **right-click → Open**. Do not instruct users to disable Gateke
 
 ## Explicit non-goals (for now)
 
-- Auto-publishing every green `main` build as a stable release  
-- Claiming notarized Windows/Intel binaries before those pipelines are proven  
+- Cutting a new version tag for every `main` commit. Asset refresh stays on the current tag until `package.json` and the download page move together.
+- Claiming notarized Windows/Intel binaries before those pipelines are proven
 - Bypassing notarization with unsafe workarounds

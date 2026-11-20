@@ -160,8 +160,14 @@ pub fn check(ws: &Path) -> Vec<Dep> {
     let n = std::fs::read_dir(&portals)
         .map(|r| r.flatten().count())
         .unwrap_or(0);
-    v.push(Dep { id: "portals".into(), name: "Installed portals".into(), ok: n > 0, required: false,
-        detail: format!("{} installed", n), fix: "Use Add portal in the app (Jobs, Settings → Dependencies, or Workflows).".into() });
+    v.push(Dep {
+        id: "portals".into(),
+        name: "Installed portals".into(),
+        ok: n > 0,
+        required: false,
+        detail: format!("{} installed", n),
+        fix: "Use Add portal in the app (Jobs, Settings → Dependencies, or Workflows).".into(),
+    });
     v
 }
 
