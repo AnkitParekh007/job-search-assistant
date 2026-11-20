@@ -103,7 +103,7 @@ export const HELP_TOPICS: HelpTopic[] = [
   {
     id: "interviews",
     question: "How do I prepare for interviews?",
-    answer: "Open Interview Prep to work with the interview workflow. AI-powered preparation depends on a configured provider; Scout's help answers do not.",
+    answer: "Open Interview Prep to work with the interview workflow. AI-powered preparation depends on a configured provider; Jobzuu's help answers do not.",
     route: "interview", action: "Open Interview Prep",
     triggers: ["interview", "practice questions", "mock interview", "interview prep", "roleplay"],
     contexts: ["interview"],
@@ -111,7 +111,7 @@ export const HELP_TOPICS: HelpTopic[] = [
   {
     id: "workflows",
     question: "What are workflows?",
-    answer: "Workflows connect to the upstream job-search commands for tasks like discovery, ranking and preparation. Starting a workflow may invoke your configured AI provider; Scout itself never runs a workflow.",
+    answer: "Workflows connect to the upstream job-search commands for tasks like discovery, ranking and preparation. Starting a workflow may invoke your configured AI provider; The offline guide never runs a workflow.",
     route: "automations", action: "Open Workflows",
     triggers: ["workflows", "automation", "slash commands", "run workflow", "what can i automate"],
     contexts: ["automations"],
@@ -143,7 +143,7 @@ export const HELP_TOPICS: HelpTopic[] = [
   {
     id: "providers",
     question: "Do I need an AI provider?",
-    answer: "Not for Scout. This guide is bundled and never calls a model. Job-search workflows use the provider you choose in Settings. Claude Code and Codex can run the agent workflows. OpenAI API, Gemini, and Ollama handle structured assists such as ranking, drafts, and interview prep; they do not run portal discovery or submit applications. Gmail and Notion sync need Claude Code. Ollama runs on your machine. The others use your own account or API key.",
+    answer: "Not for the offline Jobzuu guide. This guide is bundled and never calls a model. Job-search workflows use the provider you choose in Settings. Claude Code and Codex can run the agent workflows. OpenAI API, Gemini, and Ollama handle structured assists such as ranking, drafts, and interview prep; they do not run portal discovery or submit applications. Gmail and Notion sync need Claude Code. Ollama runs on your machine. The others use your own account or API key.",
     route: "settings", action: "Open Settings",
     triggers: ["ai provider", "claude", "codex", "openai", "gemini", "ollama", "api key", "need ai", "without ai", "no ai", "models", "local llm", "local model", "which model", "what models"],
     contexts: ["settings", "automations"],
@@ -151,22 +151,22 @@ export const HELP_TOPICS: HelpTopic[] = [
   {
     id: "privacy",
     question: "Is my data stored locally?",
-    answer: "The app keeps workspace data in your local upstream folder and run history/settings in local app storage. External AI workflows may send relevant content to a configured provider. Scout never sends your question to a server.",
+    answer: "The app keeps workspace data in your local upstream folder and run history/settings in local app storage. External AI workflows may send relevant content to a configured provider. The offline guide never sends your question to a server.",
     route: "settings", action: "Open Settings",
     triggers: ["privacy", "local data", "stored locally", "where is data stored", "work offline", "data security", "private"],
     contexts: ["settings"],
   },
   {
     id: "costs",
-    question: "Is Scout free?",
-    answer: "Yes. Scout is a bundled, offline help feature: no subscription, API key, model download or token charge. Other AI-powered workflows may incur provider charges.",
-    triggers: ["is scout free", "chatbot cost", "help cost", "free assistant", "token cost", "no api cost"],
+    question: "Is the Jobzuu guide free?",
+    answer: "Yes. The Jobzuu guide is a bundled, offline help feature: no subscription, API key, model download or token charge. Other AI-powered workflows may incur provider charges.",
+    triggers: ["is scout free", "is jobzuu free", "does the help guide cost money", "chatbot cost", "help cost", "free assistant", "token cost", "no api cost"],
     contexts: ["dashboard", "settings"],
   },
   {
     id: "troubleshooting",
     question: "What if something isn't working?",
-    answer: "Start with Settings to check your connected workspace, provider and dependencies. Use Agent Activity for workflow errors. Scout can explain the screens, but it cannot inspect logs or repair your system.",
+    answer: "Start with Settings to check your connected workspace, provider and dependencies. Use Agent Activity for workflow errors. The offline guide can explain the screens, but it cannot inspect logs or repair your system.",
     steps: ["Check Settings and the workspace connection.", "Review Agent Activity for the failed run.", "Consult the project's troubleshooting guide for your error."],
     route: "settings", action: "Open Settings",
     triggers: ["not working", "application failed", "workflow failed", "troubleshoot", "missing dependency", "something wrong", "something failed"],
@@ -244,7 +244,7 @@ export function findHelpTopic(input: string): HelpTopic | null {
   return bestScore >= 80 ? best : null;
 }
 
-const THANKS = /^(?:thanks|thank you|thx|ok|okay|got it|great|cool)(?: scout)?$/;
+const THANKS = /^(?:thanks|thank you|thx|ok|okay|got it|great|cool)(?: (?:scout|jobzuu))?$/;
 const FOLLOW_UP_OPEN = /^(?:please )?(?:open it|open that|open this|go there|take me there|show me that|take me to it|open the screen)$/;
 const OPEN_REQUEST = /^(?:please )?(?:open|go to|take me to|show me) (?:the )?(.+)$/;
 
