@@ -19,7 +19,7 @@ In the local workspace folder you chose, plus SQLite for run history/settings un
 Source ports exist under `apps/macos-intel` and `apps/windows`. Apple Silicon is the developed client. See [apps/README.md](../apps/README.md).
 
 **Where do I download a binary?**  
-Platform packages are on [GitHub Releases](https://github.com/AnkitParekh007/job-search-assistant/releases) and the [download page](https://job-search-assistant.rebound-ops.org/download). Notarized installers are not published yet — see [installation.md](./installation.md).
+Published v0.1.1 platform ZIPs are source/client archives, **not verified installers**. Build from source using [installation.md](./installation.md). A native release requires actual platform builds and manual acceptance.
 
 **Can I use a local LLM?**  
 Not with the current architecture (Ollama is on the roadmap as a planned option).
