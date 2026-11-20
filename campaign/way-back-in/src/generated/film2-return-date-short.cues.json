@@ -1,0 +1,75 @@
+[
+ {
+  "speechStart": 0.15,
+  "speechEnd": 1.13,
+  "text": "For 11 years,",
+  "lines": [
+   "For 11 years,"
+  ],
+  "start": 0.1,
+  "end": 1.17
+ },
+ {
+  "speechStart": 1.25,
+  "speechEnd": 3.388,
+  "text": "I said a career break isn't a red flag.",
+  "lines": [
+   "I said a career break",
+   "isn't a red flag."
+  ],
+  "start": 1.2,
+  "end": 3.47
+ },
+ {
+  "speechStart": 3.55,
+  "speechEnd": 4.592,
+  "text": "Then I took one.",
+  "lines": [
+   "Then I took one."
+  ],
+  "start": 3.5,
+  "end": 4.842
+ },
+ {
+  "speechStart": 5.05,
+  "speechEnd": 7.007,
+  "text": "But coming back was harder than leaving.",
+  "lines": [
+   "But coming back was",
+   "harder than leaving."
+  ],
+  "start": 5.0,
+  "end": 7.257
+ },
+ {
+  "speechStart": 8.0,
+  "speechEnd": 9.476,
+  "text": "My experience still fit.",
+  "lines": [
+   "My experience still fit."
+  ],
+  "start": 7.95,
+  "end": 9.636
+ },
+ {
+  "speechStart": 9.716,
+  "speechEnd": 11.882,
+  "text": "One gap was real, so I worked on it.",
+  "lines": [
+   "One gap was real,",
+   "so I worked on it."
+  ],
+  "start": 9.666,
+  "end": 12.132
+ },
+ {
+  "speechStart": 12.6,
+  "speechEnd": 14.16,
+  "text": "A pause isn't a full stop.",
+  "lines": [
+   "A pause isn't a full stop."
+  ],
+  "start": 12.55,
+  "end": 14.41
+ }
+]

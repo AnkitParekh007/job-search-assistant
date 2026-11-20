@@ -1,10 +1,10 @@
-import {AbsoluteFill, Easing, interpolate, useCurrentFrame, random} from 'remotion';
+import {AbsoluteFill, Easing, interpolate, useCurrentFrame} from 'remotion';
 import {loadFont as loadDisplay} from '@remotion/google-fonts/BricolageGrotesque';
 import {loadFont as loadBody} from '@remotion/google-fonts/Figtree';
 import {loadFont as loadSerif} from '@remotion/google-fonts/InstrumentSerif';
 import {loadFont as loadMono} from '@remotion/google-fonts/JetBrainsMono';
 
-// Google Fonts stand-ins for Cabinet Grotesk / Satoshi (same as the campaign page).
+// Google Fonts, all SIL Open Font License 1.1 (see LICENSES.md).
 export const F = {
   display: loadDisplay('normal', {weights: ['600', '800'], subsets: ['latin']}).fontFamily,
   body: loadBody('normal', {weights: ['400', '500', '600'], subsets: ['latin']}).fontFamily,
@@ -32,9 +32,11 @@ export const AURORA = `linear-gradient(90deg, ${C.cyan}, ${C.violet} 55%, ${C.ma
 export const enter = Easing.bezier(0.2, 0, 0, 1);
 export const exitEase = Easing.in(Easing.cubic);
 
-// 90 px side margins; type never in the bottom 200 px.
+// Safe areas for 4:5 feeds on phones: 90 px side margins, nothing in the bottom 200 px.
+// Captions own the band just above it; scene type must end above CAPTION_TOP.
 export const M = 90;
 export const SAFE_BOTTOM = 1350 - 200;
+export const CAPTION_TOP = 1010;
 
 export const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 
@@ -101,51 +103,3 @@ export const Tag: React.FC<{children: React.ReactNode; opacity?: number}> = ({ch
     {children}
   </div>
 );
-
-// Stand-in for a live-action shot: mood lighting, vignette and a slate label.
-export const LiveSlot: React.FC<{
-  mood: 'overcast' | 'night' | 'warm' | 'after';
-  label: string;
-  show: boolean;
-  children?: React.ReactNode;
-}> = ({mood, label, show, children}) => {
-  const frame = useCurrentFrame();
-  const drift = interpolate(frame, [0, 150], [1, 1.03]);
-  const bg = {
-    overcast: `radial-gradient(120% 80% at 85% 15%, #3A4058 0%, #1A1D2E 45%, ${C.ink} 100%)`,
-    night: `radial-gradient(60% 40% at 50% 62%, #1C2440 0%, #0B0D1C 55%, #04050C 100%)`,
-    warm: `radial-gradient(110% 80% at 80% 10%, #5A3B2C 0%, #24171A 50%, ${C.ink} 100%)`,
-    after: `radial-gradient(110% 80% at 75% 15%, #6A4632 0%, #2A1B1C 50%, ${C.ink} 100%)`,
-  }[mood];
-  return (
-    <AbsoluteFill style={{background: C.ink, overflow: 'hidden'}}>
-      <AbsoluteFill style={{background: bg, transform: `scale(${drift})`}} />
-      {mood === 'night' && <CityBokeh />}
-      <AbsoluteFill style={{background: 'radial-gradient(90% 70% at 50% 45%, transparent 40%, rgba(0,0,0,.55) 100%)'}} />
-      {show && (
-        <div style={{position: 'absolute', top: 64, left: M, fontFamily: F.mono, fontSize: 20, color: C.dim,
-          letterSpacing: '0.06em', lineHeight: 1.5, maxWidth: 560}}>
-          LIVE-ACTION SLOT<br />{label}
-        </div>
-      )}
-      {children}
-    </AbsoluteFill>
-  );
-};
-
-const CityBokeh: React.FC = () => {
-  const frame = useCurrentFrame();
-  return (
-    <AbsoluteFill>
-      {new Array(26).fill(0).map((_, i) => {
-        const x = random(`x${i}`) * 1080;
-        const y = 120 + random(`y${i}`) * 520;
-        const r = 10 + random(`r${i}`) * 34;
-        const hue = random(`h${i}`) > 0.7 ? '#FFB37A' : '#7FA4FF';
-        const tw = 0.25 + 0.2 * Math.sin(frame / 18 + i);
-        return <div key={i} style={{position: 'absolute', left: x, top: y, width: r, height: r, borderRadius: '50%',
-          background: hue, opacity: tw, filter: 'blur(6px)'}} />;
-      })}
-    </AbsoluteFill>
-  );
-};

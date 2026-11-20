@@ -1,99 +1,26 @@
-import {AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame, random} from 'remotion';
-import cues from './film1-vo.json';
-import visemes from './film1-visemes.json';
-import {AVATARS, AvatarBubble} from './Avatar';
-import {AURORA, C, F, Grain, LiveSlot, M, Tag, Words, clamp, enter, exitEase, prog} from './theme';
+import React from 'react';
+import {AbsoluteFill, interpolate, random, useCurrentFrame} from 'remotion';
+import {C, F, Grain, M, Words, clamp, enter, exitEase, prog} from './theme';
+import {
+  ApprovalCard, AscendMark, Btn, Chip, Cursor, EndCard, Feel, FilmProps, FilmShell, Label, Note, PipelineBoard,
+  RankedJob, TextBlock, Window,
+} from './shared';
+import {KitchenMorning, NightWindow, Scrim} from './Illustrations';
 
-export const FILM1_FRAMES = 1200; // 40 s at 30 fps
+/*
+  Film 1 · Commit History · Daniel Okafor (fictional) · ~37 s
+  Story: an engineer off work for 14 months for health reasons; nine résumés, nothing back.
+  Product (from 0:11): workspace setup, Jobs ranking with gaps, Studio drafts behind an approval gate,
+  interview practice and the pipeline. Ending: he submits on the employer's own site himself.
+  No employer is named, no offer is shown, no outcome is claimed.
+*/
 
-type Props = {company: string; showSlates: boolean; withMusic: boolean; withVO: boolean; captions: boolean; avatar: boolean};
+const ROLE = 'Applied AI Engineer';
+const CO = 'Larkspur Labs (sample)';
 
-// Scene starts (frames), from the shot list.
-const S = {grid: 0, kitchen: 60, stack: 180, window: 330, decision: 420, fit: 510, words: 660, pipeline: 780, offer: 900, end: 1050};
-
-export const Film1: React.FC<Props> = ({company, showSlates, withMusic, withVO, captions, avatar}) => (
-  <AbsoluteFill style={{background: C.ink}}>
-    <Sequence from={S.grid} durationInFrames={60}><EmptyGrid /></Sequence>
-    <Sequence from={S.kitchen} durationInFrames={120}><Kitchen show={showSlates} /></Sequence>
-    <Sequence from={S.stack} durationInFrames={150}><VersionStack /></Sequence>
-    <Sequence from={S.window} durationInFrames={90}><WindowNight show={showSlates} /></Sequence>
-    <Sequence from={S.decision} durationInFrames={90}><Decision show={showSlates} /></Sequence>
-    <Sequence from={S.fit} durationInFrames={150}><FitAndGaps /></Sequence>
-    <Sequence from={S.words} durationInFrames={120}><HisWords /></Sequence>
-    <Sequence from={S.pipeline} durationInFrames={120}><Pipeline /></Sequence>
-    <Sequence from={S.offer} durationInFrames={150}><Offer company={company} show={showSlates} /></Sequence>
-    <Sequence from={S.end} durationInFrames={150}><GridToAscend /></Sequence>
-    {withMusic && <Audio src={staticFile('film1-score.wav')} volume={(f) => (withVO ? duck(f / 30) : 1)} />}
-    {withVO && <Audio src={staticFile('film1-vo.wav')} />}
-    {captions && <Captions />}
-    {avatar && <CornerAvatar />}
-  </AbsoluteFill>
-);
-
-/* ---------- voiceover: ducking + burned-in captions ---------- */
-
-type Cue = {start: number; end: number; text: string};
-const CUES = cues as Cue[];
-
-// Music sits at 45% under the voice, with 0.3 s ramps.
-const duck = (t: number) => {
-  let d = 0;
-  for (const c of CUES) d = Math.max(d, Math.min(1, (t - c.start + 0.3) / 0.3, (c.end + 0.3 - t) / 0.3));
-  return 1 - 0.55 * Math.max(0, d);
-};
-
-// Split each line into short chunks (sentence first, then max 6 words), timed by character count.
-const CHUNKS = CUES.flatMap((c) => {
-  const parts = c.text.match(/[^.?!…]+[.?!…]*/g)!.map((p) => p.trim()).filter(Boolean)
-    .flatMap((p) => {
-      const w = p.split(' ');
-      if (w.length <= 6) return [p];
-      const mid = Math.ceil(w.length / 2);
-      return [w.slice(0, mid).join(' '), w.slice(mid).join(' ')];
-    });
-  const total = parts.reduce((a, p) => a + p.length, 0);
-  let t = c.start;
-  return parts.map((p) => {
-    const d = ((c.end - c.start) * p.length) / total;
-    const chunk = {start: t, end: t + d, text: p};
-    t += d;
-    return chunk;
-  });
-});
-
-const Captions: React.FC = () => {
-  const f = useCurrentFrame();
-  const t = f / 30;
-  const cur = CHUNKS.find((c) => t >= c.start && t < c.end + 0.12);
-  if (!cur) return null;
-  return (
-    <div style={{position: 'absolute', left: 0, right: 0, top: 1078, display: 'flex', justifyContent: 'center'}}>
-      <span style={{fontFamily: F.body, fontWeight: 500, fontSize: 38, color: C.paper, background: 'rgba(7,8,20,.78)',
-        padding: '8px 20px', borderRadius: 10, maxWidth: 900, textAlign: 'center', lineHeight: 1.25}}>{cur.text}</span>
-    </div>
-  );
-};
-
-// Daniel's 3D presenter, top-right; fades out as the end card arrives.
-const CornerAvatar: React.FC = () => {
-  const f = useCurrentFrame();
-  const o = interpolate(f, [4, 16, S.end + 30, S.end + 44], [0, 1, 1, 0], clamp);
-  const lift = interpolate(f, [4, 16], [16, 0], clamp);
-  return (
-    <div style={{position: 'absolute', right: 52, top: 44 + lift}}>
-      <AvatarBubble style={AVATARS.daniel} visemes={visemes as [number, number, number][]} size={230} opacity={o} />
-    </div>
-  );
-};
-
-/* ---------- shared pieces ---------- */
-
-const COLS = 61; // ~14 months of weeks
-const ROWS = 7;
-const CELL = 22;
-const STEP = 28; // grid bleeds off the right edge, like a camera pushed in
-
-const Grid: React.FC<{fill?: (col: number, row: number) => string; build?: number; top?: number}> = ({fill, build = 1, top = 330}) => {
+/* ---------- contribution grid ---------- */
+const COLS = 61, ROWS = 7, CELL = 22, STEP = 28;
+const Grid: React.FC<{fill?: (col: number, row: number) => string; build?: number; top?: number}> = ({fill, build = 1, top = 300}) => {
   const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
   return (
     <div style={{position: 'absolute', left: M, top, width: COLS * STEP}}>
@@ -102,51 +29,27 @@ const Grid: React.FC<{fill?: (col: number, row: number) => string; build?: numbe
       </div>
       <div style={{position: 'relative', height: ROWS * STEP}}>
         {new Array(COLS * ROWS).fill(0).map((_, k) => {
-          const col = Math.floor(k / ROWS);
-          const row = k % ROWS;
-          const visible = col / COLS < build;
-          return <div key={k} style={{position: 'absolute', left: col * STEP, top: row * STEP, width: CELL, height: CELL,
-            borderRadius: 3, background: fill ? fill(col, row) : col < 2 ? C.cellFaint : C.cellEmpty, opacity: visible ? 1 : 0}} />;
+          const col = Math.floor(k / ROWS), row = k % ROWS;
+          return <div key={k} style={{position: 'absolute', left: col * STEP, top: row * STEP, width: CELL, height: CELL, borderRadius: 3,
+            background: fill ? fill(col, row) : col < 2 ? C.cellFaint : C.cellEmpty, opacity: col / COLS < build ? 1 : 0}} />;
         })}
       </div>
     </div>
   );
 };
 
-const TextBlock: React.FC<{children: React.ReactNode; top?: number}> = ({children, top = 820}) => (
-  <div style={{position: 'absolute', left: M, right: M, top, display: 'flex', flexDirection: 'column', gap: 18}}>{children}</div>
-);
-
-const Feel: React.FC<{text: string; start: number; size?: number}> = ({text, start, size = 64}) => (
-  <Words text={text} start={start} size={size} font={F.serif} weight={400} italic color={C.haze} />
-);
-
-const Window: React.FC<{children: React.ReactNode; title: string; topBorder?: string; style?: React.CSSProperties}> = ({children, title, topBorder, style}) => (
-  <div style={{background: C.surface, border: `1px solid ${C.line}`, borderRadius: 22, overflow: 'hidden',
-    boxShadow: '0 40px 120px rgba(0,0,0,.55)', ...style}}>
-    <div style={{height: 4, background: topBorder ?? 'transparent'}} />
-    <div style={{display: 'flex', alignItems: 'center', gap: 10, padding: '18px 24px', borderBottom: `1px solid ${C.line}`}}>
-      {[0, 1, 2].map((i) => <div key={i} style={{width: 13, height: 13, borderRadius: 7, background: C.line}} />)}
-      <span style={{fontFamily: F.mono, fontSize: 20, color: C.haze, marginLeft: 12}}>{title}</span>
-    </div>
-    {children}
-  </div>
-);
-
-/* ---------- 1 · Empty grid (0:00–0:02) ---------- */
-
+/* 1 · Empty grid */
 const EmptyGrid: React.FC = () => {
   const f = useCurrentFrame();
-  const build = interpolate(f, [0, 18], [0, 1], clamp);
-  const cursorOn = f > 34 && Math.floor((f - 34) / 6) % 2 === 0 && f < 58;
+  const build = interpolate(f, [0, 16], [0, 1], clamp);
+  const cursorOn = f > 30 && Math.floor((f - 30) / 6) % 2 === 0;
   return (
     <AbsoluteFill>
-      <Tag>Dramatization</Tag>
       <Grid build={build} />
-      <TextBlock top={720}>
-        <Words text="14 months." start={14} size={104} weight={800} />
+      <TextBlock top={620}>
+        <Words text="14 months." start={8} size={104} weight={800} />
         <div style={{display: 'flex', alignItems: 'center', gap: 6}}>
-          <Words text="0 commits." start={18} size={104} weight={800} style={{marginRight: -24}} />
+          <Words text="0 commits." start={12} size={104} weight={800} style={{marginRight: -24}} />
           <div style={{width: 9, height: 96, background: C.paper, opacity: cursorOn ? 1 : 0}} />
         </div>
       </TextBlock>
@@ -155,387 +58,272 @@ const EmptyGrid: React.FC = () => {
   );
 };
 
-/* ---------- 2 · Kitchen table (0:02–0:06) ---------- */
+/* 2 · Kitchen table, morning (original illustration) */
+const Kitchen: React.FC = () => (
+  <AbsoluteFill>
+    <KitchenMorning />
+    <TextBlock top={800}>
+      <Words text="I didn't lose my job because of my code." start={4} size={56} />
+      <Feel text="I lost it while I was getting better." start={36} size={50} />
+    </TextBlock>
+    <Grain opacity={0.07} />
+  </AbsoluteFill>
+);
 
-const Kitchen: React.FC<{show: boolean}> = ({show}) => {
-  const f = useCurrentFrame();
-  const push = interpolate(f, [0, 120], [1, 1.03]);
-  const screen = interpolate(f, [96, 120], [0, 1], {...clamp, easing: enter});
-  return (
-    <LiveSlot mood="overcast" label="Kitchen table · morning · laptop opens" show={show}>
-      <AbsoluteFill style={{transform: `scale(${push})`}}>
-        {/* laptop glow, which becomes the screen for the match cut */}
-        <div style={{position: 'absolute', left: 540 - 200 - screen * 340, top: 360 - screen * 260,
-          width: 400 + screen * 680, height: 250 + screen * 740, borderRadius: 18 - screen * 18,
-          background: `linear-gradient(160deg, #2B3150, ${C.surface})`, opacity: 0.55 + screen * 0.45,
-          boxShadow: '0 0 160px rgba(140,160,255,.18)'}} />
-      </AbsoluteFill>
-      <TextBlock top={790}>
-        <Words text="I didn't lose my job because of my code." start={6} size={60} />
-        <Feel text="I lost it while I was getting better." start={42} />
-      </TextBlock>
-      <Grain />
-    </LiveSlot>
-  );
-};
-
-/* ---------- 3 · Version stack (0:06–0:11) ---------- */
-
+/* 3 · Nine résumés, nothing back (his own files, not the app) */
 const FILES = ['resume_final.pdf', 'resume_final_v2.pdf', 'resume_final_v3.pdf', 'resume_final_v4.pdf', 'resume_final_v5.pdf',
   'resume_final_v6.pdf', 'resume_final_v7.pdf', 'resume_final_v8.pdf', 'resume_final_v9.pdf'];
-const REJECTIONS = ['Update on your application', 'Thank you for your interest', 'Regarding your application', 'Your application status'];
-
 const VersionStack: React.FC = () => {
   const f = useCurrentFrame();
-  const collapse = interpolate(f, [132, 150], [1, 0.006], {...clamp, easing: exitEase});
+  const collapse = interpolate(f, [82, 96], [1, 0.006], {...clamp, easing: exitEase});
   return (
     <AbsoluteFill style={{background: C.surface}}>
-      {REJECTIONS.map((r, i) => {
-        const p = prog(f, 20 + i * 18, 30);
-        return <div key={i} style={{position: 'absolute', left: M + 40 + i * 30, top: 120 + i * 64 + (1 - p) * 120,
-          fontFamily: F.body, fontSize: 34, color: C.haze, opacity: p * 0.45, filter: 'blur(3px)'}}>{r}</div>;
-      })}
-      <div style={{position: 'absolute', left: M, right: M, top: 290, transform: `scaleY(${collapse})`, transformOrigin: '50% 60%'}}>
-        <Window title="Documents" style={{background: C.ink}}>
-          <div style={{padding: '10px 0'}}>
+      <div style={{position: 'absolute', left: M, right: M, top: 190, transform: `scaleY(${collapse})`, transformOrigin: '50% 60%'}}>
+        <Window title="Finder · Documents" style={{background: C.ink}}>
+          <div style={{padding: '8px 0'}}>
             {FILES.map((name, i) => {
-              const p = prog(f, 4 + i * 2.4 * 2, 12);
-              const over = interpolate(p, [0, 0.7, 1], [-30, 6, 0]);
+              const p = prog(f, 2 + i * 3.6, 10);
               const last = i === FILES.length - 1;
               return (
-                <div key={name} style={{display: 'flex', alignItems: 'center', gap: 18, padding: '10px 28px', opacity: p,
-                  transform: `translateY(${over}px)`, background: last ? C.surface2 : 'transparent'}}>
-                  <svg width="26" height="30" viewBox="0 0 26 30"><path d="M3 2h13l7 7v19H3z" fill="none" stroke={C.dim} strokeWidth="2" strokeLinejoin="round" /></svg>
-                  <span style={{fontFamily: F.mono, fontSize: 28, color: last ? C.paper : C.haze}}>{name}</span>
+                <div key={name} style={{display: 'flex', alignItems: 'center', gap: 18, padding: '8px 28px', opacity: p,
+                  transform: `translateY(${interpolate(p, [0, 0.7, 1], [-30, 6, 0])}px)`, background: last ? C.surface2 : 'transparent'}}>
+                  <svg width="24" height="28" viewBox="0 0 26 30"><path d="M3 2h13l7 7v19H3z" fill="none" stroke={C.dim} strokeWidth="2" strokeLinejoin="round" /></svg>
+                  <span style={{fontFamily: F.mono, fontSize: 27, color: last ? C.paper : C.haze}}>{name}</span>
                 </div>
               );
             })}
           </div>
         </Window>
       </div>
-      <TextBlock top={930}>
-        <Words text="Recovered. Ready. Invisible." start={40} stagger={8} size={64} style={{opacity: collapse > 0.5 ? 1 : 0}} />
+      <TextBlock top={830}>
+        <Words text="Nine résumés." start={30} size={64} weight={800} />
+        <Feel text="Nothing back." start={44} size={56} />
       </TextBlock>
       <Grain />
     </AbsoluteFill>
   );
 };
 
-/* ---------- 4 · Window at night (0:11–0:14) ---------- */
+/* 4 · Window at night (original illustration) */
+const Night: React.FC = () => (
+  <AbsoluteFill>
+    <NightWindow />
+    <TextBlock top={830}>
+      <Words text="The gap wasn't on my résumé." start={4} size={56} />
+      <Feel text="It was in my head." start={30} size={52} />
+    </TextBlock>
+    <Grain opacity={0.08} />
+  </AbsoluteFill>
+);
 
-const WindowNight: React.FC<{show: boolean}> = ({show}) => {
+/* 5 · The decision: he connects a workspace (Onboarding copy from packages/ui) and writes the rule down */
+const Decision: React.FC = () => {
   const f = useCurrentFrame();
-  const dip = interpolate(f, [84, 90], [0, 1], clamp);
+  const note = prog(f, 26, 14);
+  const write = interpolate(f, [34, 70], [0, 1], clamp);
+  const under = interpolate(f, [56, 72], [0, 1], {...clamp, easing: enter});
   return (
     <AbsoluteFill>
-      <LiveSlot mood="night" label="Window at night · phone glow · rack focus" show={show}>
-        <div style={{position: 'absolute', left: 470, top: 520, width: 140, height: 220, borderRadius: 70,
-          background: 'radial-gradient(closest-side, rgba(150,175,255,.32), transparent)', filter: 'blur(10px)'}} />
-        <TextBlock top={820}>
-          <Words text="The gap wasn't on my résumé." start={6} size={60} />
-          <Feel text="It was in my head." start={36} />
-        </TextBlock>
-        <Grain />
-      </LiveSlot>
-      <AbsoluteFill style={{background: '#000', opacity: dip}} />
+      <div style={{position: 'absolute', left: M, right: M, top: 190, opacity: prog(f, 0, 10)}}>
+        <Window title="Welcome · Jobzuu" topBorder={C.flare} app>
+          <div style={{padding: '26px 30px 30px'}}>
+            <div style={{fontFamily: F.display, fontWeight: 800, fontSize: 40, color: C.paper}}>Connect your agent workspace</div>
+            <div style={{fontFamily: F.body, fontSize: 25, lineHeight: 1.4, color: C.haze, marginTop: 10}}>
+              Choose any folder on this Mac. If it is empty, I will create <span style={{fontFamily: F.mono, fontSize: 22}}>CLAUDE.md</span> and the starter workspace files.
+            </div>
+            <div style={{display: 'flex', alignItems: 'center', gap: 14, marginTop: 20, padding: '16px 18px', borderRadius: 12, border: '1.5px solid rgba(46,230,255,.45)'}}>
+              <svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="none" stroke={C.cyan} strokeWidth="2.4" /><path d="M8 13.5 L11.5 17 L18 9.5" fill="none" stroke={C.cyan} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <span style={{fontFamily: F.mono, fontSize: 23, color: C.paper}}>~/job-search</span>
+              <div style={{flex: 1}} />
+              <Btn>Choose folder</Btn>
+            </div>
+          </div>
+        </Window>
+      </div>
+      {/* his notebook card, overlapping the window */}
+      <div style={{position: 'absolute', left: M + 10, top: 540, width: 470, padding: '26px 30px', borderRadius: 8, background: '#F3ECDD',
+        transform: `rotate(-3deg) translateY(${(1 - note) * 40}px)`, opacity: note, boxShadow: '0 30px 60px rgba(0,0,0,.5)'}}>
+        <div style={{fontFamily: F.serif, fontStyle: 'italic', fontSize: 46, color: '#2A2418', lineHeight: 1.05,
+          clipPath: `inset(0 ${(1 - write) * 100}% 0 0)`}}>Treat it like a project.</div>
+        <div style={{height: 4, width: `${under * 80}%`, background: C.flare, marginTop: 10, borderRadius: 2}} />
+      </div>
+      <TextBlock top={850}>
+        <Words text="So I stopped." start={6} size={56} />
+        <Words text="And treated it like a project." start={40} size={56} color={C.flare} />
+      </TextBlock>
     </AbsoluteFill>
   );
 };
 
-/* ---------- 5 · The decision (0:14–0:17), first coral ---------- */
-
-const Decision: React.FC<{show: boolean}> = ({show}) => {
-  const f = useCurrentFrame();
-  const scatter = interpolate(f, [26, 50], [0, 1], {...clamp, easing: enter});
-  const underline = interpolate(f, [50, 62], [0, 1], {...clamp, easing: enter});
-  const stretch = interpolate(f, [74, 90], [0, 1], {...clamp, easing: enter});
-  return (
-    <LiveSlot mood="warm" label="Notebook · 'treat it like a project' · pen down" show={show}>
-      <TextBlock top={760}>
-        <div style={{position: 'relative'}}>
-          <Words text="So I stopped applying" start={0} size={60} style={{display: 'inline'}} />
-          <span style={{position: 'relative', display: 'inline-block', fontFamily: F.display, fontWeight: 600, fontSize: 60, color: C.paper, letterSpacing: '-0.02em'}}>
-            {'everywhere.'.split('').map((ch, i) => {
-              const a = random(`a${i}`) * Math.PI * 2;
-              const d = scatter * (60 + random(`d${i}`) * 120);
-              return <span key={i} style={{display: 'inline-block', opacity: prog(f, 8, 15) * (1 - scatter),
-                transform: `translate(${Math.cos(a) * d}px, ${Math.sin(a) * d}px) rotate(${scatter * (random(`r${i}`) - 0.5) * 90}deg)`}}>{ch}</span>;
-            })}
-          </span>
-        </div>
-        <div style={{position: 'relative', display: 'flex', flexWrap: 'wrap'}}>
-          <Words text="And started" start={44} size={60} />
-          <span style={{position: 'relative'}}>
-            <Words text="engineering" start={48} size={60} color={underline > 0.5 ? C.flare : C.paper} />
-            <div style={{position: 'absolute', left: 0, bottom: -6, height: 6, borderRadius: 3, background: C.flare,
-              width: `calc(${underline * 92}% + ${stretch * 1400}px)`, transform: `translateX(${-stretch * 500}px)`}} />
-          </span>
-          <Words text="my search." start={54} size={60} />
-        </div>
-      </TextBlock>
-    </LiveSlot>
-  );
-};
-
-/* ---------- 6 · Fit and gaps (0:17–0:22) ---------- */
-
-const ROLES = [
-  {role: 'Applied AI Engineer', fit: 82},
-  {role: 'Platform Engineer', fit: 74},
-  {role: 'Senior Backend Engineer', fit: 71},
-  {role: 'ML Infrastructure Engineer', fit: 63},
-];
-
-const Chip: React.FC<{children: React.ReactNode; tone: 'good' | 'gap'; p: number}> = ({children, tone, p}) => (
-  <span style={{fontFamily: F.body, fontSize: 24, fontWeight: 500, padding: '8px 16px', borderRadius: 999, opacity: p,
-    transform: `translateY(${(1 - p) * 12}px)`, display: 'inline-block',
-    color: tone === 'good' ? C.paper : C.flare, background: tone === 'good' ? 'rgba(46,230,255,.10)' : 'rgba(255,140,102,.12)',
-    border: `1px solid ${tone === 'good' ? 'rgba(46,230,255,.35)' : 'rgba(255,140,102,.45)'}`}}>{children}</span>
-);
-
+/* 6 · Where he fits, and where he doesn't yet */
 const FitAndGaps: React.FC = () => {
   const f = useCurrentFrame();
-  const intro = prog(f, 0, 18);
-  const sweep = interpolate(f, [40, 56], [0, 1], {...clamp, easing: enter});
-  const expand = interpolate(f, [54, 72], [0, 1], {...clamp, easing: enter});
-  const zoom = interpolate(f, [134, 150], [1, 2.6], {...clamp, easing: exitEase});
-  const zoomFade = interpolate(f, [140, 150], [1, 0], clamp);
+  const intro = prog(f, 0, 14);
+  const out = interpolate(f, [138, 150], [0, 1], {...clamp, easing: exitEase});
   return (
-    <AbsoluteFill style={{perspective: 1800}}>
-      <div style={{position: 'absolute', left: M - 20, right: M - 20, top: 290, opacity: intro * zoomFade,
-        transform: `rotateY(-5deg) rotateX(3deg) translateY(${(1 - intro) * 30}px) scale(${zoom * 0.82})`, transformOrigin: '30% 0%'}}>
-        <Window title="Jobs · Ranked" topBorder={C.flare}>
-          <div style={{padding: '14px 0'}}>
-            {ROLES.map((r, i) => {
-              const fill = prog(f, 12 + i * 4, 24);
-              const chosen = i === 0;
-              return (
-                <div key={r.role} style={{position: 'relative', padding: '18px 28px', borderBottom: `1px solid ${C.line}`}}>
-                  {chosen && <div style={{position: 'absolute', inset: 0, background: 'rgba(255,140,102,.10)',
-                    borderLeft: `4px solid ${C.flare}`, clipPath: `inset(0 ${(1 - sweep) * 100}% 0 0)`}} />}
-                  <div style={{position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline'}}>
-                    <span style={{fontFamily: F.body, fontWeight: 600, fontSize: 30, color: C.paper}}>{r.role}</span>
-                    <span style={{fontFamily: F.mono, fontSize: 26, color: chosen ? C.flare : C.haze}}>Fit {Math.round(r.fit * fill)}</span>
-                  </div>
-                  <div style={{position: 'relative', height: 8, borderRadius: 4, background: C.cellEmpty, marginTop: 14}}>
-                    <div style={{height: 8, borderRadius: 4, width: `${r.fit * fill}%`, background: chosen ? AURORA : C.dim}} />
-                  </div>
-                  {chosen && (
-                    <div style={{position: 'relative', overflow: 'hidden', height: expand * 210}}>
-                      <div style={{fontFamily: F.mono, fontSize: 20, color: C.haze, margin: '22px 0 12px', letterSpacing: '0.06em'}}>WHY IT FITS</div>
-                      <div style={{display: 'flex', gap: 10, flexWrap: 'wrap'}}>
-                        {['Distributed systems', 'Python', 'On-call leadership'].map((s, k) => <Chip key={s} tone="good" p={prog(f, 66 + k * 3, 12)}>{s}</Chip>)}
-                      </div>
-                      <div style={{fontFamily: F.mono, fontSize: 20, color: C.haze, margin: '22px 0 12px', letterSpacing: '0.06em'}}>GAPS TO ADDRESS</div>
-                      <Chip tone="gap" p={prog(f, 80, 12)}>Recent LLM tooling</Chip>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+    <AbsoluteFill>
+      <div style={{position: 'absolute', left: M, right: M, top: 200, opacity: intro * (1 - out), transform: `translateY(${(1 - intro) * 30}px)`}}>
+        <Window title="Jobs · Ranked" topBorder={C.flare} app>
+          <RankedJob role={ROLE} company={CO} score={78} f={f} start={8}
+            fits={['Python services', 'Data pipelines', 'Code review']} gaps={['Production LLM evaluation']} />
+          {[['Platform Engineer', 'Northwind Logistics', 71], ['ML Infrastructure Eng.', 'Fernhill Studio', 63]].map(([r, c, s], i) => (
+            <div key={r as string} style={{display: 'flex', justifyContent: 'space-between', padding: '14px 28px', borderTop: `1px solid ${C.line}`, opacity: prog(f, 46 + i * 5, 10)}}>
+              <span style={{fontFamily: F.body, fontSize: 24, color: C.haze}}>{r} · {c} · sample</span>
+              <span style={{fontFamily: F.mono, fontSize: 24, color: C.haze}}>{s}</span>
+            </div>
+          ))}
         </Window>
       </div>
-      <TextBlock top={870}>
-        <div style={{opacity: zoomFade}}>
-          <Words text="See where you fit." start={20} size={60} />
-          <div style={{height: 14}} />
-          <Feel text="And where you don't yet." start={84} size={56} />
-        </div>
+      <TextBlock top={850}>
+        <Words text="See where you fit." start={14} size={56} />
+        <Feel text="And where you don't, yet." start={60} size={50} />
       </TextBlock>
     </AbsoluteFill>
   );
 };
 
-/* ---------- 7 · His words (0:22–0:26) ---------- */
-
-const TYPED = '2024–25 · Medical leave. Returned full-time; shipped an LLM eval harness.';
-
+/* 7 · His words, saved only after he allows it */
+const TYPED = '2024–25 · Health leave. Built an eval harness for retrieval models (open source).';
 const HisWords: React.FC = () => {
   const f = useCurrentFrame();
-  const intro = prog(f, 0, 12);
-  const chars = Math.floor(interpolate(f, [14, 74], [0, TYPED.length], clamp));
-  const diff = interpolate(f, [74, 100], [1, 0], clamp);
-  const press = f >= 92 && f < 94 ? 0.97 : 1;
-  const approved = f >= 94;
-  const out = interpolate(f, [108, 120], [0, 1], {...clamp, easing: exitEase});
-  const line = (w: string) => <div style={{height: 14, width: w, borderRadius: 7, background: '#D9DBEA', margin: '14px 0'}} />;
+  const chars = Math.floor(interpolate(f, [8, 56], [0, TYPED.length], clamp));
+  const gate = prog(f, 58, 10);
+  const allowed = interpolate(f, [86, 92], [0, 1], clamp);
+  const line = (w: string) => <div style={{height: 13, width: w, borderRadius: 7, background: '#D9DBEA', margin: '12px 0'}} />;
   return (
     <AbsoluteFill>
-      <div style={{position: 'absolute', left: M, right: M, top: 290, opacity: intro, transform: `translateX(${out * 1100}px) scale(0.75)`, transformOrigin: '50% 0%'}}>
-        <Window title="Studio · Tailored CV · Applied AI Engineer" topBorder={AURORA}>
-          <div style={{background: '#F4F5FF', margin: 26, borderRadius: 12, padding: '34px 38px', color: '#14162A'}}>
-            <div style={{fontFamily: F.display, fontWeight: 800, fontSize: 40}}>Daniel Okafor</div>
-            <div style={{fontFamily: F.body, fontSize: 24, color: '#4B4F6E', marginTop: 4}}>Senior Backend Engineer · Python · Distributed systems</div>
-            <div style={{fontFamily: F.mono, fontSize: 18, color: '#6B6F8E', marginTop: 28, letterSpacing: '0.06em'}}>EXPERIENCE</div>
-            {line('92%')}{line('78%')}
-            <div style={{fontFamily: F.body, fontSize: 25, lineHeight: 1.4, padding: '10px 12px', margin: '10px -12px', borderRadius: 8,
-              background: `rgba(123,97,255,${0.22 * diff})`, minHeight: 72}}>
+      <div style={{position: 'absolute', left: M, right: M, top: 190, opacity: prog(f, 0, 10), transform: 'scale(0.9)', transformOrigin: '50% 0'}}>
+        <Window title={`Studio · CV draft · ${ROLE}`} topBorder="linear-gradient(90deg,#2EE6FF,#7B61FF 55%,#FF4FB8)" app>
+          <div style={{background: '#F4F5FF', margin: 22, borderRadius: 12, padding: '26px 32px', color: '#14162A'}}>
+            <div style={{fontFamily: F.display, fontWeight: 800, fontSize: 36}}>Daniel Okafor</div>
+            <div style={{fontFamily: F.body, fontSize: 22, color: '#4B4F6E', marginTop: 2}}>Senior Backend Engineer · Python · Distributed systems</div>
+            <div style={{fontFamily: F.mono, fontSize: 17, color: '#6B6F8E', marginTop: 18, letterSpacing: '0.06em'}}>EXPERIENCE</div>
+            <div style={{fontFamily: F.body, fontSize: 24, lineHeight: 1.35, padding: '8px 12px', margin: '8px -12px', borderRadius: 8,
+              background: `rgba(123,97,255,${0.18 * (1 - allowed)})`, minHeight: 66}}>
               {TYPED.slice(0, chars)}
-              {chars < TYPED.length && <span style={{display: 'inline-block', width: 3, height: 28, background: '#14162A', verticalAlign: 'middle', marginLeft: 2}} />}
+              {chars < TYPED.length && <span style={{display: 'inline-block', width: 3, height: 26, background: '#14162A', verticalAlign: 'middle', marginLeft: 2}} />}
             </div>
-            {line('84%')}{line('64%')}
+            {line('90%')}{line('70%')}
           </div>
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 26px 26px'}}>
-            <span style={{fontFamily: F.body, fontSize: 24, color: C.haze}}>{approved ? 'Approved by you' : 'Review this draft before it is saved'}</span>
-            <span style={{fontFamily: F.body, fontWeight: 600, fontSize: 26, padding: '14px 30px', borderRadius: 12, transform: `scale(${press})`,
-              background: approved ? C.surface2 : C.flare, color: approved ? C.paper : C.ink, border: approved ? `1px solid ${C.line}` : 'none'}}>
-              {approved ? '✓ Approved' : 'Approve'}
-            </span>
+          <div style={{padding: '0 22px 22px', opacity: gate, transform: `translateY(${(1 - gate) * 16}px)`}}>
+            <ApprovalCard tool="Write" target="applications/larkspur/cv.tex" chosen={allowed} press={f > 82 && f < 87 ? 1 : 0} />
           </div>
         </Window>
       </div>
-      <TextBlock top={890}>
-        <Words text="Tailored drafts." start={6} size={60} />
-        <Feel text="My words. My approval." start={40} size={56} />
+      <TextBlock top={872}>
+        <Words text="Tailored drafts." start={60} size={52} />
+        <Feel text="My words. My approval." start={90} size={46} />
       </TextBlock>
     </AbsoluteFill>
   );
 };
 
-/* ---------- 8 · Practice and pipeline (0:26–0:30) ---------- */
-
-const COLS_PIPE = ['Applied', 'Interviewing', 'Final round', 'Offer'];
-
+/* 8 · Practice, track, draft the follow-up (drafts only; the app never sends email) */
 const Pipeline: React.FC = () => {
   const f = useCurrentFrame();
-  // card -> column index over beats (every 30 frames)
-  const beat = Math.min(3, Math.floor(f / 30));
-  const cards = [
-    {t: 'Applied AI Engineer', path: [0, 1, 2, 3]},
-    {t: 'Platform Engineer', path: [0, 1, 1, 1]},
-    {t: 'Senior Backend Eng.', path: [0, 0, 1, 1]},
-    {t: 'ML Infrastructure', path: [0, 0, 0, 0]},
-  ];
-  const colW = 900 / 4;
+  const a = 1 - interpolate(f, [50, 60], [0, 1], clamp);
+  const b = prog(f, 54, 12);
   return (
     <AbsoluteFill>
-      <div style={{position: 'absolute', left: M, right: M, top: 290, transform: 'scale(0.8)', transformOrigin: '50% 0%'}}>
-        <div style={{display: 'flex', fontFamily: F.mono, fontSize: 20, color: C.haze, letterSpacing: '0.04em'}}>
-          {COLS_PIPE.map((c, i) => <div key={c} style={{width: colW, paddingLeft: 8, color: i === 3 && beat === 3 ? C.flare : C.haze}}>{c}</div>)}
-        </div>
-        <div style={{position: 'relative', height: 560, marginTop: 16}}>
-          {COLS_PIPE.map((c, i) => <div key={c} style={{position: 'absolute', left: i * colW, top: 0, width: colW - 12, height: 560,
-            borderRadius: 16, background: C.surface, border: `1px solid ${C.line}`}} />)}
-          {cards.map((card, i) => {
-            const prev = card.path[Math.max(0, beat - 1)];
-            const cur = card.path[beat];
-            const local = f - beat * 30;
-            const p = beat === 0 ? 1 : prog(local, 0, 15);
-            const col = prev + (cur - prev) * p;
-            const sameCol = cards.slice(0, i).filter((c) => c.path[beat] === cur).length;
-            const isHero = i === 0;
-            return (
-              <div key={card.t} style={{position: 'absolute', left: col * colW + 10, top: 16 + sameCol * 118, width: colW - 32, height: 102,
-                borderRadius: 12, background: C.surface2, border: `1px solid ${isHero ? C.flare : C.line}`, padding: '14px 14px',
-                boxShadow: isHero ? '0 10px 40px rgba(255,140,102,.18)' : 'none'}}>
-                <div style={{fontFamily: F.body, fontWeight: 600, fontSize: 21, color: C.paper, lineHeight: 1.2}}>{card.t}</div>
-                <div style={{height: 6, borderRadius: 3, marginTop: 14, width: '70%', background: isHero ? AURORA : C.line}} />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <TextBlock top={800}>
-        <div style={{display: 'flex', gap: 22}}>
-          <Words text="Practice." start={2} size={64} />
-          <Words text="Track." start={32} size={64} />
-          <Words text="Follow up." start={62} size={64} />
-        </div>
-        <div style={{fontFamily: F.mono, fontSize: 30, color: C.haze, opacity: prog(f, 66, 12)}}>Pipeline · 3 interviewing</div>
-      </TextBlock>
-    </AbsoluteFill>
-  );
-};
-
-/* ---------- 9 · The offer (0:30–0:35) ---------- */
-
-const Offer: React.FC<{company: string; show: boolean}> = ({company, show}) => {
-  const f = useCurrentFrame();
-  const toFace = f >= 96;
-  const mail = (
-    <AbsoluteFill>
-      <div style={{position: 'absolute', left: M, right: M, top: 300}}>
-        <Window title="Inbox">
-          <div style={{display: 'flex'}}>
-            <div style={{width: 230, borderRight: `1px solid ${C.line}`, padding: 18}}>
-              {[0, 1, 2, 3, 4].map((i) => <div key={i} style={{height: 12, borderRadius: 6, background: C.line, width: `${80 - i * 8}%`, margin: '18px 0'}} />)}
-            </div>
-            <div style={{flex: 1, padding: '28px 30px'}}>
-              <div style={{fontFamily: F.body, fontSize: 22, color: C.haze}}>Recruiting team</div>
-              <div style={{fontFamily: F.body, fontWeight: 600, fontSize: 32, color: C.paper, marginTop: 10, lineHeight: 1.25}}>
-                Offer · Applied AI Engineer · {company}
-              </div>
-              {[96, 88, 92, 60].map((w, i) => <div key={i} style={{height: 12, borderRadius: 6, background: C.line, width: `${w}%`, margin: '20px 0'}} />)}
-            </div>
+      <div style={{position: 'absolute', left: M, right: M, top: 210, opacity: prog(f, 0, 10) * a}}>
+        <Window title="Interview · Mock interview" app>
+          <div style={{padding: '24px 28px 30px'}}>
+            <Label>Interviewer asks</Label>
+            <Words text="Walk me through the 14 months." start={4} size={34} font={F.body} weight={600} stagger={1} />
+            <Label>Questions to ask them</Label>
+            {['How does the team evaluate model changes?', 'What would the first 90 days look like?'].map((q, k) => (
+              <div key={q} style={{fontFamily: F.body, fontSize: 25, color: C.haze, padding: '6px 0', opacity: prog(f, 16 + k * 6, 10)}}>· {q}</div>
+            ))}
           </div>
         </Window>
       </div>
-    </AbsoluteFill>
-  );
-  return (
-    <AbsoluteFill>
-      {toFace ? (
-        <LiveSlot mood="after" label="Daniel sits back, exhales · partner's hand on shoulder" show={show} />
-      ) : mail}
-      <TextBlock top={830}>
-        <Words text={`Applied AI Engineer at ${company}.`} start={30} size={60} />
-        <Feel text="Month 4 of a focused search." start={60} size={56} />
+      <div style={{position: 'absolute', left: M, right: M, top: 230, opacity: b}}>
+        <Window title="Pipeline" app>
+          <PipelineBoard cards={[{title: 'Fernhill · ML Infra', col: 0}, {title: 'Larkspur · Applied AI', col: 1}, {title: 'Northwind · Platform', col: 1}]} />
+          <div style={{display: 'flex', gap: 12, alignItems: 'center', padding: '0 28px 24px'}}>
+            <Btn primary press={f > 92 && f < 97 ? 1 : 0}>Draft follow-up</Btn>
+            <span style={{fontFamily: F.body, fontSize: 22, color: C.haze}}>A draft for you to send. The app never emails.</span>
+          </div>
+        </Window>
+      </div>
+      <TextBlock top={850}>
+        <div style={{display: 'flex', gap: 28}}>
+          <Words text="Practice." start={2} size={60} />
+          <Words text="Track." start={40} size={60} />
+          <Words text="Follow up." start={78} size={60} />
+        </div>
       </TextBlock>
     </AbsoluteFill>
   );
 };
 
-/* ---------- 10 · Grid → Ascend + end card (0:35–0:40) ---------- */
-
-const AscendMark: React.FC<{size: number; draw: number}> = ({size, draw}) => (
-  <svg width={size} height={size} viewBox="0 0 32 32">
-    <defs>
-      <linearGradient id="ag" x1="6" y1="26" x2="26" y2="6" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stopColor={C.cyan} /><stop offset="0.55" stopColor={C.violet} /><stop offset="1" stopColor={C.magenta} />
-      </linearGradient>
-    </defs>
-    <rect x="1" y="1" width="30" height="30" rx="9.5" fill="#0D0F22" opacity={draw} />
-    <rect x="1.6" y="1.6" width="28.8" height="28.8" rx="8.9" fill="none" stroke="url(#ag)" strokeWidth="1.2" opacity={draw} />
-    <path d="M7.5 24.5A17 17 0 0 1 24.5 7.5" fill="none" stroke="url(#ag)" strokeWidth="2.2" strokeLinecap="round" strokeDasharray="0.1 4.2" opacity={draw} />
-    <path d="M11 21 21.2 10.8M14.2 10.8h7v7" fill="none" stroke={C.flare} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"
-      pathLength={1} strokeDasharray="1" strokeDashoffset={1 - draw} />
-  </svg>
-);
-
-const auroraAt = (t: number) => {
-  const stops = [[46, 230, 255], [123, 97, 255], [255, 79, 184]];
-  const x = t * 2; const i = Math.min(1, Math.floor(x)); const k = x - i;
-  const c = stops[i].map((v, j) => Math.round(v + (stops[i + 1][j] - v) * k));
-  return `rgb(${c.join(',')})`;
+/* 9 · He submits on the employer's own site (story; the app never submits) */
+const Submit: React.FC = () => {
+  const f = useCurrentFrame();
+  const cx = interpolate(f, [16, 52], [700, 210], {...clamp, easing: enter});
+  const cy = interpolate(f, [16, 52], [560, 318], {...clamp, easing: enter});
+  const pressed = f >= 56 && f < 62;
+  const sent = f >= 62;
+  const field = (label: string, value: string, d: number) => (
+    <div style={{opacity: prog(f, d, 10)}}>
+      <div style={{fontFamily: F.body, fontSize: 20, color: '#5B6078'}}>{label}</div>
+      <div style={{fontFamily: F.body, fontSize: 25, color: '#14162A', border: '1.5px solid #CBD0E0', borderRadius: 8, padding: '10px 14px', marginTop: 4}}>{value}</div>
+    </div>
+  );
+  return (
+    <AbsoluteFill style={{background: '#10121F'}}>
+      <div style={{position: 'absolute', left: M, right: M, top: 200}}>
+        <div style={{background: '#FFFFFF', borderRadius: 18, overflow: 'hidden', boxShadow: '0 40px 120px rgba(0,0,0,.55)'}}>
+          <div style={{background: '#E9ECF5', padding: '14px 22px', fontFamily: F.mono, fontSize: 20, color: '#5B6078'}}>careers.example.com/apply</div>
+          <div style={{padding: '24px 30px 30px', display: 'flex', flexDirection: 'column', gap: 14}}>
+            <div style={{fontFamily: F.display, fontWeight: 800, fontSize: 32, color: '#14162A'}}>{ROLE} · Apply</div>
+            {field('Full name', 'Daniel Okafor', 4)}
+            {field('CV', 'cv-larkspur.pdf · reviewed', 8)}
+            <div style={{display: 'flex', alignItems: 'center', gap: 16, marginTop: 6}}>
+              <span style={{fontFamily: F.body, fontWeight: 700, fontSize: 26, padding: '14px 28px', borderRadius: 10,
+                background: sent ? '#2F7D5B' : '#1F2A5C', color: '#fff', transform: `scale(${pressed ? 0.96 : 1})`}}>{sent ? 'Submitted ✓' : 'Submit application'}</span>
+            </div>
+          </div>
+        </div>
+        <Cursor x={cx} y={cy} press={pressed} />
+      </div>
+      <TextBlock top={830}>
+        <Words text="I hit submit myself." start={10} size={58} />
+        <Feel text="This time, I knew it was ready." start={64} size={50} />
+      </TextBlock>
+    </AbsoluteFill>
+  );
 };
 
+/* 10 · The grid fills again (he's writing code again) → Ascend + end card */
+const auroraAt = (t: number) => {
+  const stops = [[46, 230, 255], [123, 97, 255], [255, 79, 184]];
+  const x = t * 2, i = Math.min(1, Math.floor(x)), k = x - i;
+  return `rgb(${stops[i].map((v, j) => Math.round(v + (stops[i + 1][j] - v) * k)).join(',')})`;
+};
 const GridToAscend: React.FC = () => {
   const f = useCurrentFrame();
-  // fill columns, 1 frame per column: coral first, aurora after
-  const filled = interpolate(f, [0, 36], [0, 36], clamp); // ~36 columns are on screen
-  const morph = interpolate(f, [40, 64], [0, 1], {...clamp, easing: enter});
-  const card = prog(f, 66, 15);
+  const filled = interpolate(f, [0, 36], [0, 36], clamp);
+  const morph = interpolate(f, [44, 68], [0, 1], {...clamp, easing: enter});
   return (
     <AbsoluteFill>
       <div style={{opacity: 1 - morph, transform: `scale(${1 - morph * 0.6})`, transformOrigin: '50% 30%'}}>
-        <Grid top={330} fill={(col, row) => {
+        <Grid top={300} fill={(col, row) => {
           if (col >= filled) return col < 2 ? C.cellFaint : C.cellEmpty;
-          const lit = random(`c${col}-${row}`) > 0.28;
-          if (!lit) return C.cellFaint;
+          if (random(`c${col}-${row}`) <= 0.28) return C.cellFaint;
           return col < 8 ? C.flare : auroraAt(Math.min(1, (col - 8) / 28));
         }} />
       </div>
-      <div style={{position: 'absolute', left: M, top: 220 - card * 40, transform: `scale(${0.6 + morph * 0.4})`, transformOrigin: '0 0'}}>
-        <AscendMark size={200} draw={morph} />
+      <div style={{position: 'absolute', left: M, top: 160, transform: `scale(${0.6 + morph * 0.4})`, transformOrigin: '0 0', opacity: morph}}>
+        <AscendMark size={170} draw={morph} id="ag1" />
       </div>
-      <div style={{position: 'absolute', left: M, right: M, top: 500, opacity: card, transform: `translateY(${(1 - card) * 24}px)`}}>
-        <Words text="Run your comeback like a project." start={66} size={88} weight={800} />
-        <div style={{fontFamily: F.body, fontWeight: 600, fontSize: 38, color: C.paper, marginTop: 46}}>AI Job Search Assistant</div>
-        <div style={{fontFamily: F.body, fontSize: 38, color: C.flare, marginTop: 6}}>Download free · Mac &amp; Windows</div>
-        <div style={{fontFamily: F.mono, fontSize: 28, color: C.haze, marginTop: 26}}>job-search-assistant.rebound-ops.org</div>
-        <div style={{fontFamily: F.body, fontSize: 24, color: C.dim, marginTop: 40}}>Dramatization. Results vary. You submit your own applications.</div>
-      </div>
+      <EndCard line="Run your comeback like a project." start={60} />
     </AbsoluteFill>
   );
 };
+
+export const FILM1_SCENES = {grid: EmptyGrid, kitchen: Kitchen, stack: VersionStack, night: Night, decision: Decision, fit: FitAndGaps,
+  words: HisWords, pipeline: Pipeline, send: Submit, end: GridToAscend};
+
+export const Film1: React.FC<FilmProps> = (p) => <FilmShell compId="Film1" scenes={FILM1_SCENES} {...p} />;
+export const Film1Short: React.FC<FilmProps> = (p) => <FilmShell compId="Film1Short" scenes={FILM1_SCENES} {...p} />;
