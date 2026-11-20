@@ -2,7 +2,7 @@
 
 Primary path: **macOS Apple Silicon** (`apps/macos-apple-silicon`).
 
-Platform packages are on [GitHub Releases](https://github.com/AnkitParekh007/job-search-assistant/releases); notarized installers are not published yet. You can also build from source.
+**Installable release status (20 Nov 2026):** the published v0.1.1 platform ZIPs contain client source files, **not verified ready-to-launch `.app` or `.exe` installers**. Do not download one expecting a native app. Build from source using the instructions below. Native releases are being gated by actual binary validation and manual acceptance; signing/notarization is not yet available.
 
 ## System requirements
 
@@ -43,7 +43,7 @@ python3.12 --version   # must be ≥ 3.10
 
 Install BasicTeX (or a fuller TeX distribution) and the packages your CV templates need. The app’s **Settings → Dependencies** lists what is missing.
 
-## 4. Clone and build this app
+## 4. Clone and build this app (currently required)
 
 ```bash
 git clone https://github.com/AnkitParekh007/job-search-assistant.git
@@ -63,7 +63,7 @@ On first launch, pick any folder. Empty folders are fine — Jobzuu creates `CLA
 
 ## Gatekeeper (unsigned builds)
 
-Personal builds are typically **unsigned**. On first open, use **Finder → right-click the app → Open**, then confirm. Do not recommend disabling Gatekeeper system-wide.
+Personal builds are typically **unsigned**. On first open, use **Finder → right-click the app → Open**, then confirm only if you trust the downloaded source and the local build. Do not recommend disabling Gatekeeper system-wide.
 
 ## Other platforms
 
