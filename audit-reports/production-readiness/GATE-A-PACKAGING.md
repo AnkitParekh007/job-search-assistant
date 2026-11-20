@@ -30,21 +30,21 @@ Follow [apps/macos-apple-silicon/e2e/smoke.offline.spec.md](../../apps/macos-app
 
 Agent Computer Use log (2026-11-21): [`evidence/SMOKE-COMPUTER-USE-20261121.md`](./evidence/SMOKE-COMPUTER-USE-20261121.md) — **not a substitute for Ankit signature**.
 
-- [x] Fresh launch → onboarding → absolute workspace connect *(Computer Use)*
-- [ ] Relative path `INVALID` rejected; prior workspace kept — **FAIL / blocker:** `set_workspace` lacks absolute-path guard (see smoke log)
-- [x] Profile form saves without AI *(Computer Use)*
-- [x] Manual job + “I already applied” with submission confirmation *(UI gate observed; full submit blocked by WebView AX)*
-- [x] Original application date preserved after status move *(Nordlicht 2026-11-15 + Rust unit test)*
-- [ ] Find jobs disabled / blocked when provider signed out — **PARTIAL:** enabled while Claude Ready; re-check signed-out
-- [x] Add portal does not finish onboarding *(Computer Use)*
-- [x] Studio integrity check shows no Python traceback *(CLI `posting_guard` ok; UI paste incomplete under AX)*
-- [x] Scout opens without provider calls *(Computer Use + screenshot)*
+- [ ] Fresh launch → onboarding → absolute workspace connect — WIP smoke only; re-run after shipping stash
+- [ ] Relative path `INVALID` rejected; prior workspace kept — **FAIL on `main`:** no absolute-path guard (fix exists in `stash@{0}` only)
+- [ ] Profile form saves without AI — **FAIL on `main`:** Profile is read-only markdown
+- [ ] Manual job + “I already applied” with submission confirmation — **FAIL on `main`:** no Add manually UI committed
+- [ ] Original application date preserved after status move — **FAIL on `main`:** `update_status` still rewrites `date` when leaving `drafted`
+- [ ] Find jobs disabled / blocked when provider signed out — **PARTIAL**
+- [ ] Add portal does not finish onboarding — **FAIL on `main`:** `finishOnboarding` still called from Add portal
+- [ ] Studio integrity check shows no Python traceback — **PARTIAL**
+- [ ] Scout opens without provider calls — HelpAssistant yes; Scout page **missing** on `main`
 
 ### Automated proxies (not a substitute for UI smoke)
 
-- [x] Core vitest + ATS benchmark: **26/26** (`runBenchmark().ok`) — [`evidence/core-vitest-benchmark-20261121b.log`](./evidence/core-vitest-benchmark-20261121b.log)
-- [x] Release `.app` bundles successfully on Apple Silicon
-- [x] Computer Use smoke evidence + screenshots — [`evidence/SMOKE-COMPUTER-USE-20261121.md`](./evidence/SMOKE-COMPUTER-USE-20261121.md)
+- [ ] Core vitest + ATS benchmark — **NOT on `main`**: current `@ai-job-search/core` vitest is **9** tests; `runBenchmark` / `packages/core/src/ats/` absent (prior “26/26” claim was against lost WIP). See [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md)
+- [x] Release `.app` bundles successfully on Apple Silicon *(adhoc)*
+- [x] Computer Use smoke evidence + screenshots — [`evidence/SMOKE-COMPUTER-USE-20261121.md`](./evidence/SMOKE-COMPUTER-USE-20261121.md) — **caveat:** smoked a local WIP binary, not committed `main` sources
 
 ## Honesty
 

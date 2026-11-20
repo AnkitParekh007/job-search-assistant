@@ -113,8 +113,8 @@ Before tagging a beta or public release, attach:
 
 | Gate | Status |
 |------|--------|
-| A | **Code complete / packaging pending** — Phases 1–5 implemented on Apple Silicon (integrity, offline profile/jobs/apps, Scout, backup/restore, ATS text+PDF/DOCX extract path, synthetic benchmark). Complete [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md) + clean-device smoke before labeling **verified** beta. Until then label builds **developed**. |
-| B | **Blocked** — Gate A packaging must pass first; then ATS-01..06 evidence pack + copy review. Benchmark suite exists (`runBenchmark().ok`); do not market ATS optimization yet. |
-| C | **Blocked** — intel/Windows have mirrored APIs; no Gate A smoke evidence yet |
+| A | **Not ready** — Re-audit 2026-11-21: Phase 1–2 P0s still open on `main` (workspace absolute path, date rewrite, Add-portal finishing onboarding, offline profile/manual apps). Substantial WIP exists only in local `git stash@{0}`; ATS/`Scout.tsx`/`readiness` modules missing from disk. Do **not** label **verified**. See [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md). |
+| B | **Blocked** — Gate A must pass first; `packages/core/src/ats/` and `runBenchmark` are **absent** on `main`. Do not market ATS optimization. |
+| C | **Blocked** — intel/Windows twins exist; no Gate A smoke evidence |
 
-See also: [apps/macos-apple-silicon/e2e/smoke.offline.spec.md](../../apps/macos-apple-silicon/e2e/smoke.offline.spec.md).
+See also: [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md), [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md), [apps/macos-apple-silicon/e2e/smoke.offline.spec.md](../../apps/macos-apple-silicon/e2e/smoke.offline.spec.md).
