@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 # Package GitHub Release download assets for the marketing download page.
 # Usage: ./scripts/package-release-assets.sh [version]
+# Optional: ONLY=macos-arm64,macos-x64,windows-x64
+# Optional: REQUIRE_BUILT_APP=1  (fail instead of shipping Apple Silicon source)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="${1:-0.1.1}"
+ONLY="${ONLY:-all}"
 OUT="$ROOT/dist-release"
 STAGE="$OUT/stage"
+
+want() {
+  [[ "$ONLY" == "all" || ",$ONLY," == *",$1,"* ]]
+}
 
 rm -rf "$OUT"
 mkdir -p "$STAGE" "$OUT"
@@ -65,8 +72,13 @@ package_source_client() {
 }
 
 # --- macOS Apple Silicon (prefer built .app) ---
+if want macos-arm64; then
 AS_APP="$ROOT/apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app"
 AS_ASSET="AI-Job-Search-${VERSION}-macos-arm64.zip"
+if [[ "${REQUIRE_BUILT_APP:-}" == "1" && ! -d "$AS_APP" ]]; then
+  echo "REQUIRE_BUILT_APP=1 but no Apple Silicon app at: $AS_APP" >&2
+  exit 1
+fi
 if [[ -d "$AS_APP" ]]; then
   rm -rf "$STAGE/macos-arm64"
   mkdir -p "$STAGE/macos-arm64"
@@ -101,8 +113,10 @@ else
     "macOS Apple Silicon" \
     "cd app && npm install && npm run tauri build"
 fi
+fi
 
 # --- macOS Intel ---
+if want macos-x64; then
 INTEL_APP="$ROOT/apps/macos-intel/src-tauri/target/x86_64-apple-darwin/release/bundle/macos/AI Job Search.app"
 INTEL_ASSET="AI-Job-Search-${VERSION}-macos-x64.zip"
 if [[ -d "$INTEL_APP" ]]; then
@@ -123,8 +137,10 @@ else
     "macOS Intel" \
     "cd app && npm install && npm run build:intel"
 fi
+fi
 
 # --- Windows ---
+if want windows-x64; then
 WIN_BUNDLE_DIR="$ROOT/apps/windows/src-tauri/target/release/bundle"
 WIN_ASSET="AI-Job-Search-${VERSION}-windows-x64.zip"
 if compgen -G "$WIN_BUNDLE_DIR/nsis/*.exe" > /dev/null || compgen -G "$WIN_BUNDLE_DIR/msi/*.msi" > /dev/null; then
@@ -145,6 +161,7 @@ else
     "$WIN_ASSET" \
     "Windows x64" \
     "cd app && npm install && npm run tauri build"
+fi
 fi
 
 # Checksums

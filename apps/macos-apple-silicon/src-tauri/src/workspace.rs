@@ -418,7 +418,8 @@ Ask before sending anything externally.
 /// never overwrites existing content. Returns the relative paths that were created.
 pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
     if !ws.exists() {
-        fs::create_dir_all(ws).map_err(|e| format!("could not create folder {}: {}", ws.display(), e))?;
+        fs::create_dir_all(ws)
+            .map_err(|e| format!("could not create folder {}: {}", ws.display(), e))?;
     }
     if !ws.is_dir() {
         return Err(format!("{} is not a folder", ws.display()));
@@ -468,7 +469,11 @@ pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
         &(TRACKER_HEADER.join(",") + "\n"),
         &mut created,
     )?;
-    write_new("job_scraper/seen_jobs.json", "{\"seen\":{}}\n", &mut created)?;
+    write_new(
+        "job_scraper/seen_jobs.json",
+        "{\"seen\":{}}\n",
+        &mut created,
+    )?;
     write_new(
         ".claude/skills/job-application-assistant/01-candidate-profile.md",
         SCAFFOLD_PROFILE_STUB,
@@ -509,9 +514,17 @@ pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
         SCAFFOLD_SEARCH_QUERIES,
         &mut created,
     )?;
-    write_new(".claude/commands/setup.md", SCAFFOLD_SETUP_CMD, &mut created)?;
+    write_new(
+        ".claude/commands/setup.md",
+        SCAFFOLD_SETUP_CMD,
+        &mut created,
+    )?;
     write_new(".claude/commands/rank.md", SCAFFOLD_RANK_CMD, &mut created)?;
-    write_new(".claude/commands/apply.md", SCAFFOLD_APPLY_CMD, &mut created)?;
+    write_new(
+        ".claude/commands/apply.md",
+        SCAFFOLD_APPLY_CMD,
+        &mut created,
+    )?;
 
     Ok(created)
 }
@@ -615,11 +628,18 @@ mod tests {
         assert!(d.path().join(".claude/commands").is_dir());
         assert!(d.path().join("job_search_tracker.csv").exists());
         let again = ensure_workspace(d.path()).unwrap();
-        assert!(again.is_empty(), "second pass must not overwrite: {:?}", again);
+        assert!(
+            again.is_empty(),
+            "second pass must not overwrite: {:?}",
+            again
+        );
         let original = fs::read_to_string(d.path().join("CLAUDE.md")).unwrap();
         fs::write(d.path().join("CLAUDE.md"), "custom").unwrap();
         let _ = ensure_workspace(d.path()).unwrap();
-        assert_eq!(fs::read_to_string(d.path().join("CLAUDE.md")).unwrap(), "custom");
+        assert_eq!(
+            fs::read_to_string(d.path().join("CLAUDE.md")).unwrap(),
+            "custom"
+        );
         assert!(original.contains("[YOUR_NAME]"));
     }
 }

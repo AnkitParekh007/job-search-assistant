@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRight, HelpCircle, MessageCircleQuestion, Send, X } from "lucide-react";
-import { Scout } from "../pages/Onboarding";
 import { useStore } from "../store";
+import { Jobzuu } from "./Jobzuu";
 import { answerHelpQuestion, HELP_TOPICS, suggestedHelpTopics, type HelpTopic } from "./helpContent";
 
 type HelpMessage = {
@@ -114,7 +114,7 @@ export function HelpAssistant({ paletteOpen = false, onOpenChange }: { paletteOp
             className="fixed bottom-20 right-4 z-40 flex h-[min(460px,calc(100vh-240px))] w-[min(390px,calc(100vw-32px))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl"
           >
             <div className="relative flex shrink-0 items-center gap-2.5 border-b border-line bg-surface-2 px-4 py-3">
-              <Scout size={38} />
+              <Jobzuu size={38} />
               <div className="min-w-0 flex-1">
                 <h2 className="text-[14px] font-semibold text-ink">Ask Scout</h2>
                 <p className="text-[11px] text-ink-3">Offline app guide · No AI · No API cost</p>

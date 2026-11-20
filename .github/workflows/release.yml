@@ -2,26 +2,79 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches: [main]
+    tags: ["v*"]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "scripts/package-release-assets.sh"
+      - "scripts/ci-package-release-assets.sh"
+      - "scripts/publish-release-assets.sh"
+      - ".github/workflows/release.yml"
+      - "package.json"
+      - "package-lock.json"
+      - "market-site/src/lib/releases.ts"
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Release tag to create or refresh (e.g. v0.1.0)"
-        required: true
-        default: "v0.1.0"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
+  group: release-assets
+  cancel-in-progress: true
 
 jobs:
-  package:
-    name: Package release assets
+  version:
+    name: Resolve release version
     runs-on: ubuntu-latest
+    # Manual runs publish only from main or a v* tag, so a branch dispatch cannot replace download assets.
+    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    outputs:
+      tag: ${{ steps.ver.outputs.tag }}
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Resolve version and check the download page
+        id: ver
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            TAG="${GITHUB_REF_NAME}"
+            VERSION="${TAG#v}"
+          else
+            VERSION="$(node -p "require('./package.json').version")"
+            TAG="v${VERSION}"
+          fi
+          export TAG VERSION
+          python3 - <<'PY'
+          import os, re, sys
+          from pathlib import Path
+          text = Path("market-site/src/lib/releases.ts").read_text()
+          tag = re.search(r'RELEASE_TAG = "([^"]+)"', text)
+          ver = re.search(r'RELEASE_VERSION = "([^"]+)"', text)
+          if not tag or not ver:
+              sys.exit("market-site/src/lib/releases.ts is missing RELEASE_TAG or RELEASE_VERSION")
+          if tag.group(1) != os.environ["TAG"] or ver.group(1) != os.environ["VERSION"]:
+              sys.exit(
+                  f"Download page is {tag.group(1)} ({ver.group(1)}) but this release is "
+                  f"{os.environ['TAG']} ({os.environ['VERSION']}). "
+                  "Update market-site/src/lib/releases.ts in the same change."
+              )
+          PY
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+  macos-app:
+    name: Build macOS Apple Silicon app
+    needs: version
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,39 +91,83 @@ jobs:
           rm -rf node_modules apps/*/node_modules packages/*/node_modules
           npm ci
 
-      - name: Resolve version
-        id: ver
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            TAG="${{ inputs.tag }}"
-          else
-            TAG="${GITHUB_REF_NAME}"
-          fi
-          VERSION="${TAG#v}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Package assets
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/macos-apple-silicon/src-tauri -> target
+
+      - name: Build Apple Silicon app
+        working-directory: apps/macos-apple-silicon
+        run: npm run tauri build
+
+      - name: Package Apple Silicon zip
         env:
-          VERSION: ${{ steps.ver.outputs.version }}
+          ONLY: macos-arm64
+          REQUIRE_BUILT_APP: "1"
+        run: bash scripts/package-release-assets.sh "${{ needs.version.outputs.version }}"
+
+      - name: Upload Apple Silicon zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-macos-arm64
+          path: dist-release/AI-Job-Search-*-macos-arm64.zip
+          if-no-files-found: error
+
+  source-clients:
+    name: Package Intel and Windows clients
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Package source clients
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+          ONLY: macos-x64,windows-x64
         run: bash scripts/ci-package-release-assets.sh
 
-      - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload source zips
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ steps.ver.outputs.tag }}
-          name: AI Job Search Assistant ${{ steps.ver.outputs.tag }}
-          generate_release_notes: true
-          body: |
-            Desktop packages for **AI Job Search Assistant** `${{ steps.ver.outputs.tag }}`.
+          name: release-source
+          path: dist-release/*.zip
+          if-no-files-found: error
 
-            - **macOS Apple Silicon / Intel / Windows** archives contain the platform client (build locally if a signed binary is not included).
-            - The app does **not** submit applications automatically.
-            - Multi-provider AI support (Claude Code or Codex) is required for AI workflows.
+  publish:
+    name: Publish GitHub Release assets
+    needs: [version, macos-app, source-clients]
+    if: always() && !cancelled() && needs.version.result == 'success' && (needs.macos-app.result == 'success' || needs.source-clients.result == 'success')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            Download page: https://job-search-assistant.rebound-ops.org/download
-          files: |
-            dist-release/AI-Job-Search-${{ steps.ver.outputs.version }}-*.zip
-            dist-release/SHA256SUMS.txt
+      - name: Download Apple Silicon zip
+        if: needs.macos-app.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-macos-arm64
+          path: incoming
+
+      - name: Download Intel and Windows zips
+        if: needs.source-clients.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-source
+          path: incoming
+
+      - name: Publish assets onto the existing release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.version.outputs.tag }}
+          VERSION: ${{ needs.version.outputs.version }}
+          RELEASE_SHA: ${{ github.sha }}
+          ARM64_REBUILT: ${{ needs.macos-app.result == 'success' }}
+          SOURCE_REBUILT: ${{ needs.source-clients.result == 'success' }}
+        run: bash scripts/publish-release-assets.sh incoming
