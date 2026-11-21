@@ -165,7 +165,7 @@ function NeedsYou() {
 }
 
 function Shell() {
-  const { route, go, dataError, ws, loading } = useStore();
+  const { route, go, dataError, ws, loading, toast } = useStore();
   const [palette, setPalette] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -185,6 +185,24 @@ function Shell() {
     api.getSetting("theme").then((t) => { const v = t || "dark"; if (v === "system") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = v; });
     api.getSetting("onboarded").then((o) => setOnboard(o !== "1"));
   }, []);
+  useEffect(() => {
+    if (!inTauri() || typeof api.checkForUpdate !== "function") return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const pref = await api.getSetting("update_check_on_launch");
+        if (pref === "0" || cancelled) return;
+        const r = await api.checkForUpdate();
+        if (cancelled) return;
+        if (r.status === "available" || r.status === "available_no_asset") {
+          toast(`Update ${r.latest} available — open Settings → Updates to download.`, "info");
+        }
+      } catch {
+        /* offline / rate limit — ignore soft launch check */
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [toast]);
   useEffect(() => { prev.current = route; }, [route]);
   const Page = ({ dashboard: Dashboard, jobs: Jobs, pipeline: Pipeline, studio: Studio, activity: ActivityPage, automations: Automations, profile: Profile, documents: Documents, settings: Settings, interview: Interview, scout: Scout } as Record<string, React.ComponentType>)[route] || Dashboard;
   if (onboard && !loading) return <Onboarding onDone={() => { api.setSetting("onboarded", "1"); setOnboard(false); }} />;

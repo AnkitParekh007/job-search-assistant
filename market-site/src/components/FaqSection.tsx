@@ -31,7 +31,7 @@ export const FAQ_ITEMS = [
   },
   {
     question: "Does it work on macOS, Windows and Linux?",
-    answer: "macOS Apple Silicon is the only platform with a published desktop package: v0.1.3. It is ad-hoc signed, not notarized, and auto-update is disabled. First launch may need right-click → Open. Do not disable Gatekeeper. Intel Mac and Windows are build-from-source. Linux is not a desktop release target.",
+    answer: "macOS Apple Silicon is the only platform with a published desktop package. It is ad-hoc signed and not notarized. Updates are assisted: Settings can check GitHub Releases and download a verified zip; you quit and replace the app yourself (no silent install). First launch may need right-click → Open. Do not disable Gatekeeper. Intel Mac and Windows are build-from-source. Linux is not a desktop release target.",
   },
   {
     question: "Do I need programming knowledge to get started?",

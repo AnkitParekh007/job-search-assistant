@@ -1,6 +1,6 @@
 {
   "name": "@ai-job-search/runtime",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "type": "module",
   "description": "Virtual package — each app aliases this to its own src/runtime implementation.",

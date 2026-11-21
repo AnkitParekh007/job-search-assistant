@@ -6,6 +6,7 @@ mod env;
 mod orchestration;
 mod providers;
 mod security;
+mod updates;
 mod workspace;
 
 use db::Db;
@@ -761,6 +762,16 @@ fn set_setting(state: State<AppState>, key: String, value: String) -> Result<(),
         .map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+fn check_for_update() -> Result<Value, String> {
+    updates::check_for_update(env!("CARGO_PKG_VERSION"))
+}
+
+#[tauri::command]
+fn download_update(tag: String, asset: String) -> Result<Value, String> {
+    updates::download_update(&tag, &asset)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -823,7 +834,9 @@ pub fn run() {
             provider_models,
             provider_set_credential,
             provider_clear_credential,
-            provider_test
+            provider_test,
+            check_for_update,
+            download_update
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

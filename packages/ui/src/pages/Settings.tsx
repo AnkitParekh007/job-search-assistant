@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { revealItemInDir } from "@ai-job-search/runtime";
+import { revealItemInDir, openUrl } from "@ai-job-search/runtime";
 import { open as openDialog } from "@ai-job-search/runtime";
 import clsx from "clsx";
-import { CircleCheck, CircleX, FolderOpen, KeyRound, Loader2, PlugZap, RefreshCw, Trash2, Zap } from "lucide-react";
-import { api } from "@ai-job-search/runtime";
+import { CircleCheck, CircleX, Download, ExternalLink, FolderOpen, KeyRound, Loader2, PlugZap, RefreshCw, Trash2, Zap } from "lucide-react";
+import { api, inTauri, type UpdateCheckResult } from "@ai-job-search/runtime";
 import type { ProviderStatus } from "@ai-job-search/core";
 import { PROVIDER_LABEL, PROVIDER_META, providerEvidenceLabel, providerUiStatus, type ProviderId } from "@ai-job-search/core";
 import { useStore } from "../store";
@@ -30,6 +30,8 @@ export default function Settings() {
   const [keyDraft, setKeyDraft] = useState<Record<string, string>>({});
   const [discovered, setDiscovered] = useState<Record<string, ModelOption[]>>({});
   const [configOpen, setConfigOpen] = useState<string | null>(null);
+  const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult | null>(null);
+  const [checkOnLaunch, setCheckOnLaunch] = useState(true);
 
   useEffect(() => { setPath(ws?.path || ""); }, [ws?.path]);
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function Settings() {
     api.getSetting("ollama_model").then((m) => setOllamaModel(m || ""));
     api.getSetting("ollama_endpoint").then((m) => setOllamaEndpoint(m || "http://127.0.0.1:11434"));
     api.getSetting("ai_provider").then((p) => setProvider(p || "claude"));
+    api.getSetting("update_check_on_launch").then((v) => setCheckOnLaunch(v !== "0"));
     void refreshProviders();
   }, []);
 
@@ -182,6 +185,52 @@ export default function Settings() {
     finally { setBusy(null); }
   };
 
+  const checkUpdate = async () => {
+    if (typeof api.checkForUpdate !== "function") {
+      toast("Update check requires the desktop app", "bad");
+      return;
+    }
+    setBusy("update:check");
+    try {
+      const r = await api.checkForUpdate();
+      setUpdateInfo(r);
+      toast(r.message, r.status === "available" || r.status === "available_no_asset" ? "info" : "good");
+    } catch (e) {
+      toast(String(e), "bad");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const downloadUpdate = async () => {
+    if (typeof api.downloadUpdate !== "function" || !updateInfo?.tag || !updateInfo?.asset) {
+      toast("Check for updates first", "bad");
+      return;
+    }
+    if (!updateInfo.url) {
+      toast("No downloadable package for this platform on that release", "bad");
+      return;
+    }
+    setBusy("update:download");
+    try {
+      const r = await api.downloadUpdate(updateInfo.tag, updateInfo.asset);
+      setUpdateInfo(r);
+      toast(r.message, r.sha256_ok === false ? "info" : "good");
+      if (r.downloaded_path) {
+        try { await revealItemInDir(r.downloaded_path); } catch { /* ignore */ }
+      }
+    } catch (e) {
+      toast(String(e), "bad");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const toggleCheckOnLaunch = async (on: boolean) => {
+    setCheckOnLaunch(on);
+    try { await api.setSetting("update_check_on_launch", on ? "1" : "0"); } catch { /* preview */ }
+  };
+
   const needsKey = (id: string) => id === "openai_api" || id === "gemini";
   const statusChip = (p: ProviderStatus) => {
     const s = providerUiStatus(p);
@@ -201,11 +250,73 @@ export default function Settings() {
           Version <span className="font-mono">{APP_VERSION}</span>
           {" "}· packaging <span className="chip bg-sunken text-ink-2">{PACKAGING_VERIFIED ? "verified" : "not verified for this version"}</span>
         </div>
-        <div className="text-ink-3 text-[12px] leading-relaxed">
-          Distributed macOS builds are <b>ad-hoc signed</b> and <b>not notarized</b>. Auto-update is <b>disabled</b>.
-          Gatekeeper may require <b>right-click → Open</b> on first launch. Do not disable Gatekeeper or strip quarantine.
+        <div className="text-ink-3 text-[12px] leading-relaxed mb-3">
+          Distributed macOS builds are <b>ad-hoc signed</b> and <b>not notarized</b>.
+          Updates are <b>assisted</b>: the app can check GitHub Releases and download a verified zip; you quit and replace the app yourself. There is no silent in-place install.
+          Gatekeeper may require <b>right-click → Open</b> after install or replace. Do not disable Gatekeeper or strip quarantine.
           The published desktop package is <b>macOS Apple Silicon</b>. Intel Mac and Windows are build-from-source.
           Offline tracking works without AI. Local match and export validation use confirmed facts only. This app does not claim ATS pass rates, guaranteed interviews, named-employer ATS compatibility, or a job outcome.
+        </div>
+        <div className="rounded-xl border border-line bg-sunken/40 p-3.5 space-y-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="font-semibold text-[13px] flex-1">Updates</div>
+            {updateInfo && (
+              <span className={clsx(
+                "chip",
+                updateInfo.status === "available" || updateInfo.status === "available_no_asset"
+                  ? "bg-ai-soft text-ai"
+                  : updateInfo.status === "up_to_date"
+                    ? "bg-good-soft text-good"
+                    : "bg-sunken text-ink-2",
+              )}>
+                {updateInfo.status === "available"
+                  ? `v${updateInfo.latest} available`
+                  : updateInfo.status === "available_no_asset"
+                    ? `v${updateInfo.latest} · no package`
+                    : updateInfo.status === "up_to_date"
+                      ? "Up to date"
+                      : updateInfo.status === "downloaded"
+                        ? "Downloaded"
+                        : updateInfo.status}
+              </span>
+            )}
+          </div>
+          <div className="text-[12px] text-ink-2 leading-relaxed">
+            {updateInfo?.message || "Check GitHub for a newer regular release. Download writes to your Downloads folder and verifies SHA-256 when SHA256SUMS.txt is present."}
+          </div>
+          <label className="flex items-center gap-2 text-[12.5px] text-ink-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={checkOnLaunch}
+              onChange={(e) => void toggleCheckOnLaunch(e.target.checked)}
+              className="rounded border-line"
+            />
+            Check for updates when the app launches
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button className="btn h-8 text-[12px]" disabled={!inTauri() || busy === "update:check"} onClick={() => void checkUpdate()}>
+              {busy === "update:check" ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+              Check for updates
+            </button>
+            <button
+              className="btn btn-primary h-8 text-[12px]"
+              disabled={!inTauri() || !updateInfo?.url || busy === "update:download" || !(updateInfo.status === "available" || updateInfo.status === "downloaded")}
+              onClick={() => void downloadUpdate()}
+            >
+              {busy === "update:download" ? <Loader2 size={12} className="animate-spin" /> : <Download size={12} />}
+              Download update
+            </button>
+            {updateInfo?.notes_url && (
+              <button className="btn h-8 text-[12px]" onClick={() => void openUrl(updateInfo.notes_url)}>
+                <ExternalLink size={12} />Release notes
+              </button>
+            )}
+            {updateInfo?.downloaded_path && (
+              <button className="btn h-8 text-[12px]" onClick={() => void revealItemInDir(updateInfo.downloaded_path!)}>
+                <FolderOpen size={12} />Reveal zip
+              </button>
+            )}
+          </div>
         </div>
       </section>
       <section className="card p-5 mb-4">

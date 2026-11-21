@@ -72,7 +72,7 @@ export const DOCS_META: Record<
   install: {
     section: "get-started",
     title: "Install — Docs — Job Search Assistant",
-    description: "Download v0.1.3 for Apple Silicon (ad-hoc signed, not notarized) or build Intel and Windows from source.",
+    description: "Download v0.1.4 for Apple Silicon (ad-hoc signed, not notarized; assisted updates) or build Intel and Windows from source.",
     path: "/docs/install",
   },
   "first-run": {

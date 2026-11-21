@@ -1,18 +1,18 @@
 import { GITHUB_REPO } from "./site";
 
 /** Keep in sync with root package.json. This is the prepared release, not a prerelease tag. */
-export const RELEASE_TAG = "v0.1.3";
-export const RELEASE_VERSION = "0.1.3";
+export const RELEASE_TAG = "v0.1.4";
+export const RELEASE_VERSION = "0.1.4";
 
 /**
  * True only after the regular GitHub Release and its Apple Silicon zip exist.
- * v0.1.3 was uploaded on 2026-11-21 and is not a prerelease.
+ * Stay false until v0.1.4 is uploaded.
  */
-export const RELEASE_PUBLISHED = true;
+export const RELEASE_PUBLISHED = false;
 
 /** Last GitHub Release that actually has a native Apple Silicon zip. Do not rename that asset. */
-export const LAST_PUBLISHED_TAG = "v0.1.2";
-export const LAST_PUBLISHED_ASSET = "AI-Job-Search-0.1.2-macos-arm64.zip";
+export const LAST_PUBLISHED_TAG = "v0.1.3";
+export const LAST_PUBLISHED_ASSET = "Job-Search-Assistant-0.1.3-macos-arm64.zip";
 
 export const RELEASES_PAGE = `${GITHUB_REPO}/releases`;
 export const RELEASE_TAG_URL = `${GITHUB_REPO}/releases/tag/${RELEASE_PUBLISHED ? RELEASE_TAG : LAST_PUBLISHED_TAG}`;
@@ -43,12 +43,12 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     id: "macos-apple-silicon",
     title: "Apple Silicon",
     subtitle: "macOS 13+ · M1–M4",
-    badge: RELEASE_PUBLISHED ? "macOS Apple Silicon" : "Published v0.1.2",
+    badge: RELEASE_PUBLISHED ? "macOS Apple Silicon" : "Published v0.1.3",
     kind: "native",
     asset: RELEASE_PUBLISHED ? preparedAppleSiliconAsset : LAST_PUBLISHED_ASSET,
     note: RELEASE_PUBLISHED
-      ? "Ad-hoc signed · not notarized · right-click → Open on first launch. Auto-update is disabled."
-      : "v0.1.3 is prepared and not published. This link is the existing v0.1.2 Apple Silicon zip: ad-hoc signed, not notarized, right-click → Open. Do not disable Gatekeeper.",
+      ? "Ad-hoc signed · not notarized · right-click → Open on first launch. Assisted updates: Settings can check GitHub and download a verified zip; replace the app yourself (no silent install)."
+      : "v0.1.4 is prepared and not published. This link is the existing v0.1.3 Apple Silicon zip: ad-hoc signed, not notarized, right-click → Open. Do not disable Gatekeeper.",
   },
   {
     id: "macos-intel",

@@ -5,6 +5,19 @@ export type {
 } from "@ai-job-search/core";
 export { STATUSES, FINAL, canonical, TRACKER_HEADER } from "@ai-job-search/core";
 
+export type UpdateCheckResult = {
+  status: string;
+  current: string;
+  latest: string;
+  tag: string;
+  asset: string;
+  url: string | null;
+  notes_url: string;
+  downloaded_path: string | null;
+  sha256_ok: boolean | null;
+  message: string;
+};
+
 export const api = {
   workspace: () => invoke<import("@ai-job-search/core").Workspace>("get_workspace"),
   setWorkspace: (path: string) => invoke<import("@ai-job-search/core").Workspace>("set_workspace", { path }),
@@ -64,6 +77,9 @@ export const api = {
   providerClearCredential: (provider: string) =>
     invoke<{ ok: boolean }>("provider_clear_credential", { provider }),
   providerTest: (provider: string) => invoke<any>("provider_test", { provider }),
+  checkForUpdate: () => invoke<UpdateCheckResult>("check_for_update"),
+  downloadUpdate: (tag: string, asset: string) =>
+    invoke<UpdateCheckResult>("download_update", { tag, asset }),
 };
 
 export const fileUrl = (abs: string) => convertFileSrc(abs);

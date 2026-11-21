@@ -6,9 +6,13 @@ import { SiteHeader } from "../components/SiteHeader";
 import { PAGE_SEO } from "../lib/pages";
 import { applySeo } from "../lib/seo";
 import {
+  LAST_PUBLISHED_ASSET,
+  LAST_PUBLISHED_TAG,
   PLATFORM_DOWNLOADS,
+  RELEASE_PUBLISHED,
   RELEASE_TAG,
   RELEASE_TAG_URL,
+  RELEASE_VERSION,
   RELEASES_PAGE,
   releaseAssetUrl,
   type PlatformDownload,
@@ -92,20 +96,34 @@ export function DownloadPage() {
                 </Link>
               </div>
               <p className="fine-print">
-                Published package{" "}
-                <a href={RELEASE_TAG_URL} rel="noopener">
-                  {RELEASE_TAG}
-                </a>{" "}
-                (<span className="font-mono">Job-Search-Assistant-0.1.3-macos-arm64.zip</span>) on{" "}
-                <a href={RELEASES_PAGE} rel="noopener">
-                  GitHub Releases
-                </a>
-                . It is a regular release, ad-hoc signed and not notarized. First launch may need right-click → Open.
-                Do not disable Gatekeeper or strip quarantine. The earlier v0.1.2 zip is unchanged.
+                {RELEASE_PUBLISHED ? (
+                  <>
+                    Published package{" "}
+                    <a href={RELEASE_TAG_URL} rel="noopener">
+                      {RELEASE_TAG}
+                    </a>{" "}
+                    (<span className="font-mono">Job-Search-Assistant-{RELEASE_VERSION}-macos-arm64.zip</span>) on{" "}
+                    <a href={RELEASES_PAGE} rel="noopener">
+                      GitHub Releases
+                    </a>
+                    . It is a regular release, ad-hoc signed and not notarized. First launch may need right-click → Open.
+                    Do not disable Gatekeeper or strip quarantine. Earlier v0.1.2 and v0.1.3 zips are unchanged.
+                  </>
+                ) : (
+                  <>
+                    Prepared release {RELEASE_TAG} is not published yet. The live download is{" "}
+                    <a href={RELEASE_TAG_URL} rel="noopener">
+                      {LAST_PUBLISHED_TAG}
+                    </a>{" "}
+                    (<span className="font-mono">{LAST_PUBLISHED_ASSET}</span>). Ad-hoc signed, not notarized.
+                    First launch may need right-click → Open. Do not disable Gatekeeper.
+                  </>
+                )}
               </p>
               <p className="fine-print">
                 <strong>Platform:</strong> the published download is macOS Apple Silicon only. Intel Mac and Windows
-                are build-from-source. Linux is not a desktop release target. Auto-update is disabled. Local match
+                are build-from-source. Linux is not a desktop release target. Updates are assisted (Settings can check
+                GitHub and download a verified zip; you replace the app yourself — no silent install). Local match
                 uses confirmed facts only and is not a universal ATS pass rate, a named-employer guarantee, or a
                 promise of interviews or job offers.
               </p>

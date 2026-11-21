@@ -6,10 +6,11 @@ Downloadable packages are published as GitHub Release assets and linked from the
 
 | Item | Value |
 |------|-------|
-| Tag / version | `v0.1.3` / `0.1.3` (regular release, not a prerelease) |
+| Tag / version | `v0.1.4` / `0.1.4` (regular release, not a prerelease) |
 | Signing | Ad-hoc, **not notarized**. No Developer ID on the build machine |
-| Native asset | `Job-Search-Assistant-0.1.3-macos-arm64.zip` |
-| Preserved previous asset | `AI-Job-Search-0.1.2-macos-arm64.zip` (not replaced) |
+| Native asset | `Job-Search-Assistant-0.1.4-macos-arm64.zip` |
+| Preserved previous assets | `v0.1.2` and `v0.1.3` Apple Silicon zips (not replaced) |
+| Updates | Assisted: in-app GitHub check + SHA-verified zip download; manual `.app` replace (no silent install) |
 | Site constants | `RELEASE_TAG` / `RELEASE_VERSION` in `market-site/src/lib/releases.ts` |
 | Auto-publish | **Off** — GitHub uploads require `workflow_dispatch` + `publish_assets=true` + `RELEASE_PUBLISH_APPROVED=1` |
 
@@ -60,15 +61,16 @@ Keep these equal:
 
 ## Bundle identifier
 
-See [macos-bundle-identifier.md](./macos-bundle-identifier.md). v0.1.3 keeps `dev.local.aijobsearch`. Changing it without a migration orphans Application Support, Keychain items, and TCC grants.
+See [macos-bundle-identifier.md](./macos-bundle-identifier.md). v0.1.4 keeps `dev.local.aijobsearch`. Changing it without a migration orphans Application Support, Keychain items, and TCC grants.
 
 ## Gatekeeper (ad-hoc, not notarized)
 
-Users may need **right-click → Open**. Do not instruct users to disable Gatekeeper or clear quarantine as a workaround.
+Users may need **right-click → Open** on first launch and after replacing the `.app` from an assisted update download. Do not instruct users to disable Gatekeeper or clear quarantine as a workaround.
 
 ## Explicit non-goals (Phase A)
 
-- Overwriting `v0.1.2` or publishing `v0.1.3` without human approval  
+- Overwriting `v0.1.2` / `v0.1.3` or publishing without human approval  
+- Silent in-place auto-install or Tauri updater claims without Developer ID + notarization  
 - Claiming notarized or Developer ID–signed installers  
 - Shipping source trees as platform “installers”  
 - Apple Developer Program enrollment / paid certificates  

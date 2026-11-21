@@ -34,6 +34,20 @@ export type MigrateWorkspaceResult = {
   applications_written: number;
 };
 
+/** Assisted update status from GitHub Releases (never silent in-place install). */
+export type UpdateCheckResult = {
+  status: string;
+  current: string;
+  latest: string;
+  tag: string;
+  asset: string;
+  url: string | null;
+  notes_url: string;
+  downloaded_path: string | null;
+  sha256_ok: boolean | null;
+  message: string;
+};
+
 export type RuntimeApi = {
   workspace: () => Promise<Workspace>;
   setWorkspace: (path: string) => Promise<Workspace>;
@@ -73,6 +87,8 @@ export type RuntimeApi = {
   providerSetCredential: (provider: string, secret: string) => Promise<{ ok: boolean }>;
   providerClearCredential: (provider: string) => Promise<{ ok: boolean }>;
   providerTest: (provider: string) => Promise<any>;
+  checkForUpdate: () => Promise<UpdateCheckResult>;
+  downloadUpdate: (tag: string, asset: string) => Promise<UpdateCheckResult>;
 };
 
 export declare const api: RuntimeApi;

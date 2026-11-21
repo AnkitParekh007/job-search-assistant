@@ -129,7 +129,7 @@ STAMP="$(cat <<EOF
 <!-- assets-stamp -->
 Downloadable **native** assets on this release were refreshed from \`${short}\` on ${day}.
 Platforms required for this publish: ${REQUIRE_PLATFORMS}.
-Channel: regular release. Signing: ad-hoc, not notarized. Auto-update: disabled.
+Channel: regular release. Signing: ad-hoc, not notarized. Updates: assisted check/download (manual replace; no silent install).
 <!-- /assets-stamp -->
 EOF
 )"

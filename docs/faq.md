@@ -16,10 +16,10 @@ The app has no subscription of its own. Cloud providers bill against your plan o
 In the local workspace folder you chose, plus SQLite for run history/settings under Application Support.
 
 **Is there a Windows / Intel app?**  
-Source trees exist under `apps/macos-intel` and `apps/windows`. Only **Apple Silicon** has a published ZIP (`v0.1.3`, ad-hoc signed, not notarized). Intel and Windows are build-from-source until native installers are smoke-verified. See [apps/README.md](../apps/README.md).
+Source trees exist under `apps/macos-intel` and `apps/windows`. Only **Apple Silicon** has a published ZIP (`v0.1.4`, ad-hoc signed, not notarized). Intel and Windows are build-from-source until native installers are smoke-verified. See [apps/README.md](../apps/README.md).
 
 **Where do I download a binary?**  
-Apple Silicon only: [GitHub Release `v0.1.3`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.3). Notarized installers are not published — see [installation.md](./installation.md).
+Apple Silicon only: [GitHub Release `v0.1.4`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.4). Assisted updates (check + download zip; manual replace) are in Settings. Notarized installers are not published — see [installation.md](./installation.md).
 
 **Can I use a local LLM?**  
 Yes — Ollama is supported for structured inference workflows when the local service is running. It cannot scrape portals or run full agentic automation.

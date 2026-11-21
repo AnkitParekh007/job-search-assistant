@@ -2,7 +2,9 @@
 
 Primary path: **macOS Apple Silicon** (`apps/macos-apple-silicon`).
 
-Published package: **[`v0.1.3`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.3)** — `Job-Search-Assistant-0.1.3-macos-arm64.zip` (`Job Search Assistant.app`, ad-hoc signed, not notarized). The v0.1.2 zip is unchanged and still contains `AI Job Search.app`. Intel/Windows: build from source. Prefer `./scripts/build-macos-apple-silicon-preview.sh` for a validated local build. Do not disable Gatekeeper or strip quarantine to launch.
+Published package: **[`v0.1.4`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.4)** — `Job-Search-Assistant-0.1.4-macos-arm64.zip` (`Job Search Assistant.app`, ad-hoc signed, not notarized). Earlier `v0.1.2` / `v0.1.3` zips are unchanged. Intel/Windows: build from source. Prefer `./scripts/build-macos-apple-silicon-preview.sh` for a validated local build. Do not disable Gatekeeper or strip quarantine to launch.
+
+**Updates:** Settings → Updates can check GitHub Releases and download a SHA-verified zip to Downloads. Quit the app, replace the `.app`, then right-click → Open if Gatekeeper prompts. There is no silent in-place install.
 
 ## System requirements
 
