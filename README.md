@@ -243,7 +243,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 
 - macOS Apple Silicon builds are labeled **verified** for Gate A job-tracking ([checklist](./audit-reports/production-readiness/GATE-A-PACKAGING.md)).
 - Auto-update is **disabled**. Notarized installers are **not** claimed for the internal beta channel.
-- Local resume parse / match helpers are **experimental** — we do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
+- Local resume parse, evidence-grounded match, and export validation are Gate B–backed ([checklist](./audit-reports/production-readiness/GATE-B-ATS.md)) — we still do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
 
 ### Key limitations
 

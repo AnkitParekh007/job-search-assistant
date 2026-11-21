@@ -49,7 +49,7 @@ Post-rebuild Computer Use smoke **2026-11-21 ~04:28 IST** — see [`evidence/SMO
 
 - [x] README / release notes: offline tracking first; AI optional — [`RELEASE-NOTES-v0.1.1-gate-a.md`](./RELEASE-NOTES-v0.1.1-gate-a.md)
 - [x] No universal ATS pass rate, guaranteed interviews, or named-employer ATS compatibility
-- [x] ATS features labeled **experimental** until Gate B
+- [x] ATS features: local match/export Gate B–backed; no forbidden overclaims (see [GATE-B-ATS.md](./GATE-B-ATS.md))
 - [x] Provider copy: installed ≠ authenticated ≠ workflow-capable (Settings + deps)
 - [x] In-app readiness label: **verified** (sidebar footer + Settings → About; flipped 2026-11-21 by product owner)
 

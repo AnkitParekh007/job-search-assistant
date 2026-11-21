@@ -45,7 +45,7 @@ Proof required before an issue or gate is marked done. Prefer automated tests; m
 | **ATS-05** | Exported resume re-parse detects missing sections and unsupported/invented statements | Export → Validate tests; block or warn with user-visible reason |
 | **ATS-06** | Lifecycle records recruiter screen, interview, offer, outcomes with accurate timestamps; metrics from events | Event-log tests; UI cannot invent submission without confirmation |
 
-**Benchmark CI threshold (Phase 5):** vitest `runBenchmark().ok === true` on the synthetic Alex/Nordlicht corpus — specifically: **name extracted**, **≥1 must-have** requirement, and **match does not refuse** when useful facts are confirmed (also skills-subset recall ≥ 0.75 and export validation ok inside `runBenchmark`). This is a private regression gate — **not** marketed as a universal ATS pass rate. See `packages/core/src/ats/benchmark/` and `PRIVACY.md`.
+**Benchmark CI threshold (Phase 5):** vitest `runBenchmark().ok === true` on the synthetic Alex/Nordlicht corpus — specifically: **name extracted**, **employer fact**, **≥1 must-have** requirement, and **match does not refuse** when useful facts are confirmed (also skills-subset recall ≥ 0.75 and export validation ok inside `runBenchmark`). This is a private regression gate — **not** marketed as a universal ATS pass rate. See `packages/core/src/ats/benchmark.ts`, `fixtures.ts`, and [`packages/core/src/ats/PRIVACY.md`](../../packages/core/src/ats/PRIVACY.md). Gate B checklist: [`GATE-B-ATS.md`](./GATE-B-ATS.md).
 
 ---
 

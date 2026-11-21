@@ -159,6 +159,10 @@ function EditFormPane() {
     setPendingFacts((list) => list?.map((f) => (f.id === id ? { ...f, confirmed } : f)) ?? null);
   };
 
+  const setFactValue = (id: string, value: string) => {
+    setPendingFacts((list) => list?.map((f) => (f.id === id ? { ...f, value, source: "user" as const, confidence: 1 } : f)) ?? null);
+  };
+
   const save = async () => {
     setSaving(true);
     try {
@@ -247,8 +251,8 @@ function EditFormPane() {
         </div>
 
         <div>
-          <div className="h-section mb-1 flex items-center gap-2">Resume <span className="chip bg-sunken text-ink-3 font-normal">experimental</span></div>
-          <div className="text-ink-3 text-[12px] mb-2">Import PDF/DOCX/text or paste — parse locally with no AI. Confirm facts before match/export. Not marketed as ATS optimization until Gate B.</div>
+          <div className="h-section mb-1 flex items-center gap-2">Resume <span className="chip bg-sunken text-ink-3 font-normal">local parse</span></div>
+          <div className="text-ink-3 text-[12px] mb-2">Import PDF/DOCX/text or paste — parse locally with no AI. Edit and confirm facts; only confirmed facts feed match and export validation.</div>
           <textarea className="input w-full min-h-[140px] font-mono text-[12px]" value={resumeText} onChange={(e) => setResumeText(e.target.value)} placeholder="Paste resume plain text, or import a file…" />
           <div className="mt-2 flex flex-wrap gap-2">
             <button type="button" className="btn" onClick={() => void importResumeFile()}>Import file</button>
@@ -265,11 +269,16 @@ function EditFormPane() {
           )}
           {pendingFacts && pendingFacts.length > 0 && (
             <div className="mt-3 space-y-2">
-              <div className="label">Extracted facts · confirm or reject</div>
+              <div className="label">Extracted facts · edit, confirm, or reject</div>
               {pendingFacts.map((f) => (
                 <div key={f.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-line px-3 py-2">
                   <span className="chip bg-sunken text-ink-2 font-mono font-normal">{f.field}</span>
-                  <span className="flex-1 min-w-[120px] text-[13px] selectable">{f.value}</span>
+                  <input
+                    className="input flex-1 min-w-[140px] h-8 text-[13px]"
+                    value={f.value}
+                    onChange={(e) => setFactValue(f.id, e.target.value)}
+                    aria-label={`Edit ${f.field} fact`}
+                  />
                   <span className="text-[11px] text-ink-3">{f.source} · {Math.round(f.confidence * 100)}%</span>
                   <div className="flex rounded-[10px] border border-line bg-surface-2 p-0.5">
                     <button type="button" className={clsx("h-6 px-2.5 rounded-lg text-[12px]", f.confirmed ? "bg-good-soft text-good font-medium" : "text-ink-3 hover:text-ink")} onClick={() => setFactConfirmed(f.id, true)}>Confirm</button>

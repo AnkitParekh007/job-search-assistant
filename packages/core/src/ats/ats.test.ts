@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { aiProviderBlockedReason, aiProviderReady } from "../readiness";
-import { emptyProfile, explainMatch, extractJobRequirements, mergeFact, parseResumeFromText, runBenchmark, validateExportText } from "./index";
+import {
+  ALEX_RESUME,
+  ALEX_RESUME_MINIMAL,
+  NORDLICHT_POSTING,
+  emptyProfile,
+  explainMatch,
+  extractJobRequirements,
+  mergeFact,
+  parseResumeFromText,
+  runBenchmark,
+  validateExportText,
+} from "./index";
 
-const RESUME = "Alex Morgan\nalex@example.com\n+49 30 1234567\nBerlin, Germany\nSkills: TypeScript, React\n";
+const RESUME = ALEX_RESUME_MINIMAL;
 
 describe("parseResumeFromText", () => {
   it("extracts unconfirmed facts", () => {
@@ -31,6 +42,11 @@ describe("extractJobRequirements", () => {
     expect(reqs.map((r) => [r.kind, r.text])).toEqual([["must", "TypeScript"], ["must", "React"], ["nice", "GraphQL"]]);
     for (const r of reqs) expect(posting.slice(r.span!.start, r.span!.end)).toBe(r.text);
   });
+  it("extracts Nordlicht fixture must/nice", () => {
+    const reqs = extractJobRequirements(NORDLICHT_POSTING);
+    expect(reqs.some((r) => r.kind === "must" && /TypeScript/i.test(r.text))).toBe(true);
+    expect(reqs.some((r) => r.kind === "nice" && /GraphQL/i.test(r.text))).toBe(true);
+  });
 });
 
 describe("explainMatch", () => {
@@ -51,6 +67,40 @@ describe("explainMatch", () => {
     expect(m.strengths).toHaveLength(1);
     expect(m.gaps).toHaveLength(1);
     expect(m.score).toBe(0.5);
+  });
+  it("never cites absent facts in strengths", () => {
+    let p = emptyProfile();
+    for (const f of parseResumeFromText(RESUME).facts) {
+      if (f.field === "skill" && f.value === "TypeScript") p = mergeFact(p, { ...f, confirmed: true });
+    }
+    const m = explainMatch(p, reqs);
+    expect(m.ok).toBe(true);
+    for (const s of m.strengths) {
+      expect(p.facts.some((f) => f.id === s.factId && f.confirmed && f.value === "TypeScript")).toBe(true);
+      expect(s.note).not.toMatch(/Rust|Python|invented/i);
+    }
+  });
+});
+
+describe("parse experience / employer", () => {
+  it("extracts employer from Alex fixture", () => {
+    const { facts, diagnostics } = parseResumeFromText(ALEX_RESUME);
+    expect(facts.some((f) => f.field === "employer" && f.value === "Example GmbH")).toBe(true);
+    expect(facts.some((f) => f.field === "experience" && /Example GmbH/.test(f.value))).toBe(true);
+    expect(diagnostics.missingSections).not.toContain("experience");
+  });
+});
+
+describe("mergeFact edit round-trip", () => {
+  it("keeps user-corrected value and confirmation", () => {
+    const { facts } = parseResumeFromText(RESUME);
+    const skill = facts.find((f) => f.field === "skill")!;
+    let p = emptyProfile();
+    p = mergeFact(p, { ...skill, value: "TypeScript (strict)", source: "user", confirmed: true, confidence: 1 });
+    const saved = p.facts.find((f) => f.field === "skill")!;
+    expect(saved.value).toBe("TypeScript (strict)");
+    expect(saved.confirmed).toBe(true);
+    expect(saved.source).toBe("user");
   });
 });
 

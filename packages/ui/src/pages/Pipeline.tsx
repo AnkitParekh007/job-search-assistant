@@ -114,6 +114,10 @@ function MoveDialog({ mv, onClose }: { mv: Move; onClose: () => void }) {
     } catch (e) { toast(String(e), "bad"); }
   };
   const viaOutcome = async () => {
+    if (needsSubmitConfirm && !confirmedSubmit) {
+      toast("Confirm you submitted this application before recording the outcome with AI.", "bad");
+      return;
+    }
     const r = await startWorkflow("outcome", `/outcome ${mv.row.fields.company}`);
     if (r) { onClose(); go("activity"); }
   };
@@ -138,7 +142,7 @@ function MoveDialog({ mv, onClose }: { mv: Move; onClose: () => void }) {
         <div className="flex justify-end gap-2 mt-4">
           <button className="btn" onClick={onClose}>Cancel</button>
           <button className="btn" disabled={needsSubmitConfirm && !confirmedSubmit} onClick={quick}>Quick update</button>
-          <button className="btn btn-primary" onClick={viaOutcome}>Record with AI</button>
+          <button className="btn btn-primary" disabled={needsSubmitConfirm && !confirmedSubmit} onClick={viaOutcome}>Record with AI</button>
         </div>
       </motion.div>
     </motion.div>

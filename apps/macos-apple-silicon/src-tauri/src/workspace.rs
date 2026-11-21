@@ -207,6 +207,10 @@ pub fn update_status(
         _ => "evaluated",
     };
     let _ = append_application_event(ws, company, role, event_type, &note, today);
+    // Funnel honesty: first interview step also records recruiter screen scheduled.
+    if new_status == "interview" {
+        let _ = append_application_event(ws, company, role, "recruiter_screen_scheduled", &note, today);
+    }
 
     Ok(updated)
 }

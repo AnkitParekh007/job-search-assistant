@@ -202,7 +202,7 @@ export default function Settings() {
         <div className="text-ink-3 text-[12px] leading-relaxed">
           Gate A <b>verified</b> job-tracking beta (Apple Silicon packaging smoke signed).
           Auto-update is <b>disabled</b>. Code signing / notarization for this channel: <b>N/A for internal beta</b> (unsigned local build).
-          Offline tracking works without AI. Match/parse helpers are experimental until Gate B — we do not claim ATS pass rates or guaranteed interviews.
+          Offline tracking works without AI. Local match and export validation use confirmed facts only — we do not claim ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
         </div>
       </section>
       <section className="card p-5 mb-4">

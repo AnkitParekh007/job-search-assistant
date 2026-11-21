@@ -138,8 +138,41 @@ export function parseResumeFromText(text: string): { facts: CandidateFact[]; dia
   });
   if (!skillCount) warnings.push("No skills section detected.");
 
+  // Experience / employers (Title, Company YEAR - YEAR)
+  let inExperience = false;
+  let employerCount = 0;
+  const EXP_LINE = /^(.+?),\s+([A-Z][\w&.'-]*(?:\s+[A-Z][\w&.'-]*){0,4})\s+((?:19|20)\d{2})\s*(?:[-–—]|to)\s*((?:19|20)\d{2}|present|current|now)\s*$/i;
+  lines.forEach((l, i) => {
+    const t = l.text.trim();
+    if (!t) return;
+    if (/^\s*(?:#+\s*)?(?:work\s+)?(?:experience|employment)\s*:?\s*$/i.test(t)) {
+      inExperience = true;
+      used.add(i);
+      return;
+    }
+    if (OTHER_HEADER.test(t) && !/experience|employment/i.test(t)) {
+      inExperience = false;
+      return;
+    }
+    if (!inExperience && !EXP_LINE.test(t)) return;
+    const m = EXP_LINE.exec(t);
+    if (!m) return;
+    const company = m[2].trim();
+    const years = `${m[3]} - ${m[4]}`;
+    const title = m[1].trim();
+    const companyAt = text.indexOf(company, l.start);
+    add("employer", company, 0.7, companyAt >= 0 ? { start: companyAt, end: companyAt + company.length } : undefined);
+    add("experience", `${title} at ${company} (${years})`, 0.65, { start: l.start, end: l.start + l.text.length });
+    employerCount++;
+    used.add(i);
+    inExperience = true;
+  });
+  if (!employerCount && /^\s*(?:#+\s*)?(?:work\s+)?(?:experience|employment)/im.test(text)) {
+    warnings.push("Experience section found but no Title, Company YEAR - YEAR lines parsed.");
+  }
+
   const missingSections: string[] = [];
-  if (!/^\s*(?:#+\s*)?(?:work\s+)?(?:experience|employment)/im.test(text)) missingSections.push("experience");
+  if (!/^\s*(?:#+\s*)?(?:work\s+)?(?:experience|employment)/im.test(text) && !employerCount) missingSections.push("experience");
   if (!/^\s*(?:#+\s*)?education/im.test(text)) missingSections.push("education");
   if (!skillCount) missingSections.push("skills");
 

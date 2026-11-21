@@ -24,6 +24,10 @@ Summary of [`apps/macos-apple-silicon/docs/SECURITY-MODEL.md`](../apps/macos-app
 
 Network use is your selected AI provider (Anthropic via Claude Code and/or OpenAI via Codex under your account) and whatever upstream workflows fetch. Profile and posting content processed by a provider are subject to that provider’s terms and **are not free**.
 
+## ATS benchmark corpus
+
+Gate B regression benchmarks default to a **synthetic** Alex/Nordlicht corpus. Rules: [`packages/core/src/ats/PRIVACY.md`](../packages/core/src/ats/PRIVACY.md). Do not commit real resumes into CI.
+
 ## Public forks
 
 Do not push personal tracker CSVs, tailored CVs, or archives to a public fork. Upstream gitignores cover many of these paths — verify before publishing.

@@ -49,12 +49,12 @@ Shared UI/core: `packages/ui`, `packages/core`. Rust twins must receive the same
 
 ### Additionally required
 
-- [ ] Phase 3 ATS match/tailor + export validation shipped
-- [ ] ATS-01..06 all green per [ACCEPTANCE-MATRIX.md](./ACCEPTANCE-MATRIX.md)
-- [ ] Phase 5 benchmark suite reproducible; privacy rules documented; evidence attached or available under consent
-- [ ] Copy review: README, site, release notes — **no** forbidden claims
-- [ ] Zero unresolved P1 on ATS core path
-- [ ] Gate A still green
+- [x] Phase 3 ATS match/tailor + export validation shipped (local match + Validate export; AI tailor still review-gated) — [GATE-B-ATS.md](./GATE-B-ATS.md)
+- [x] ATS-01..06 all green per [ACCEPTANCE-MATRIX.md](./ACCEPTANCE-MATRIX.md) (see GATE-B checklist)
+- [x] Phase 5 benchmark suite reproducible; privacy rules documented; evidence attached ([evidence/GATE-B-BENCHMARK-20261121.json](./evidence/GATE-B-BENCHMARK-20261121.json), [PRIVACY.md](../../packages/core/src/ats/PRIVACY.md))
+- [x] Copy review: README, site, release notes — **no** forbidden claims (re-check before heavy marketing)
+- [x] Zero unresolved P1 on ATS core path (drawer/events metrics + binary fixtures tracked as follow-ups)
+- [x] Gate A still green
 
 ### Forbidden claims (without independent evidence)
 
@@ -114,7 +114,7 @@ Before tagging a beta or public release, attach:
 | Gate | Status |
 |------|--------|
 | A | **Verified** (2026-11-21) — Gate A packaging checklist signed; Computer Use smoke (INVALID + apply-confirm) PASS; UI/docs flipped to **verified**. See [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md). |
-| B | **Blocked** — Gate A is verified; next: ATS-01..06 evidence pack + copy review. `runBenchmark` exists but do not market ATS optimization. |
+| B | **Open / evidence-backed local ATS** (2026-11-21) — ATS-01..06 wired; synthetic benchmark evidence attached; see [GATE-B-ATS.md](./GATE-B-ATS.md). Still forbid universal pass-rate / named-employer claims. Follow-ups: events drawer, metrics-from-events, binary fixtures. |
 | C | **Blocked** — intel/Windows twins updated with same integrity APIs; no Gate A smoke evidence yet |
 
 See also: [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md), [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md), [apps/macos-apple-silicon/e2e/smoke.offline.spec.md](../../apps/macos-apple-silicon/e2e/smoke.offline.spec.md).

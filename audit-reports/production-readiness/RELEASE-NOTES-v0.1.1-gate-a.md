@@ -17,7 +17,7 @@ Local-first job tracking on **macOS Apple Silicon**:
 - Not a verified public installer (unsigned internal / developer channel)
 - No auto-update channel
 - No claim of universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility
-- ATS match/parse UI is **experimental** until Gate B
+- Local match/export validation is Gate B–backed (confirmed facts only); AI tailor remains review-gated — still **no** universal ATS pass-rate claims
 
 ## Platforms
 
