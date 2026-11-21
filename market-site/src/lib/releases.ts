@@ -1,8 +1,8 @@
 import { GITHUB_REPO } from "./site";
 
 /** Keep in sync with the GitHub Release tag created for downloadable assets. */
-export const RELEASE_TAG = "v0.1.1";
-export const RELEASE_VERSION = "0.1.1";
+export const RELEASE_TAG = "v0.1.2-beta";
+export const RELEASE_VERSION = "0.1.2-beta";
 
 export const RELEASES_PAGE = `${GITHUB_REPO}/releases`;
 export const RELEASE_TAG_URL = `${GITHUB_REPO}/releases/tag/${RELEASE_TAG}`;
@@ -27,23 +27,23 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     subtitle: "macOS 13+ · M1–M4",
     badge: "Recommended",
     asset: `AI-Job-Search-${RELEASE_VERSION}-macos-arm64.zip`,
-    note: "Unsigned .app — right-click → Open the first time",
+    note: "Gate A verified · Gate B local ATS — unsigned/adhoc (no notarization); right-click → Open",
   },
   {
     id: "macos-intel",
     title: "Intel Mac",
     subtitle: "macOS 13+ · x86_64",
-    badge: "Download",
+    badge: "Build-only",
     asset: `AI-Job-Search-${RELEASE_VERSION}-macos-x64.zip`,
-    note: "Unsigned, not yet smoke-verified — unzip and follow README",
+    note: "Cross-built .app available; Gate A smoke still pending on Intel hardware — unsigned",
   },
   {
     id: "windows",
     title: "Windows",
     subtitle: "Windows 10/11 · x64",
-    badge: "Download",
+    badge: "Source",
     asset: `AI-Job-Search-${RELEASE_VERSION}-windows-x64.zip`,
-    note: "Unsigned, not yet smoke-verified — unzip and follow README",
+    note: "Source package only on this host — build on Windows; unsigned, not smoke-verified",
   },
 ];
 

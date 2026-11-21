@@ -33,7 +33,7 @@ Use this before marketing parse quality, match explainability, or export validat
 
 ## Remaining (non-blocking for evidence-backed local ATS; required before heavy marketing)
 
-- [x] DOCX fixture automation: synthetic `fixtures/alex-resume.docx` + `extractFixtures.test.ts` (no extra deps; skips if file absent). PDF fixture automation still **pending** (needs poppler / a committed synthetic PDF) — see PRIVACY.md
+- [x] DOCX + PDF fixture automation: synthetic `fixtures/alex-resume.docx` / `alex-resume.pdf` + `extractFixtures.test.ts` (`pdftotext` when on PATH; skips if absent) — see PRIVACY.md
 - [x] Optional text fixture: `ALEX_RESUME` in `fixtures.ts` is source of truth (parsed in `extractFixtures.test.ts`)
 - [x] Pipeline drawer timeline reading `events.jsonl` (`AppFolder.events` in all three Tauri twins; falls back to CSV notes)
 - [x] Funnel metrics derived from events: `computeMetrics(..., lifecycleEvents)`; when any submitted/interview/offer event exists, Submitted/Interview/Offer use events only (unique per application); Dashboard notes “Submitted from confirmed events”

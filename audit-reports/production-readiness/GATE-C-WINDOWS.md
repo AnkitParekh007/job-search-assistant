@@ -7,7 +7,7 @@ Mirrors [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md). Apple Silicon remains the 
 | Item | Status |
 |------|--------|
 | Source (`apps/windows`) | **Mirrored** from Apple Silicon (same integrity APIs, `events.jsonl`, `AppFolder.events`) |
-| Release build | **Pending** — Windows installers cannot be built or run on this macOS host; use a Windows machine or CI runner |
+| Release build | **Source zip only** — `AI-Job-Search-0.1.2-beta-windows-x64.zip` packages `apps/windows` for build on Windows; no NSIS/MSI from this host |
 | Smoke | **N/A on this macOS host (needs Windows 10/11 x64)** |
 | Readiness label | **developed** until Gate A smoke is signed on this platform (not **verified**) |
 | ATS claims | Only if Gate B is re-run **on that binary**; otherwise shared UI copy must not claim ATS parity |

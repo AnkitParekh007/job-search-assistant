@@ -7,8 +7,8 @@ Mirrors [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md). Apple Silicon remains the 
 | Item | Status |
 |------|--------|
 | Source (`apps/macos-intel`) | **Mirrored** from Apple Silicon (same integrity APIs, `events.jsonl`, `AppFolder.events`) |
-| Release build | **Pending** — this host is Apple Silicon; native x86_64 build and smoke need an Intel Mac (or CI runner). Optional cross-compile: `rustup target add x86_64-apple-darwin` then `npm run tauri build -- --target x86_64-apple-darwin` — a cross-built artifact still has **no smoke evidence** |
-| Smoke | **Pending (needs an Intel Mac)** |
+| Release build | **Done (cross-compile)** — `npm run build:intel` on Apple Silicon host 2026-11-21 → x86_64 `.app` (~6.74 MiB). Packaged as `AI-Job-Search-0.1.2-beta-macos-x64.zip`. Still **build-only** until Intel/Rosetta smoke. |
+| Smoke | **Pending** — Rosetta not installed on this host; needs an Intel Mac (or Rosetta) for Gate A UI smoke |
 | Readiness label | **developed** until Gate A smoke is signed on this platform (not **verified**) |
 | ATS claims | Only if Gate B is re-run **on that binary**; otherwise shared UI copy must not claim ATS parity |
 | Signing / notarization | **N/A for internal beta** (would be adhoc); notarization **not done** |
@@ -23,10 +23,10 @@ Mirrors [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md). Apple Silicon remains the 
 
 ## Build
 
-- [ ] `apps/macos-intel` release build completes (`npm run tauri build`; bundle targets: `app`)
-- [ ] (Optional) Cross-compiled `x86_64-apple-darwin` build from Apple Silicon recorded as *build-only*, not smoke evidence
-- [ ] Artifact path recorded in `evidence/` (new file; do not reuse Apple Silicon `ARTIFACT-PATH.txt`)
-- [ ] Code signing / notarization status documented for this platform
+- [x] `apps/macos-intel` release build completes (`npm run build:intel` → `x86_64-apple-darwin`)
+- [x] Cross-compiled `x86_64-apple-darwin` build from Apple Silicon recorded as *build-only* ([evidence/ARTIFACT-PATH-INTEL.txt](./evidence/ARTIFACT-PATH-INTEL.txt))
+- [x] Artifact path recorded in `evidence/ARTIFACT-PATH-INTEL.txt`
+- [x] Code signing / notarization: adhoc only — [evidence/SIGNING-STATUS-20261121.md](./evidence/SIGNING-STATUS-20261121.md)
 - [x] Auto-update: disabled in `tauri.conf.json` (no updater plugin/endpoint)
 
 ## Smoke
@@ -48,7 +48,7 @@ No smoke has been run on Intel hardware or under Rosetta-as-proxy.
 ### Automated proxies (not a substitute for UI smoke)
 
 - [ ] Rust lib tests on this platform (`cargo test --lib` in `apps/macos-intel/src-tauri`)
-- [ ] Frontend production build (`tsc && vite build` in `apps/macos-intel`)
+- [x] Frontend production build (`tsc && vite build` in `apps/macos-intel` as beforeBuildCommand)
 - [x] Shared `packages/core` vitest (platform-independent; run via `npm run test:core`)
 
 ## Gate B on this binary (only if ATS features are marketed)

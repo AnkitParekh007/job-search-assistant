@@ -7,11 +7,11 @@
 | Gate B | Local ATS helpers **evidence-backed** (synthetic regression only — [GATE-B-ATS.md](../GATE-B-ATS.md), `GATE-B-BENCHMARK-20261121.json`). Not a universal ATS pass rate. |
 | Target | macOS Apple Silicon (arm64) |
 | Bundle targets | `app` only |
-| Code signing | **N/A for wider beta** — adhoc signature only; Developer ID signing not done |
+| Code signing | **N/A for wider beta** — adhoc only; **0** Developer ID identities — [SIGNING-STATUS-20261121.md](./SIGNING-STATUS-20261121.md) |
 | Notarization | **Not done** (Gatekeeper requires right-click → Open) |
 | Auto-update | **Disabled** (no updater plugin/endpoint in `tauri.conf.json`) |
-| Artifact | Gate B rebuild — see [`ARTIFACT-PATH.txt`](./ARTIFACT-PATH.txt) (`apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app`) |
-| Other platforms | Intel / Windows: source mirrored, no build or smoke evidence on this host — [GATE-C-MACOS-INTEL.md](../GATE-C-MACOS-INTEL.md), [GATE-C-WINDOWS.md](../GATE-C-WINDOWS.md) |
+| Artifact | Apple Silicon Gate B rebuild — [`ARTIFACT-PATH.txt`](./ARTIFACT-PATH.txt); release zips under `dist-release/` for tag **v0.1.2-beta** ([`SHA256SUMS-0.1.2-beta.txt`](./SHA256SUMS-0.1.2-beta.txt)) |
+| Other platforms | Intel: cross-built `.app` ([`ARTIFACT-PATH-INTEL.txt`](./ARTIFACT-PATH-INTEL.txt)); Windows: source zip only — [GATE-C-MACOS-INTEL.md](../GATE-C-MACOS-INTEL.md), [GATE-C-WINDOWS.md](../GATE-C-WINDOWS.md) |
 
 ## Build result (Gate B rebuild, Apple Silicon)
 

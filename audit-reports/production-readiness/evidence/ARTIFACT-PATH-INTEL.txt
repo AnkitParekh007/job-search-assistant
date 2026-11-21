@@ -1,0 +1,13 @@
+Artifact (2026-11-21, macOS Intel x86_64 — cross-built from Apple Silicon)
+
+Path:
+  apps/macos-intel/src-tauri/target/x86_64-apple-darwin/release/bundle/macos/AI Job Search.app
+
+Also produced under sandbox cargo target:
+  .../cargo-target/x86_64-apple-darwin/release/bundle/macos/AI Job Search.app
+
+Size: ~6.74 MiB
+Arch: Mach-O 64-bit executable x86_64
+Signing: adhoc
+Smoke: NOT RUN (Rosetta unavailable on this host) — build-only evidence
+Release zip: dist-release/AI-Job-Search-0.1.2-beta-macos-x64.zip

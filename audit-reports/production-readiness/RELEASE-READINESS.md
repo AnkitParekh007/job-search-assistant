@@ -115,6 +115,6 @@ Before tagging a beta or public release, attach:
 |------|--------|
 | A | **Verified** (2026-11-21) — Gate A packaging checklist signed; Computer Use smoke (INVALID + apply-confirm) PASS; UI/docs flipped to **verified**. See [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md). |
 | B | **Open / evidence-backed local ATS** (2026-11-21) — ATS-01..06 wired; synthetic benchmark evidence attached; see [GATE-B-ATS.md](./GATE-B-ATS.md). Still forbid universal pass-rate / named-employer claims. Events drawer, metrics-from-events, synthetic DOCX fixture and market benchmarks aggregate done; PDF fixture automation still pending. |
-| C | **Blocked / documented** — checklists exist: [GATE-C-MACOS-INTEL.md](./GATE-C-MACOS-INTEL.md), [GATE-C-WINDOWS.md](./GATE-C-WINDOWS.md). Apple Silicon is the primary verified target; Intel/Windows source is mirrored but build/smoke are Pending (no Gate A smoke evidence). Packaging honesty documented: unsigned/ad-hoc, no notarization, no parity claimed. |
+| C | **Partial** — Intel **cross-built** `.app` + zip (`ARTIFACT-PATH-INTEL.txt`); Windows **source zip** only. Smoke still pending (no Rosetta / no Windows host). See [GATE-C-MACOS-INTEL.md](./GATE-C-MACOS-INTEL.md), [GATE-C-WINDOWS.md](./GATE-C-WINDOWS.md). Signing: [SIGNING-STATUS-20261121.md](./evidence/SIGNING-STATUS-20261121.md). |
 
 See also: [RE-AUDIT-20261121.md](./RE-AUDIT-20261121.md), [GATE-A-PACKAGING.md](./GATE-A-PACKAGING.md), [apps/macos-apple-silicon/e2e/smoke.offline.spec.md](../../apps/macos-apple-silicon/e2e/smoke.offline.spec.md).

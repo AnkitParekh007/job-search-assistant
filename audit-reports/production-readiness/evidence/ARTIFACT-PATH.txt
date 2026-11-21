@@ -1,19 +1,22 @@
-Artifact (2026-11-21 ~05:45 IST, Apple Silicon, this machine)
+Artifact (2026-11-21 ~06:18 IST, Apple Silicon, this machine)
 
 Path:
   apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app
 
-Also produced under sandbox cargo target (then copied + adhoc codesign):
-  /var/folders/ct/97n4xstn7dd5k80p535vw4z00000gn/T/cursor-sandbox-cache/19b2a86940aaa9972ebdeae241fda101/cargo-target/release/bundle/macos/AI Job Search.app
-
 Size: ~6.2 MiB
 Arch: Mach-O 64-bit executable arm64
-Signing: adhoc — N/A for wider beta (notarization not done)
+Signing: adhoc — see SIGNING-STATUS-20261121.md (notarization not done)
 Auto-update: disabled
-Git: Gate B polish working tree on top of v0.1.1-13-g5882c35
+Git: post-a7aaa63 working tree (Load Nordlicht sample + PDF fixture)
 Readiness: Gate A verified · Gate B local ATS evidence-backed
+
+Release zip (tag v0.1.2-beta):
+  dist-release/AI-Job-Search-0.1.2-beta-macos-arm64.zip
+  https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2-beta
+
+Smoke:
+  SMOKE-GATE-B-20261121.md
+  SMOKE-GATE-B-MATCH-20261121.md (Load sample → integrity → local match PASS)
 
 Binary:
   Contents/MacOS/ai-job-search-desktop
-
-Smoke: evidence/SMOKE-GATE-B-20261121.md

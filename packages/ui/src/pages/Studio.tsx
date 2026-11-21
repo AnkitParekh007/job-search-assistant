@@ -8,6 +8,7 @@ import {
   emptyProfile,
   explainMatch,
   extractJobRequirements,
+  NORDLICHT_POSTING,
   type CandidateFact,
   type CandidateProfile,
   type MatchExplanation,
@@ -151,7 +152,16 @@ export default function Studio() {
           ) : (
             <div className="space-y-2">
               <textarea className="input w-full h-56 font-mono text-[12px]" placeholder="Paste the full posting text" value={text} onChange={(e) => { setText(e.target.value); setGuard(null); }} />
-              <button className="btn h-7 text-[12px]" disabled={!text.trim()} onClick={checkText}><ShieldCheck size={12} />Run integrity check</button>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="btn h-7 text-[12px]"
+                  onClick={() => { setText(NORDLICHT_POSTING.trim()); setGuard(null); }}
+                >
+                  Load Nordlicht sample
+                </button>
+                <button className="btn h-7 text-[12px]" disabled={!text.trim()} onClick={checkText}><ShieldCheck size={12} />Run integrity check</button>
+              </div>
               {guard && <pre className={clsx("text-[11px] font-mono whitespace-pre-wrap rounded-lg p-2.5 selectable", guard.ok ? "bg-good-soft text-good" : "bg-warn-soft text-warn")}>{guard.out || (guard.ok ? "clean" : "flagged")}</pre>}
               {guard && !!reqSummary.length && (
                 <div className="rounded-lg border border-line bg-surface-2 p-2.5 space-y-2">
