@@ -1,22 +1,22 @@
-Artifact (2026-11-21 ~06:18 IST, Apple Silicon, this machine)
+Artifact (2026-11-21 ~07:03 IST — free ad-hoc Apple Silicon developer preview)
 
 Path:
   apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app
 
-Size: ~6.2 MiB
+Size: ~6.18 MiB
 Arch: Mach-O 64-bit executable arm64
-Signing: adhoc — see SIGNING-STATUS-20261121.md (notarization not done)
+Version: 0.1.2-beta
+Bundle id: dev.local.aijobsearch
+Signing: ad-hoc (Signature=adhoc) — free Apple Account; 0 Developer ID identities
+Notarization: not done
 Auto-update: disabled
-Git: post-a7aaa63 working tree (Load Nordlicht sample + PDF fixture)
-Readiness: Gate A verified · Gate B local ATS evidence-backed
+Gatekeeper: spctl assessments enabled; quarantined downloads need right-click → Open
+  see docs/macos-gatekeeper-adhoc.md
 
-Release zip (tag v0.1.2-beta):
+Local package only (NOT uploaded to GitHub):
   dist-release/AI-Job-Search-0.1.2-beta-macos-arm64.zip
-  https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2-beta
+  SHA256: 70748243dcee3b6067ac8c45b440c03c8f409e445da8b60e36fab3e738b016d5
 
-Smoke:
-  SMOKE-GATE-B-20261121.md
-  SMOKE-GATE-B-MATCH-20261121.md (Load sample → integrity → local match PASS)
-
-Binary:
-  Contents/MacOS/ai-job-search-desktop
+Evidence:
+  ADHOC-SIGN-ACCEPTANCE-20261121.md
+  PHASE-A-VERIFY-20261121.md

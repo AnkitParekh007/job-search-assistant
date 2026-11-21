@@ -9,7 +9,6 @@ import {
   PLATFORM_DOWNLOADS,
   RELEASE_TAG,
   RELEASE_TAG_URL,
-  RELEASE_VERSION,
   RELEASES_PAGE,
   releaseAssetUrl,
   type PlatformDownload,
@@ -42,8 +41,9 @@ function DownloadGlyph() {
 
 export function DownloadPage() {
   const { hash } = useLocation();
-  const primary = PLATFORM_DOWNLOADS[0];
-  const primaryUrl = releaseAssetUrl(primary.asset);
+  const primary = PLATFORM_DOWNLOADS.find((p) => p.kind === "native" && p.asset) ?? PLATFORM_DOWNLOADS[0];
+  const primaryUrl =
+    primary.kind === "native" && primary.asset ? releaseAssetUrl(primary.asset) : "/docs/install";
 
   useEffect(() => {
     applySeo({
@@ -101,13 +101,15 @@ export function DownloadPage() {
                 <a href={RELEASES_PAGE} rel="noopener">
                   GitHub Releases
                 </a>
-                . Unsigned macOS builds may need right-click → Open the first time.
+                . Developer-preview macOS builds may need right-click → Open the first time. Do not disable
+                Gatekeeper or strip quarantine attributes.
               </p>
               <p className="fine-print">
-                <strong>Honest status:</strong> Apple Silicon is Gate A verified (offline job-tracking smoke) with
-                Gate B local ATS helpers backed by a synthetic regression suite. Packages are unsigned / ad-hoc
-                internal builds — there is no notarized installer yet and auto-update is disabled. Intel Mac and
-                Windows have source and release paths but no Gate A smoke on our hardware yet.
+                <strong>Honest status:</strong> Apple Silicon is a <strong>developer preview</strong> — Gate A
+                verified offline job-tracking with Gate B local ATS helpers (synthetic regression only). Builds are
+                ad-hoc signed, <strong>not notarized</strong>, and auto-update is disabled. The Phase A pipeline no
+                longer ships source archives as if they were native installers; Intel Mac and Windows are build-from-source
+                until native artifacts exist on those hosts.
               </p>
             </div>
           </div>
@@ -116,24 +118,14 @@ export function DownloadPage() {
             <div className="platform-download-head">
               <h2 className="platform-download-title">Choose your platform</h2>
               <p className="platform-download-copy">
-                Each card downloads the {RELEASE_VERSION} package for that client from GitHub Releases.
-                Only Apple Silicon has been smoke-verified; Intel and Windows packages are unverified, unsigned
-                client builds.
+                Only native Apple Silicon developer-preview zips are offered as downloads. Intel and Windows link to
+                install docs until real installers exist — source archives are not treated as installers.
               </p>
             </div>
             <div className="platform-grid" role="list">
               {PLATFORM_DOWNLOADS.map((platform) => {
-                const href = releaseAssetUrl(platform.asset);
-                return (
-                  <a
-                    key={platform.id}
-                    className="platform-card"
-                    href={href}
-                    role="listitem"
-                    download
-                    rel="noopener"
-                    aria-label={`Download ${platform.title} (${platform.asset})`}
-                  >
+                const body = (
+                  <>
                     <div className="platform-card-top">
                       <span className="platform-card-icon">
                         <PlatformIcon id={platform.id} />
@@ -147,9 +139,35 @@ export function DownloadPage() {
                     </div>
                     <span className="platform-card-cta">
                       <DownloadGlyph />
-                      Download {RELEASE_TAG}
+                      {platform.kind === "native" ? `Download ${RELEASE_TAG}` : "View install docs"}
                     </span>
-                  </a>
+                  </>
+                );
+                if (platform.kind === "native" && platform.asset) {
+                  return (
+                    <a
+                      key={platform.id}
+                      className="platform-card"
+                      href={releaseAssetUrl(platform.asset)}
+                      role="listitem"
+                      download
+                      rel="noopener"
+                      aria-label={`Download ${platform.title} (${platform.asset})`}
+                    >
+                      {body}
+                    </a>
+                  );
+                }
+                return (
+                  <Link
+                    key={platform.id}
+                    className="platform-card"
+                    to={platform.docsPath ?? "/docs/install"}
+                    role="listitem"
+                    aria-label={`Build instructions for ${platform.title}`}
+                  >
+                    {body}
+                  </Link>
                 );
               })}
             </div>
@@ -219,8 +237,9 @@ export function DownloadPage() {
             <div className="stack reveal reveal-delay-1">
               <h2>Build from source</h2>
               <p className="lede">
-                Prefer compiling locally? Clone the desktop app, install dependencies, and produce an
-                unsigned <code>.app</code> with Tauri.
+                Prefer compiling locally? Clone the desktop app, install dependencies, and produce a
+                developer-preview <code>.app</code> with{" "}
+                <code>./scripts/build-macos-apple-silicon-preview.sh</code> (ad-hoc sign + validate).
               </p>
               <div className="cta-row">
                 <a className="btn btn-soft btn-lg" href={GITHUB_REPO} rel="noopener">

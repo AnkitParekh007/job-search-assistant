@@ -40,7 +40,7 @@ Open:
 open "src-tauri/target/release/bundle/macos/AI Job Search.app"
 ```
 
-Unsigned personal build — first launch may need right-click → Open.
+Developer preview (ad-hoc signed) — first launch may need right-click → Open. Do not disable Gatekeeper or strip quarantine. Prefer `../../scripts/build-macos-apple-silicon-preview.sh`.
 
 On first launch it looks for `~/Desktop/Projects/Automations/Job-Automations/ai-job-search` as the workspace. Change it in Settings.
 

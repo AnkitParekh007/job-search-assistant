@@ -1,6 +1,6 @@
 import { GITHUB_REPO } from "./site";
 
-/** Keep in sync with the GitHub Release tag created for downloadable assets. */
+/** Keep in sync with root package.json and the GitHub Release tag for downloadable assets. */
 export const RELEASE_TAG = "v0.1.2-beta";
 export const RELEASE_VERSION = "0.1.2-beta";
 
@@ -14,9 +14,15 @@ export type PlatformDownload = {
   title: string;
   subtitle: string;
   badge: string;
-  /** GitHub Release asset file name */
-  asset: string;
-  /** Optional secondary note shown under the badge */
+  /**
+   * native — GitHub Release zip containing a real .app / installer
+   * docs — no native installer in the Phase A pipeline; link to build docs instead
+   */
+  kind: "native" | "docs";
+  /** GitHub Release asset file name (native only) */
+  asset?: string;
+  /** In-app docs path when kind === "docs" */
+  docsPath?: string;
   note?: string;
 };
 
@@ -25,25 +31,28 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     id: "macos-apple-silicon",
     title: "Apple Silicon",
     subtitle: "macOS 13+ · M1–M4",
-    badge: "Recommended",
+    badge: "Developer preview",
+    kind: "native",
     asset: `AI-Job-Search-${RELEASE_VERSION}-macos-arm64.zip`,
-    note: "Gate A verified · Gate B local ATS — unsigned/adhoc (no notarization); right-click → Open",
+    note: "Ad-hoc signed · not notarized · Gate A verified locally — right-click → Open on first launch",
   },
   {
     id: "macos-intel",
     title: "Intel Mac",
     subtitle: "macOS 13+ · x86_64",
-    badge: "Build-only",
-    asset: `AI-Job-Search-${RELEASE_VERSION}-macos-x64.zip`,
-    note: "Cross-built .app available; Gate A smoke still pending on Intel hardware — unsigned",
+    badge: "Build from source",
+    kind: "docs",
+    docsPath: "/docs/install",
+    note: "Native installer not offered in Phase A (source-archive fallbacks removed). Build on Intel/Rosetta when ready.",
   },
   {
     id: "windows",
     title: "Windows",
     subtitle: "Windows 10/11 · x64",
-    badge: "Source",
-    asset: `AI-Job-Search-${RELEASE_VERSION}-windows-x64.zip`,
-    note: "Source package only on this host — build on Windows; unsigned, not smoke-verified",
+    badge: "Build from source",
+    kind: "docs",
+    docsPath: "/docs/install",
+    note: "Native NSIS/MSI not offered until built on a Windows host. Source zips are no longer packaged as installers.",
   },
 ];
 

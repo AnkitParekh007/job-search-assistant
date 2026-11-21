@@ -1,6 +1,6 @@
 [package]
 name = "ai-job-search-desktop"
-version = "0.1.1"
+version = "0.1.2-beta"
 description = "Local macOS desktop shell for the AI Job Search framework"
 authors = ["local"]
 edition = "2021"

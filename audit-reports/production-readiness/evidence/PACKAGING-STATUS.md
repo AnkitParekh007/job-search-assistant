@@ -1,26 +1,26 @@
-# Packaging status — Gate A verified (v0.1.1) / Gate B local ATS
+# Packaging status — Phase A developer preview (`0.1.2-beta`)
 
-| Item | Value |
+| Item | Status |
 |------|--------|
-| App version | `0.1.1` |
-| Readiness label | **verified** (Gate A — [GATE-A-PACKAGING.md](../GATE-A-PACKAGING.md)) |
-| Gate B | Local ATS helpers **evidence-backed** (synthetic regression only — [GATE-B-ATS.md](../GATE-B-ATS.md), `GATE-B-BENCHMARK-20261121.json`). Not a universal ATS pass rate. |
-| Target | macOS Apple Silicon (arm64) |
-| Bundle targets | `app` only |
-| Code signing | **N/A for wider beta** — adhoc only; **0** Developer ID identities — [SIGNING-STATUS-20261121.md](./SIGNING-STATUS-20261121.md) |
-| Notarization | **Not done** (Gatekeeper requires right-click → Open) |
-| Auto-update | **Disabled** (no updater plugin/endpoint in `tauri.conf.json`) |
-| Artifact | Apple Silicon Gate B rebuild — [`ARTIFACT-PATH.txt`](./ARTIFACT-PATH.txt); release zips under `dist-release/` for tag **v0.1.2-beta** ([`SHA256SUMS-0.1.2-beta.txt`](./SHA256SUMS-0.1.2-beta.txt)) |
-| Other platforms | Intel: cross-built `.app` ([`ARTIFACT-PATH-INTEL.txt`](./ARTIFACT-PATH-INTEL.txt)); Windows: source zip only — [GATE-C-MACOS-INTEL.md](../GATE-C-MACOS-INTEL.md), [GATE-C-WINDOWS.md](../GATE-C-WINDOWS.md) |
+| App version | `0.1.2-beta` (package.json · tauri · Cargo · UI · market-site aligned) |
+| Channel | **Developer preview** |
+| Gate A | Verified job-tracking (Apple Silicon smoke) |
+| Gate B | Local ATS helpers evidence-backed (synthetic only — not a universal pass rate) |
+| Code signing | Ad-hoc via `scripts/sign-macos-adhoc.sh` — **0** Developer ID identities required |
+| Notarization | Not done — optional scripts ready for Phase B |
+| Auto-update | Disabled |
+| Native packaging | Source-archive fallbacks **removed**; incomplete artifacts refused |
+| GitHub asset publish | **Gated** — will not overwrite `v0.1.2-beta` without approval |
+| Artifact (local) | `apps/macos-apple-silicon/.../AI Job Search.app` after preview build |
 
-## Build result (Gate B rebuild, Apple Silicon)
+## Claims allowed
 
-- **Status:** success (see `ARTIFACT-PATH.txt` for timestamp and git state)
-- **Artifact:** `apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app`
-- **Size:** ~6.2 MiB
-- **Signing:** adhoc — internal builds only; **not** suitable for wide distribution without Developer ID signing + notarization
+- Developer-preview Apple Silicon `.app`
+- Ad-hoc signed; Gatekeeper may require right-click → Open
+- Gate A / Gate B evidence as documented
 
-## Honesty
+## Claims forbidden
 
-- Do not describe this build as "signed" or "notarized".
-- Do not imply Intel/Windows parity from Apple Silicon.
+- Notarized / Developer ID–signed / Mac App Store
+- Source zip described as a native installer
+- Universal ATS pass rates / guaranteed interviews / named-employer ATS compatibility

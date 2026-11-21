@@ -137,14 +137,15 @@ npm test
 # 3) Development
 npm run tauri dev
 
-# 4) Release .app (unsigned personal build)
+# 4) Developer-preview .app (ad-hoc sign + validate; no Apple account required)
+#    ./scripts/build-macos-apple-silicon-preview.sh
 npm run tauri build
 open "src-tauri/target/release/bundle/macos/AI Job Search.app"
 ```
 
 On first launch, choose any workspace folder (empty is fine — Jobzuu scaffolds starter files). Change it later in Settings.
 
-**Gatekeeper:** unsigned builds may need **right-click → Open** the first time. Do not disable system security broadly.
+**Gatekeeper:** developer-preview (ad-hoc) builds may need **right-click → Open** the first time. Do not disable Gatekeeper, run `spctl --master-disable`, or strip quarantine attributes.
 
 Full guide: [Installation](./docs/installation.md) · First-run walkthrough: [Getting started](./docs/getting-started.md)
 
@@ -248,7 +249,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 ### Key limitations
 
 - Primary support target is **macOS Apple Silicon**.
-- GitHub Release `v0.1.1` ships platform client packages; notarized installers are not published yet.
+- GitHub Release `v0.1.2-beta` is a **developer preview** (Apple Silicon ad-hoc `.app`). Notarized installers are not published. Source archives are no longer packaged as native installers.
 - Does **not** auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
 

@@ -1,0 +1,3 @@
+=== Gatekeeper ===
+assessments enabled
+/Users/ankitparekh/Desktop/ajs-clean-accept-20261121/install/macos-arm64/AI Job Search.app: rejected

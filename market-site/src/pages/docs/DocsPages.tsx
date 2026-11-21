@@ -221,9 +221,13 @@ export function DocsInstall() {
                     <span>{platform.subtitle}</span>
                   </td>
                   <td>
-                    <a href={releaseAssetUrl(platform.asset)} rel="noopener">
-                      {platform.asset}
-                    </a>
+                    {platform.kind === "native" && platform.asset ? (
+                      <a href={releaseAssetUrl(platform.asset)} rel="noopener">
+                        {platform.asset}
+                      </a>
+                    ) : (
+                      <Link to={platform.docsPath ?? "/docs/install"}>Build from source (no native installer)</Link>
+                    )}
                   </td>
                   <td>{platform.note ?? platform.badge}</td>
                 </tr>

@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
-# Replace GitHub Release assets for $TAG with the zips in <incoming-dir>.
-# Assets that were not rebuilt stay on the release. The Apple Silicon,
-# Intel, and Windows zips must all be present afterwards.
+# Replace GitHub Release assets for $TAG with native zips in <incoming-dir>.
+#
+# SAFETY: refuses to run unless RELEASE_PUBLISH_APPROVED=1.
+# Phase A default is local packaging only — do not upload without explicit approval.
 #
 # Env:
 #   TAG, VERSION, RELEASE_SHA
-#   ARM64_REBUILT=true|false
-#   SOURCE_REBUILT=true|false
-#   GH_TOKEN or GITHUB_TOKEN (gh auth)
+#   RELEASE_PUBLISH_APPROVED=1   required
+#   REQUIRE_PLATFORMS=macos-arm64[,macos-x64][,windows-x64]  default: macos-arm64
+#   GH_TOKEN or GITHUB_TOKEN
 set -euo pipefail
+
+if [[ "${RELEASE_PUBLISH_APPROVED:-}" != "1" ]]; then
+  echo "error: publish blocked. Set RELEASE_PUBLISH_APPROVED=1 only after explicit human approval." >&2
+  echo "Phase A does not upload or overwrite GitHub Release assets by default." >&2
+  exit 3
+fi
 
 INCOMING="${1:-incoming}"
 TAG="${TAG:?TAG is required}"
 VERSION="${VERSION:?VERSION is required}"
 SHA="${RELEASE_SHA:?RELEASE_SHA is required}"
-ARM64_REBUILT="${ARM64_REBUILT:-false}"
-SOURCE_REBUILT="${SOURCE_REBUILT:-false}"
+REQUIRE_PLATFORMS="${REQUIRE_PLATFORMS:-macos-arm64}"
 TITLE="AI Job Search Assistant ${TAG}"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -51,33 +57,59 @@ require_zip() {
   fi
 }
 
-require_zip "AI-Job-Search-${VERSION}-macos-arm64.zip"
-require_zip "AI-Job-Search-${VERSION}-macos-x64.zip"
-require_zip "AI-Job-Search-${VERSION}-windows-x64.zip"
+assert_native_macos_zip() {
+  local zip="$1"
+  local listing
+  listing="$(unzip -Z1 "$zip" 2>/dev/null || unzip -l "$zip")"
+  printf '%s\n' "$listing" | grep -F '.app/Contents/MacOS/' >/dev/null \
+    || { echo "Refusing source/incomplete macOS zip: $zip" >&2; exit 1; }
+  if printf '%s\n' "$listing" | grep -E '(^|/)app/package\.json|(^|/)src-tauri/Cargo\.toml' >/dev/null; then
+    echo "Refusing source-archive zip: $zip" >&2
+    exit 1
+  fi
+}
+
+assert_native_windows_zip() {
+  local zip="$1"
+  unzip -l "$zip" | grep -qiE '\.(exe|msi)$' \
+    || { echo "Refusing source/incomplete Windows zip: $zip" >&2; exit 1; }
+}
+
+IFS=',' read -r -a PLATFORMS <<<"$REQUIRE_PLATFORMS"
+for p in "${PLATFORMS[@]}"; do
+  case "$p" in
+    macos-arm64)
+      require_zip "AI-Job-Search-${VERSION}-macos-arm64.zip"
+      assert_native_macos_zip "$COMBINED/AI-Job-Search-${VERSION}-macos-arm64.zip"
+      ;;
+    macos-x64)
+      require_zip "AI-Job-Search-${VERSION}-macos-x64.zip"
+      assert_native_macos_zip "$COMBINED/AI-Job-Search-${VERSION}-macos-x64.zip"
+      ;;
+    windows-x64)
+      require_zip "AI-Job-Search-${VERSION}-windows-x64.zip"
+      assert_native_windows_zip "$COMBINED/AI-Job-Search-${VERSION}-windows-x64.zip"
+      ;;
+    *)
+      echo "Unknown platform in REQUIRE_PLATFORMS: $p" >&2
+      exit 1
+      ;;
+  esac
+done
 
 (
   cd "$COMBINED"
-  sha256sum "AI-Job-Search-${VERSION}-"*.zip > SHA256SUMS.txt
+  shasum -a 256 AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt 2>/dev/null \
+    || sha256sum AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt
 )
 
 short="${SHA:0:7}"
 day="$(date -u +%Y-%m-%d)"
-if [[ "$ARM64_REBUILT" == "true" ]]; then
-  arm_line="macOS Apple Silicon app was rebuilt."
-else
-  arm_line="macOS Apple Silicon app was left as previously published because that build did not succeed."
-fi
-if [[ "$SOURCE_REBUILT" == "true" ]]; then
-  src_line="macOS Intel and Windows packages were rebuilt."
-else
-  src_line="macOS Intel and Windows packages were left as previously published because that build did not succeed."
-fi
-
 STAMP="$(cat <<EOF
 <!-- assets-stamp -->
-Downloadable assets on this release were refreshed from \`${short}\` on ${day}.
-${arm_line}
-${src_line}
+Downloadable **native** assets on this release were refreshed from \`${short}\` on ${day}.
+Platforms required for this publish: ${REQUIRE_PLATFORMS}.
+Channel: developer preview until notarized.
 <!-- /assets-stamp -->
 EOF
 )"
@@ -111,12 +143,10 @@ else
   cat >"$notes" <<EOF
 Desktop packages for **AI Job Search Assistant** \`${TAG}\`.
 
-- **macOS Apple Silicon** — unsigned \`.app\` when the macOS build succeeded (right-click → Open the first time).
-- **macOS Intel / Windows** — platform client packages (unzip and follow the README to build).
+- **macOS Apple Silicon** — developer-preview \`.app\` (ad-hoc signed unless notarized).
+- First launch may need **right-click → Open**. Do not disable Gatekeeper.
 - The app does **not** submit applications automatically.
 - Multi-provider AI support (Claude Code or Codex) is required for AI workflows.
-
-Download page: https://job-search-assistant.rebound-ops.org/download
 
 ${STAMP}
 EOF

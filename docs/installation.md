@@ -2,7 +2,7 @@
 
 Primary path: **macOS Apple Silicon** (`apps/macos-apple-silicon`).
 
-Platform packages are on [GitHub Releases](https://github.com/AnkitParekh007/job-search-assistant/releases); notarized installers are not published yet. You can also build from source.
+Platform packages are on [GitHub Releases](https://github.com/AnkitParekh007/job-search-assistant/releases). The current channel is a **developer preview** (ad-hoc signed Apple Silicon `.app`, not notarized). Prefer `./scripts/build-macos-apple-silicon-preview.sh` for a validated local build. Do not disable Gatekeeper or strip quarantine to launch.
 
 ## System requirements
 

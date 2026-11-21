@@ -9,6 +9,7 @@ import { PROVIDER_LABEL, PROVIDER_META, providerUiStatus, type ProviderId } from
 import { useStore } from "../store";
 import { PageHeader } from "../components/ui";
 import { DepFixActions } from "../components/DepFixActions";
+import { APP_VERSION } from "../version";
 
 type ModelOption = { id: string; name?: string };
 
@@ -197,11 +198,12 @@ export default function Settings() {
       <section className="card p-5 mb-4">
         <div className="font-semibold mb-1">About this build</div>
         <div className="text-ink-2 text-[12.5px] mb-2">
-          Version <span className="font-mono">0.1.1</span> · readiness label <span className="chip bg-sunken text-ink-2">verified</span>
+          Version <span className="font-mono">{APP_VERSION}</span> · readiness label <span className="chip bg-sunken text-ink-2">verified</span>
+          · channel <span className="chip bg-sunken text-ink-2">developer preview</span>
         </div>
         <div className="text-ink-3 text-[12px] leading-relaxed">
-          Gate A <b>verified</b> job-tracking beta (Apple Silicon packaging smoke signed).
-          Auto-update is <b>disabled</b>. Code signing / notarization for this channel: <b>N/A for internal beta</b> (unsigned local build).
+          Gate A <b>verified</b> job-tracking on Apple Silicon. This build is a <b>developer preview</b> (ad-hoc signed, not notarized).
+          Auto-update is <b>disabled</b>. First launch may need <b>right-click → Open</b> — do not disable Gatekeeper or strip quarantine.
           Offline tracking works without AI. Local match and export validation use confirmed facts only — we do not claim ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
         </div>
       </section>

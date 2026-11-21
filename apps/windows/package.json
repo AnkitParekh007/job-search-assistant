@@ -1,7 +1,7 @@
 {
   "name": "ai-job-search-windows",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2-beta",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -22,8 +22,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-resizable-panels": "^4.24.1",
-    "@ai-job-search/core": "0.1.1",
-    "@ai-job-search/ui": "0.1.1"
+    "@ai-job-search/core": "0.1.2-beta",
+    "@ai-job-search/ui": "0.1.2-beta"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.5",

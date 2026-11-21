@@ -1,67 +1,20 @@
 #!/usr/bin/env bash
-# Linux-friendly packager used by .github/workflows/release.yml
-# Optional: ONLY=macos-arm64,macos-x64,windows-x64
+# CI helper — native artifacts only. Source-archive packaging has been removed.
+# Prefer scripts/package-release-assets.sh on a runner that produced the .app/installer.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-VERSION="${VERSION:-0.1.1}"
-ONLY="${ONLY:-all}"
-OUT="$ROOT/dist-release"
+VERSION="${VERSION:-$(node -p "require('$ROOT/package.json').version")}"
+ONLY="${ONLY:-macos-arm64}"
 
-want() {
-  [[ "$ONLY" == "all" || ",$ONLY," == *",$1,"* ]]
-}
+echo "ci-package-release-assets: native-only packaging (source fallbacks removed)"
+echo "VERSION=$VERSION ONLY=$ONLY"
 
-rm -rf "$OUT"
-mkdir -p "$OUT/stage"
-
-pack_client() {
-  local id="$1"
-  local src="$2"
-  local asset="$3"
-  local title="$4"
-  local cmds="$5"
-  local tmp="$OUT/stage/$id"
-
-  rm -rf "$tmp"
-  mkdir -p "$tmp/app"
-  rsync -a \
-    --exclude node_modules \
-    --exclude dist \
-    --exclude src-tauri/target \
-    --exclude .DS_Store \
-    "$src/" "$tmp/app/"
-
-  cat >"$tmp/README.md" <<EOF
-# AI Job Search Assistant ${VERSION} — ${title}
-
-## Build
-${cmds}
-
-Multi-provider AI support (Claude Code or Codex) is required for AI workflows. This package does not auto-submit applications.
-EOF
-  echo "$VERSION" >"$tmp/VERSION"
-  (cd "$OUT/stage" && zip -r -q "../$asset" "$id")
-  echo "Wrote $asset"
-}
-
-if want macos-arm64; then
-  pack_client macos-arm64 "$ROOT/apps/macos-apple-silicon" \
-    "AI-Job-Search-${VERSION}-macos-arm64.zip" "macOS Apple Silicon" \
-    "cd app && npm install && npm run tauri build"
+# Refuse legacy "pack source clients on Ubuntu" usage.
+if [[ "${ALLOW_SOURCE_ARCHIVES:-}" == "1" ]]; then
+  echo "error: ALLOW_SOURCE_ARCHIVES is no longer supported. Ship native installers only." >&2
+  exit 1
 fi
 
-if want macos-x64; then
-  pack_client macos-x64 "$ROOT/apps/macos-intel" \
-    "AI-Job-Search-${VERSION}-macos-x64.zip" "macOS Intel" \
-    "cd app && npm install && npm run build:intel"
-fi
-
-if want windows-x64; then
-  pack_client windows-x64 "$ROOT/apps/windows" \
-    "AI-Job-Search-${VERSION}-windows-x64.zip" "Windows x64" \
-    "cd app && npm install && npm run tauri build"
-fi
-
-(cd "$OUT" && sha256sum AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt)
-ls -lh "$OUT"
+export REQUIRE_NATIVE=1
+exec bash "$ROOT/scripts/package-release-assets.sh" "$VERSION"

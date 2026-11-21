@@ -2,74 +2,72 @@
 
 Downloadable packages are published as GitHub Release assets and linked from the marketing `/download` page (`market-site/src/lib/releases.ts`).
 
-## Current release
+## Current release (developer preview)
 
 | Item | Value |
 |------|-------|
-| Tag | `v0.1.1` |
-| Assets | `AI-Job-Search-0.1.1-macos-arm64.zip`, `…-macos-x64.zip`, `…-windows-x64.zip`, `SHA256SUMS.txt` |
-| Site constant | `RELEASE_TAG` in `market-site/src/lib/releases.ts` |
+| Tag / version | `v0.1.2-beta` / `0.1.2-beta` |
+| Channel | **Developer preview** — ad-hoc signed, not notarized |
+| Native asset (Phase A) | `AI-Job-Search-0.1.2-beta-macos-arm64.zip` |
+| Site constants | `RELEASE_TAG` / `RELEASE_VERSION` in `market-site/src/lib/releases.ts` |
+| Auto-publish | **Off** — GitHub uploads require `workflow_dispatch` + `publish_assets=true` + `RELEASE_PUBLISH_APPROVED=1` |
 
-## Local packaging (preferred for macOS `.app`)
-
-On an Apple Silicon Mac with a successful Tauri build:
+## Phase A — no-cost local preview (preferred)
 
 ```bash
-cd apps/macos-apple-silicon && npm run tauri build
-./scripts/package-release-assets.sh 0.1.1
-gh release create v0.1.1 \
-  dist-release/AI-Job-Search-0.1.1-*.zip \
-  dist-release/SHA256SUMS.txt \
-  --title "AI Job Search Assistant v0.1.1" \
-  --notes-file - <<'EOF'
-Desktop packages for AI Job Search Assistant.
-
-- macOS Apple Silicon zip includes the unsigned `.app` when built locally.
-- Intel / Windows zips include the platform client (build with Tauri if no installer is bundled).
-- Does not auto-submit applications. Multi-provider AI support (Claude Code or Codex) required for AI workflows.
-EOF
+./scripts/build-macos-apple-silicon-preview.sh
+REQUIRE_NATIVE=1 ONLY=macos-arm64 ./scripts/package-release-assets.sh
+# Validates .app, ad-hoc signature, arch, checksums, fresh-unzip with quarantine preserved.
+# Does NOT upload to GitHub Releases.
 ```
+
+Optional future paid path (credentials via env only — see `scripts/lib/macos-release.env.example`):
+
+```bash
+export APPLE_SIGNING_IDENTITY="Developer ID Application: … (TEAMID)"
+export APPLE_NOTARY_PROFILE=ai-job-search-notary
+./scripts/sign-macos-developer-id.sh
+./scripts/notarize-macos.sh
+REQUIRE_NOTARIZED=1 REQUIRE_DEVELOPER_ID=1 ./scripts/validate-macos-release.sh
+```
+
+## Packaging rules
+
+- **Native only.** `scripts/package-release-assets.sh` refuses source-archive fallbacks.
+- Missing `.app` / NSIS / MSI → hard failure (`REQUIRE_NATIVE=1`).
+- Intel / Windows are omitted from the download grid until native artifacts exist.
+- Never instruct users to disable Gatekeeper, run `spctl --master-disable`, or strip `com.apple.quarantine`.
 
 ## CI
 
-`.github/workflows/release.yml` refreshes the GitHub Release for the version in `package.json` when `main` changes **app code**, shared packages, or the release scripts. It also runs on `v*` tags and `workflow_dispatch` from `main`.
+`.github/workflows/release.yml`:
 
-### What updates downloads
-
-| Change on `main` | Refreshes release assets? |
-|------------------|---------------------------|
-| `apps/**` or `packages/**` (non-Markdown) | Yes |
-| Release scripts / `package.json` / this workflow | Yes |
-| Root `README.md`, `docs/**`, `market-site/**`, campaign, research notes | No |
-| Markdown-only under `apps/` or `packages/` (e.g. app READMEs) | No |
-
-The download URLs stay on the current tag (`v0.1.1` today). A `main` push does not create a new tag. It replaces the zip assets in place:
-
-- **macOS Apple Silicon** — `macos-latest` builds the unsigned `.app` and replaces `AI-Job-Search-<version>-macos-arm64.zip`.
-- **macOS Intel / Windows** — Ubuntu repackages the platform client sources. Those zips are replaced on the same release.
-- **SHA256SUMS.txt** is rewritten for the full set. An asset that was not rebuilt is left in place, and the release notes record which platforms were rebuilt.
-
-When a release *does* run, `market-site/src/lib/releases.ts` must still match `package.json`. Website edits alone never start this workflow; bump the site constants in the same PR as a version cut.
-
-These builds are unsigned. Prefer a local Apple Silicon package when you need to replace the `.app` before CI finishes:
-
-```bash
-gh release upload v0.1.1 dist-release/AI-Job-Search-0.1.1-macos-arm64.zip --clobber
-```
-
-## Gatekeeper (unsigned)
-
-Users may need **right-click → Open**. Do not instruct users to disable Gatekeeper or run `spctl --master-disable`.
+| Trigger | Build + validate | Upload Actions artifact | Publish GitHub Release |
+|---------|------------------|-------------------------|------------------------|
+| `main` push (app paths) | Yes (Apple Silicon) | Yes | **No** |
+| `v*` tag | Yes | Yes | **No** |
+| `workflow_dispatch` + `publish_assets=true` | Yes | Yes | Yes (after approval env) |
 
 ## Version bumps
 
-1. Bump `package.json` + each app `tauri.conf.json` together  
-2. Update `RELEASE_TAG` / `RELEASE_VERSION` in `market-site/src/lib/releases.ts`  
-3. Tag `vX.Y.Z` and publish assets  
-4. Deploy market site from `main`
+Keep these equal:
 
-## Explicit non-goals (for now)
+1. Root `package.json` + workspace package versions  
+2. Each app `tauri.conf.json` + `Cargo.toml` `version`  
+3. `packages/ui/src/version.ts` (`APP_VERSION`)  
+4. `market-site/src/lib/releases.ts` (`RELEASE_TAG` / `RELEASE_VERSION`)  
 
-- Cutting a new version tag for every `main` commit. Asset refresh stays on the current tag until `package.json` and the download page move together.
-- Claiming notarized Windows/Intel binaries before those pipelines are proven
-- Bypassing notarization with unsafe workarounds
+## Bundle identifier
+
+See [macos-bundle-identifier.md](./macos-bundle-identifier.md). Current preview id remains `dev.local.aijobsearch` until the next public cut.
+
+## Gatekeeper (developer preview)
+
+Users may need **right-click → Open**. Do not instruct users to disable Gatekeeper or clear quarantine as a workaround.
+
+## Explicit non-goals (Phase A)
+
+- Overwriting `v0.1.2-beta` without human approval  
+- Claiming notarized or Developer ID–signed installers  
+- Shipping source trees as platform “installers”  
+- Apple Developer Program enrollment / paid certificates  

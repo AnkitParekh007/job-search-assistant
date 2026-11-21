@@ -4,18 +4,29 @@ on:
   push:
     branches: [main]
     tags: ["v*"]
-    # App / package / release-tooling only. README, docs, market-site, and campaign
-    # changes do not match this list, so they never refresh download assets.
     paths:
       - "apps/**"
       - "packages/**"
       - "scripts/package-release-assets.sh"
       - "scripts/ci-package-release-assets.sh"
       - "scripts/publish-release-assets.sh"
+      - "scripts/validate-macos-release.sh"
+      - "scripts/sign-macos-*.sh"
+      - "scripts/notarize-macos.sh"
+      - "scripts/build-macos-apple-silicon-preview.sh"
       - ".github/workflows/release.yml"
       - "package.json"
       - "package-lock.json"
   workflow_dispatch:
+    inputs:
+      publish_assets:
+        description: "Upload/replace GitHub Release assets (requires explicit approval)"
+        type: boolean
+        default: false
+      platforms:
+        description: "Comma platforms to require when publishing (native only)"
+        type: string
+        default: "macos-arm64"
 
 permissions:
   contents: read
@@ -28,12 +39,12 @@ jobs:
   version:
     name: Resolve release version
     runs-on: ubuntu-latest
-    # Manual runs publish only from main or a v* tag, so a branch dispatch cannot replace download assets.
     if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     outputs:
       tag: ${{ steps.ver.outputs.tag }}
       version: ${{ steps.ver.outputs.version }}
       ship: ${{ steps.ver.outputs.ship }}
+      publish: ${{ steps.ver.outputs.publish }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,6 +60,7 @@ jobs:
         id: ver
         env:
           EVENT_BEFORE: ${{ github.event.before }}
+          INPUT_PUBLISH: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_assets || false }}
         run: |
           set -euo pipefail
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
@@ -76,8 +88,6 @@ jobs:
           PY
 
           SHIP=true
-          # Tags and manual runs always publish. On main pushes, skip when the
-          # only matching paths were Markdown (e.g. apps/*/README.md).
           if [[ "${GITHUB_EVENT_NAME}" == "push" && "${GITHUB_REF_TYPE}" == "branch" ]]; then
             BEFORE="${EVENT_BEFORE:-}"
             if [[ -n "$BEFORE" && "$BEFORE" != "0000000000000000000000000000000000000000" ]]; then
@@ -88,6 +98,8 @@ jobs:
               "scripts/package-release-assets.sh",
               "scripts/ci-package-release-assets.sh",
               "scripts/publish-release-assets.sh",
+              "scripts/validate-macos-release.sh",
+              "scripts/build-macos-apple-silicon-preview.sh",
               ".github/workflows/release.yml",
               "package.json",
               "package-lock.json",
@@ -97,24 +109,38 @@ jobs:
               path = path.strip()
               if not path or path.endswith(".md"):
                   continue
-              if path.startswith("apps/") or path.startswith("packages/") or path in SHIP_FILES:
+              if (
+                  path.startswith("apps/")
+                  or path.startswith("packages/")
+                  or path.startswith("scripts/sign-macos-")
+                  or path.startswith("scripts/notarize-")
+                  or path in SHIP_FILES
+              ):
                   ship = True
                   break
           sys.exit(0 if ship else 1)
           PY
               then
                 SHIP=false
-                echo "No shippable app code in this push (README/docs-only under apps/packages); skipping asset refresh."
+                echo "No shippable app code in this push; skipping native build."
               fi
             fi
+          fi
+
+          # Phase A: never auto-publish on push/tag. Only workflow_dispatch + publish_assets.
+          PUBLISH=false
+          if [[ "${INPUT_PUBLISH}" == "true" ]]; then
+            PUBLISH=true
           fi
 
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "ship=$SHIP" >> "$GITHUB_OUTPUT"
+          echo "publish=$PUBLISH" >> "$GITHUB_OUTPUT"
+          echo "Resolved $TAG ($VERSION) ship=$SHIP publish=$PUBLISH"
 
   macos-app:
-    name: Build macOS Apple Silicon app
+    name: Build + validate macOS Apple Silicon
     needs: version
     if: needs.version.outputs.ship == 'true'
     runs-on: macos-latest
@@ -142,49 +168,33 @@ jobs:
         with:
           workspaces: apps/macos-apple-silicon/src-tauri -> target
 
-      - name: Build Apple Silicon app
-        working-directory: apps/macos-apple-silicon
-        run: npm run tauri build
+      - name: Build + ad-hoc sign + validate (developer preview)
+        run: bash scripts/build-macos-apple-silicon-preview.sh
 
-      - name: Package Apple Silicon zip
+      - name: Package native Apple Silicon zip
         env:
           ONLY: macos-arm64
-          REQUIRE_BUILT_APP: "1"
+          REQUIRE_NATIVE: "1"
         run: bash scripts/package-release-assets.sh "${{ needs.version.outputs.version }}"
 
-      - name: Upload Apple Silicon zip
+      - name: Upload Apple Silicon zip (Actions artifact only)
         uses: actions/upload-artifact@v4
         with:
           name: release-macos-arm64
-          path: dist-release/AI-Job-Search-*-macos-arm64.zip
-          if-no-files-found: error
-
-  source-clients:
-    name: Package Intel and Windows clients
-    needs: version
-    if: needs.version.outputs.ship == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Package source clients
-        env:
-          VERSION: ${{ needs.version.outputs.version }}
-          ONLY: macos-x64,windows-x64
-        run: bash scripts/ci-package-release-assets.sh
-
-      - name: Upload source zips
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-source
-          path: dist-release/*.zip
+          path: |
+            dist-release/AI-Job-Search-*-macos-arm64.zip
+            dist-release/SHA256SUMS.txt
           if-no-files-found: error
 
   publish:
-    name: Publish GitHub Release assets
-    needs: [version, macos-app, source-clients]
-    if: always() && !cancelled() && needs.version.result == 'success' && needs.version.outputs.ship == 'true' && (needs.macos-app.result == 'success' || needs.source-clients.result == 'success')
+    name: Publish GitHub Release assets (manual approval only)
+    needs: [version, macos-app]
+    if: >-
+      always()
+      && !cancelled()
+      && needs.version.result == 'success'
+      && needs.macos-app.result == 'success'
+      && needs.version.outputs.publish == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -193,25 +203,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download Apple Silicon zip
-        if: needs.macos-app.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: release-macos-arm64
           path: incoming
 
-      - name: Download Intel and Windows zips
-        if: needs.source-clients.result == 'success'
-        uses: actions/download-artifact@v4
-        with:
-          name: release-source
-          path: incoming
-
-      - name: Publish assets onto the existing release
+      - name: Publish native assets (approved)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.version.outputs.tag }}
           VERSION: ${{ needs.version.outputs.version }}
           RELEASE_SHA: ${{ github.sha }}
-          ARM64_REBUILT: ${{ needs.macos-app.result == 'success' }}
-          SOURCE_REBUILT: ${{ needs.source-clients.result == 'success' }}
+          RELEASE_PUBLISH_APPROVED: "1"
+          REQUIRE_PLATFORMS: ${{ inputs.platforms || 'macos-arm64' }}
         run: bash scripts/publish-release-assets.sh incoming

@@ -1,174 +1,181 @@
 #!/usr/bin/env bash
-# Package GitHub Release download assets for the marketing download page.
+# Package native GitHub Release download assets only.
+# Refuses source-archive fallbacks and incomplete native artifacts.
+#
 # Usage: ./scripts/package-release-assets.sh [version]
 # Optional: ONLY=macos-arm64,macos-x64,windows-x64
-# Optional: REQUIRE_BUILT_APP=1  (fail instead of shipping Apple Silicon source)
+# Env:
+#   REQUIRE_NATIVE=1 (default) — fail if a requested platform lacks a native artifact
+#   SKIP_VALIDATE=1 — skip validate-macos-release.sh for macOS zips
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-VERSION="${1:-0.1.1}"
-ONLY="${ONLY:-all}"
+VERSION="${1:-$(node -p "require('$ROOT/package.json').version")}"
+ONLY="${ONLY:-macos-arm64}"
 OUT="$ROOT/dist-release"
 STAGE="$OUT/stage"
+REQUIRE_NATIVE="${REQUIRE_NATIVE:-1}"
+SKIP_VALIDATE="${SKIP_VALIDATE:-0}"
 
 want() {
   [[ "$ONLY" == "all" || ",$ONLY," == *",$1,"* ]]
 }
 
-rm -rf "$OUT"
-mkdir -p "$STAGE" "$OUT"
+die() { echo "error: $*" >&2; exit 1; }
 
 note() { printf '%s\n' "$*"; }
 
-write_build_readme() {
+write_preview_readme() {
   local dest="$1"
   local platform="$2"
-  local cmds="$3"
   cat >"$dest" <<EOF
 # AI Job Search Assistant ${VERSION} — ${platform}
 
-This archive contains the platform client for AI Job Search Assistant.
+**Channel:** developer preview (ad-hoc signed / unsigned — not notarized).
 
-## Requirements
-- Node.js 20+
-- Rust (stable) for desktop clients
-- AI provider CLI (Claude Code and/or OpenAI Codex) for multi-provider AI workflows
-- A local workspace folder (Jobzuu scaffolds starter files on connect)
+## Install
+1. Unzip this archive.
+2. Drag **AI Job Search.app** to Applications (or run in place).
+3. First launch may require **right-click → Open** (Gatekeeper).
+4. Select your local workspace when prompted.
 
-## Build
-${cmds}
+## Security policy
+- Do **not** disable Gatekeeper or run \`spctl --master-disable\`.
+- Do **not** strip quarantine attributes (\`xattr -d com.apple.quarantine\`) as a workaround.
+- This build is a developer preview until Developer ID signing + notarization ship.
 
-## Important
+## Notes
 - The app does **not** submit applications to employers.
-- Do not push populated job-search workspaces or personal resumes to public remotes.
-- Unsigned macOS builds may need right-click → Open the first time.
+- Multi-provider AI support (Claude Code or Codex) is required for AI workflows.
+- Do not push populated workspaces or personal resumes to public remotes.
 EOF
 }
 
-package_source_client() {
-  local id="$1"
-  local src="$2"
-  local asset="$3"
-  local title="$4"
-  local cmds="$5"
-  local tmp="$STAGE/$id"
-
-  rm -rf "$tmp"
-  mkdir -p "$tmp"
-  # Copy client without heavy/local artifacts
-  rsync -a \
-    --exclude node_modules \
-    --exclude dist \
-    --exclude src-tauri/target \
-    --exclude .DS_Store \
-    "$src/" "$tmp/app/"
-  write_build_readme "$tmp/README.md" "$title" "$cmds"
-  printf '%s\n' "$VERSION" >"$tmp/VERSION"
-  (
-    cd "$STAGE"
-    ditto -c -k --sequesterRsrc --keepParent "$id" "$OUT/$asset"
-  )
-  note "Wrote $asset"
+assert_macos_app() {
+  local app="$1"
+  local label="$2"
+  [[ -d "$app" ]] || die "$label missing native .app at: $app (source archives are not packaged)"
+  local exec_name
+  exec_name="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$app/Contents/Info.plist" 2>/dev/null || true)"
+  [[ -n "$exec_name" && -f "$app/Contents/MacOS/$exec_name" ]] \
+    || die "$label .app has no executable under Contents/MacOS (incomplete native artifact)"
 }
 
-# --- macOS Apple Silicon (prefer built .app) ---
+assert_zip_is_native_macos() {
+  local zip="$1"
+  local listing
+  listing="$(unzip -Z1 "$zip" 2>/dev/null || unzip -l "$zip")"
+  printf '%s\n' "$listing" | grep -F '.app/Contents/MacOS/' >/dev/null \
+    || die "refusing non-native macOS zip (no .app/Contents/MacOS): $zip"
+  if printf '%s\n' "$listing" | grep -E '(^|/)app/package\.json|(^|/)src-tauri/Cargo\.toml' >/dev/null; then
+    die "refusing source-archive zip: $zip"
+  fi
+}
+
+rm -rf "$OUT"
+mkdir -p "$STAGE" "$OUT"
+
+PACKAGED=0
+
+# --- macOS Apple Silicon ---
 if want macos-arm64; then
-AS_APP="$ROOT/apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app"
-AS_ASSET="AI-Job-Search-${VERSION}-macos-arm64.zip"
-if [[ "${REQUIRE_BUILT_APP:-}" == "1" && ! -d "$AS_APP" ]]; then
-  echo "REQUIRE_BUILT_APP=1 but no Apple Silicon app at: $AS_APP" >&2
-  exit 1
-fi
-if [[ -d "$AS_APP" ]]; then
+  AS_TARGET="${CARGO_TARGET_DIR_OVERRIDE:-$ROOT/apps/macos-apple-silicon/src-tauri/target}"
+  AS_APP="$AS_TARGET/release/bundle/macos/AI Job Search.app"
+  AS_ASSET="AI-Job-Search-${VERSION}-macos-arm64.zip"
+  if [[ ! -d "$AS_APP" ]]; then
+    if [[ "$REQUIRE_NATIVE" == "1" ]]; then
+      die "macos-arm64: no built .app (REQUIRE_NATIVE=1). Build first: ./scripts/build-macos-apple-silicon-preview.sh"
+    else
+      die "macos-arm64: no built .app — source fallback removed"
+    fi
+  fi
+  assert_macos_app "$AS_APP" "macos-arm64"
   rm -rf "$STAGE/macos-arm64"
   mkdir -p "$STAGE/macos-arm64"
   ditto "$AS_APP" "$STAGE/macos-arm64/AI Job Search.app"
-  cat >"$STAGE/macos-arm64/README.md" <<EOF
-# AI Job Search Assistant ${VERSION} — macOS Apple Silicon
-
-1. Unzip this archive.
-2. Drag **AI Job Search.app** to Applications (or run in place).
-3. First launch: right-click the app → **Open** (unsigned personal build).
-4. Select your local ai-job-search workspace when prompted.
-
-Multi-provider AI support (Claude Code or Codex) is required for AI workflows. This build does not auto-submit applications.
-EOF
-  (
-    cd "$STAGE/macos-arm64"
-    ditto -c -k --sequesterRsrc --keepParent "AI Job Search.app" "$OUT/$AS_ASSET"
-    # Also keep README accessible: recreate zip with readme
-  )
-  # Rebuild zip including README
-  rm -f "$OUT/$AS_ASSET"
+  write_preview_readme "$STAGE/macos-arm64/README.md" "macOS Apple Silicon"
+  # Do not use --sequesterRsrc: AppleDouble/__MACOSX breaks codesign resources on extract.
   (
     cd "$STAGE"
-    ditto -c -k --sequesterRsrc --keepParent macos-arm64 "$OUT/$AS_ASSET"
+    ditto -c -k --keepParent macos-arm64 "$OUT/$AS_ASSET"
   )
-  note "Wrote $AS_ASSET (built .app)"
-else
-  package_source_client \
-    "macos-arm64" \
-    "$ROOT/apps/macos-apple-silicon" \
-    "$AS_ASSET" \
-    "macOS Apple Silicon" \
-    "cd app && npm install && npm run tauri build"
-fi
+  assert_zip_is_native_macos "$OUT/$AS_ASSET"
+  if [[ "$SKIP_VALIDATE" != "1" ]]; then
+    EXPECT_VERSION="$VERSION" EXPECT_ARCH=arm64 FRESH_INSTALL_TEST=1 \
+      "$ROOT/scripts/validate-macos-release.sh" "$OUT/$AS_ASSET"
+  fi
+  note "Wrote $AS_ASSET (native .app)"
+  PACKAGED=$((PACKAGED + 1))
 fi
 
 # --- macOS Intel ---
 if want macos-x64; then
-INTEL_APP="$ROOT/apps/macos-intel/src-tauri/target/x86_64-apple-darwin/release/bundle/macos/AI Job Search.app"
-INTEL_ASSET="AI-Job-Search-${VERSION}-macos-x64.zip"
-if [[ -d "$INTEL_APP" ]]; then
+  INTEL_APP="$ROOT/apps/macos-intel/src-tauri/target/x86_64-apple-darwin/release/bundle/macos/AI Job Search.app"
+  # Also accept default release bundle path when building on Intel hardware
+  if [[ ! -d "$INTEL_APP" ]]; then
+    INTEL_APP="$ROOT/apps/macos-intel/src-tauri/target/release/bundle/macos/AI Job Search.app"
+  fi
+  INTEL_ASSET="AI-Job-Search-${VERSION}-macos-x64.zip"
+  if [[ ! -d "$INTEL_APP" ]]; then
+    die "macos-x64: no built .app — source fallback removed. Cross-build or build on Intel first."
+  fi
+  assert_macos_app "$INTEL_APP" "macos-x64"
   rm -rf "$STAGE/macos-x64"
   mkdir -p "$STAGE/macos-x64"
   ditto "$INTEL_APP" "$STAGE/macos-x64/AI Job Search.app"
-  write_build_readme "$STAGE/macos-x64/README.md" "macOS Intel (built .app)" "Open AI Job Search.app (right-click → Open if Gatekeeper prompts)."
+  write_preview_readme "$STAGE/macos-x64/README.md" "macOS Intel"
   (
     cd "$STAGE"
-    ditto -c -k --sequesterRsrc --keepParent macos-x64 "$OUT/$INTEL_ASSET"
+    ditto -c -k --keepParent macos-x64 "$OUT/$INTEL_ASSET"
   )
-  note "Wrote $INTEL_ASSET (built .app)"
-else
-  package_source_client \
-    "macos-x64" \
-    "$ROOT/apps/macos-intel" \
-    "$INTEL_ASSET" \
-    "macOS Intel" \
-    "cd app && npm install && npm run build:intel"
-fi
+  assert_zip_is_native_macos "$OUT/$INTEL_ASSET"
+  if [[ "$SKIP_VALIDATE" != "1" ]]; then
+    EXPECT_VERSION="$VERSION" EXPECT_ARCH=x86_64 FRESH_INSTALL_TEST=1 \
+      EXPECT_BUNDLE_ID="$(node -p "require('$ROOT/apps/macos-intel/src-tauri/tauri.conf.json').identifier")" \
+      "$ROOT/scripts/validate-macos-release.sh" "$OUT/$INTEL_ASSET"
+  fi
+  note "Wrote $INTEL_ASSET (native .app)"
+  PACKAGED=$((PACKAGED + 1))
 fi
 
-# --- Windows ---
+# --- Windows (NSIS/MSI only) ---
 if want windows-x64; then
-WIN_BUNDLE_DIR="$ROOT/apps/windows/src-tauri/target/release/bundle"
-WIN_ASSET="AI-Job-Search-${VERSION}-windows-x64.zip"
-if compgen -G "$WIN_BUNDLE_DIR/nsis/*.exe" > /dev/null || compgen -G "$WIN_BUNDLE_DIR/msi/*.msi" > /dev/null; then
+  WIN_BUNDLE_DIR="$ROOT/apps/windows/src-tauri/target/release/bundle"
+  WIN_ASSET="AI-Job-Search-${VERSION}-windows-x64.zip"
+  shopt -s nullglob
+  WIN_EXES=("$WIN_BUNDLE_DIR"/nsis/*.exe)
+  WIN_MSIS=("$WIN_BUNDLE_DIR"/msi/*.msi)
+  shopt -u nullglob
+  if [[ ${#WIN_EXES[@]} -eq 0 && ${#WIN_MSIS[@]} -eq 0 ]]; then
+    die "windows-x64: no NSIS/MSI installer — source fallback removed. Build on Windows first."
+  fi
   rm -rf "$STAGE/windows-x64"
   mkdir -p "$STAGE/windows-x64"
-  cp -R "$WIN_BUNDLE_DIR"/nsis/*.exe "$STAGE/windows-x64/" 2>/dev/null || true
-  cp -R "$WIN_BUNDLE_DIR"/msi/*.msi "$STAGE/windows-x64/" 2>/dev/null || true
-  write_build_readme "$STAGE/windows-x64/README.md" "Windows x64 (installer)" "Run the NSIS/MSI installer, then launch AI Job Search."
+  [[ ${#WIN_EXES[@]} -gt 0 ]] && cp "${WIN_EXES[@]}" "$STAGE/windows-x64/"
+  [[ ${#WIN_MSIS[@]} -gt 0 ]] && cp "${WIN_MSIS[@]}" "$STAGE/windows-x64/"
+  cat >"$STAGE/windows-x64/README.md" <<EOF
+# AI Job Search Assistant ${VERSION} — Windows x64
+
+Native installer package (NSIS and/or MSI). Not a source archive.
+
+Run the installer, then launch AI Job Search.
+EOF
   (
     cd "$STAGE"
-    ditto -c -k --sequesterRsrc --keepParent windows-x64 "$OUT/$WIN_ASSET"
+    ditto -c -k --keepParent windows-x64 "$OUT/$WIN_ASSET"
   )
-  note "Wrote $WIN_ASSET (installer)"
-else
-  package_source_client \
-    "windows-x64" \
-    "$ROOT/apps/windows" \
-    "$WIN_ASSET" \
-    "Windows x64" \
-    "cd app && npm install && npm run tauri build"
-fi
+  note "Wrote $WIN_ASSET (native installer)"
+  PACKAGED=$((PACKAGED + 1))
 fi
 
-# Checksums
+if [[ "$PACKAGED" -eq 0 ]]; then
+  die "no platforms selected/packaged (ONLY=$ONLY)"
+fi
+
 (
   cd "$OUT"
   shasum -a 256 AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt
 )
 note "Wrote SHA256SUMS.txt"
-note "Release assets ready in $OUT"
+note "Release assets ready in $OUT (local only — not uploaded)"
 ls -lh "$OUT"
