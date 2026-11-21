@@ -9,7 +9,7 @@ import { PROVIDER_LABEL, PROVIDER_META, providerEvidenceLabel, providerUiStatus,
 import { useStore } from "../store";
 import { PageHeader } from "../components/ui";
 import { DepFixActions } from "../components/DepFixActions";
-import { APP_VERSION } from "../version";
+import { APP_NAME, APP_VERSION, PACKAGING_VERIFIED } from "../version";
 
 type ModelOption = { id: string; name?: string };
 
@@ -196,15 +196,16 @@ export default function Settings() {
     <div className="h-full overflow-auto"><div className="max-w-[820px] mx-auto px-8 pb-12">
       <PageHeader title="Settings" />
       <section className="card p-5 mb-4">
-        <div className="font-semibold mb-1">About this build</div>
+        <div className="font-semibold mb-1">About {APP_NAME}</div>
         <div className="text-ink-2 text-[12.5px] mb-2">
-          Version <span className="font-mono">{APP_VERSION}</span> · readiness label <span className="chip bg-sunken text-ink-2">verified</span>
-          · channel <span className="chip bg-sunken text-ink-2">developer preview</span>
+          Version <span className="font-mono">{APP_VERSION}</span>
+          {" "}· packaging <span className="chip bg-sunken text-ink-2">{PACKAGING_VERIFIED ? "verified" : "not verified for this version"}</span>
         </div>
         <div className="text-ink-3 text-[12px] leading-relaxed">
-          Gate A <b>verified</b> job-tracking on Apple Silicon. This build is a <b>developer preview</b> (ad-hoc signed, not notarized).
-          Auto-update is <b>disabled</b>. First launch may need <b>right-click → Open</b> — do not disable Gatekeeper or strip quarantine.
-          Offline tracking works without AI. Local match and export validation use confirmed facts only — we do not claim ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
+          Distributed macOS builds are <b>ad-hoc signed</b> and <b>not notarized</b>. Auto-update is <b>disabled</b>.
+          Gatekeeper may require <b>right-click → Open</b> on first launch. Do not disable Gatekeeper or strip quarantine.
+          The published desktop package is <b>macOS Apple Silicon</b>. Intel Mac and Windows are build-from-source.
+          Offline tracking works without AI. Local match and export validation use confirmed facts only. This app does not claim ATS pass rates, guaranteed interviews, named-employer ATS compatibility, or a job outcome.
         </div>
       </section>
       <section className="card p-5 mb-4">

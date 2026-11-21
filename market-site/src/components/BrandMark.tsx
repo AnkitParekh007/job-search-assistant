@@ -64,7 +64,7 @@ export function BrandLockup({ size = 30 }: { size?: number }) {
     <>
       <BrandMark size={size} />
       <span className="brand-word">
-        AI Job <span>Search</span>
+        Job Search <span>Assistant</span>
       </span>
     </>
   );

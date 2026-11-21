@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="./docs/assets/brand/scout-hero.svg" width="100%" alt="AI Job Search Assistant conceptual hero: Jobzuu and a dark desktop workspace showing discovery, application preparation and tracking." />
+  <img src="./docs/assets/brand/scout-hero.svg" width="100%" alt="Job Search Assistant conceptual hero: Jobzuu and a dark desktop workspace showing discovery, application preparation and tracking." />
 </p>
 
-<h1 align="center">AI Job Search Assistant</h1>
+<h1 align="center">Job Search Assistant</h1>
 
 <p align="center">
   <strong>Less tab chaos. More career momentum.</strong><br />
@@ -53,7 +53,7 @@ Discover aligned roles, prepare tailored documents through the upstream workflow
 
 The upstream framework is powerful: local files, AI-assisted workflows, and a serious job-search pipeline. I wanted that same rigor with a more approachable **visual** experience — one place to see discovery, ranking, Application Studio, the pipeline, and agent activity, with human approval before sensitive tools run and multi-provider AI support.
 
-AI Job Search Assistant is that desktop shell. Jobzuu (the onboarding AI agent) walks you through connecting a workspace; the rest stays local-first and under your control.
+Job Search Assistant is that desktop shell. Jobzuu (the onboarding AI agent) walks you through connecting a workspace; the rest stays local-first and under your control.
 
 This project’s outcomes are its own. Do **not** treat upstream creator results as evidence for this app.
 
@@ -107,7 +107,7 @@ Deep dive: [Architecture](./docs/architecture.md) · [App architecture](./apps/m
 
 ## Quick start (build from source)
 
-**Download:** developer-preview Apple Silicon ZIP from [GitHub Releases `v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2) (ad-hoc signed, not notarized — right-click → Open). Intel Mac and Windows: **build from source** (no native installer published).
+**Download:** the published Apple Silicon ZIP is [GitHub Release `v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2) (`AI-Job-Search-0.1.2-macos-arm64.zip`, ad-hoc signed, not notarized — right-click → Open). Source in this tree is **v0.1.3** and is not published. Intel Mac and Windows: **build from source** (no native installer published).
 
 ### Prerequisites
 
@@ -137,15 +137,15 @@ npm test
 # 3) Development
 npm run tauri dev
 
-# 4) Developer-preview .app (ad-hoc sign + validate; no Apple account required)
+# 4) Ad-hoc signed .app (validate; no Apple account required; not notarized)
 #    ./scripts/build-macos-apple-silicon-preview.sh
 npm run tauri build
-open "src-tauri/target/release/bundle/macos/AI Job Search.app"
+open "src-tauri/target/release/bundle/macos/Job Search Assistant.app"
 ```
 
 On first launch, choose any workspace folder (empty is fine — Jobzuu scaffolds starter files). Change it later in Settings.
 
-**Gatekeeper:** developer-preview (ad-hoc) builds may need **right-click → Open** the first time. Do not disable Gatekeeper, run `spctl --master-disable`, or strip quarantine attributes.
+**Gatekeeper:** ad-hoc builds are not notarized and may need **right-click → Open** the first time. Do not disable Gatekeeper, run `spctl --master-disable`, or strip quarantine attributes.
 
 Full guide: [Installation](./docs/installation.md) · First-run walkthrough: [Getting started](./docs/getting-started.md)
 
@@ -242,14 +242,14 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 
 ### Release honesty (Gate A)
 
-- macOS Apple Silicon builds are labeled **verified** for Gate A job-tracking (local acceptance evidence; not published in-repo).
-- Auto-update is **disabled**. Notarized installers are **not** claimed for the developer-preview channel.
+- Earlier Apple Silicon acceptance evidence is not automatically a verification of the unpublished **v0.1.3** package. v0.1.3 has not been built or smoke-tested as a release artifact.
+- Auto-update is **disabled**. Notarized installers are **not** published.
 - Local resume parse, evidence-grounded match, and export validation are Gate B–backed via the synthetic corpus in [`packages/core/src/ats`](./packages/core/src/ats) — we still do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
 
 ### Key limitations
 
 - Primary support target is **macOS Apple Silicon**.
-- GitHub Release `v0.1.2` is a **developer preview** (Apple Silicon ad-hoc `.app`). Notarized installers are not published. Source archives are no longer packaged as native installers.
+- GitHub Release `v0.1.2` is the last published Apple Silicon package (ad-hoc `.app`, not notarized). `v0.1.3` is prepared in source and is not a GitHub Release yet. Source archives are not packaged as native installers.
 - Does **not** auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
 
@@ -348,9 +348,9 @@ npm run build:market     # Vite React SPA → market-site/dist (GitHub Pages)
 
 ### License and acknowledgements
 
-AI Job Search Assistant is released under the [MIT License](./LICENSE).
+Job Search Assistant is released under the [MIT License](./LICENSE).
 
-Jobzuu / AI Job Search Assistant is an **independent** local-first desktop product. Your workspace is any folder you choose; the app does not require a third-party org checkout. See [NOTICE](./NOTICE), [THIRD-PARTY.md](./THIRD-PARTY.md), and [docs/LICENSE-DECISION.md](./docs/LICENSE-DECISION.md).
+Jobzuu / Job Search Assistant is an **independent** local-first desktop product. Your workspace is any folder you choose; the app does not require a third-party org checkout. See [NOTICE](./NOTICE), [THIRD-PARTY.md](./THIRD-PARTY.md), and [docs/LICENSE-DECISION.md](./docs/LICENSE-DECISION.md).
 
 ### Maintainer
 

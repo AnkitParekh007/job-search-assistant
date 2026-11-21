@@ -84,6 +84,6 @@ export async function notifyStatus(status: string) {
       completed: "A workflow finished.",
       failed: "A workflow failed. Open Agent Activity for details.",
     }[status] || status;
-    n.sendNotification({ title: "AI Job Search", body });
+    n.sendNotification({ title: "Job Search Assistant", body });
   } catch { /* notifications unavailable */ }
 }

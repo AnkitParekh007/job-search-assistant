@@ -44,7 +44,7 @@ export function DocsOverview() {
         <div className="docs-hero-copy">
           <h1>Overview</h1>
           <p className="lede">
-            AI Job Search Assistant is the local-first desktop shell for your{" "}
+            Job Search Assistant is the local-first desktop shell for your{" "}
             local workspace folder. Discover, rank, prepare, and track with{" "}
             <strong>multi-provider AI support</strong> — Claude Code or OpenAI Codex — on files you own.
           </p>
@@ -308,7 +308,7 @@ export function DocsInstall() {
 npm install
 npm test
 npm run tauri build
-open "src-tauri/target/release/bundle/macos/AI Job Search.app"`}</pre>
+open "src-tauri/target/release/bundle/macos/Job Search Assistant.app"`}</pre>
         <p>
           The bundle lands under <code>src-tauri/target/release/bundle/macos/</code>. Intel Mac and Windows
           trees live under <code>apps/</code> — see their READMEs. Source:{" "}
@@ -478,9 +478,9 @@ export function DocsProviders() {
         </div>
 
         <div className="docs-callout">
-          <strong>Platform note.</strong> The full Rust provider runtime and published developer-preview ZIP
-          ship on Apple Silicon today. Intel Mac and Windows are build-from-source until native installers
-          are smoke-verified — they are not offered as downloadable installers.
+          <strong>Platform note.</strong> The published native zip is Apple Silicon only (ad-hoc signed, not
+          notarized). Intel Mac and Windows are build-from-source until native installers are smoke-verified.
+          They are not offered as downloadable installers.
         </div>
       </article>
       <Pager

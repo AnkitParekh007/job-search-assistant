@@ -174,7 +174,7 @@ impl Bridge {
         let claude = env::which("claude").ok_or("Claude Code CLI not found. Install it from https://claude.com/claude-code and sign in, then reopen Settings.")?;
         if !workspace.join("CLAUDE.md").exists() {
             return Err(format!(
-                "{} does not look like an AI Job Search workspace (no CLAUDE.md)",
+                "{} does not look like an Job Search Assistant workspace (no CLAUDE.md)",
                 workspace.display()
             ));
         }
@@ -447,7 +447,7 @@ impl Bridge {
             }
             json!({"behavior":"allow","updatedInput": input})
         } else {
-            json!({"behavior":"deny","message": message.unwrap_or_else(|| "The user declined this action in AI Job Search Desktop.".into())})
+            json!({"behavior":"deny","message": message.unwrap_or_else(|| "The user declined this action in Job Search Assistant Desktop.".into())})
         };
         self.reply(&run_id, &request_id, resp)?;
         self.emit(

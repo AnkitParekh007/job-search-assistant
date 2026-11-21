@@ -280,7 +280,7 @@ export const EndCard: React.FC<{line: string; start: number}> = ({line, start}) 
   return (
     <div style={{position: 'absolute', left: M, right: M, top: 370, opacity: card, transform: `translateY(${(1 - card) * 24}px)`}}>
       <Words text={line} start={start} size={80} weight={800} />
-      <div style={{fontFamily: F.body, fontWeight: 600, fontSize: 38, color: C.paper, marginTop: 36, opacity: sub(8)}}>AI Job Search Assistant</div>
+      <div style={{fontFamily: F.body, fontWeight: 600, fontSize: 38, color: C.paper, marginTop: 36, opacity: sub(8)}}>Job Search Assistant</div>
       <div style={{fontFamily: F.body, fontWeight: 600, fontSize: 32, color: C.flare, marginTop: 6, opacity: sub(10)}}>{CLAIMS.price}</div>
       <div style={{fontFamily: F.body, fontSize: 27, color: C.paper, marginTop: 10, lineHeight: 1.3, opacity: sub(12)}}>{CLAIMS.availability}</div>
       <div style={{fontFamily: F.body, fontSize: 25, color: C.haze, marginTop: 6, lineHeight: 1.3, opacity: sub(14)}}>{CLAIMS.requirement}</div>

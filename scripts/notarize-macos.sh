@@ -9,7 +9,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 DEFAULT_TARGET="${CARGO_TARGET_DIR_OVERRIDE:-$ROOT/apps/macos-apple-silicon/src-tauri/target}"
-APP="${1:-$DEFAULT_TARGET/release/bundle/macos/AI Job Search.app}"
+APP="${1:-$DEFAULT_TARGET/release/bundle/macos/Job Search Assistant.app}"
 
 if [[ ! -d "$APP" ]]; then
   echo "error: .app not found: $APP" >&2

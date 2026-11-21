@@ -38,7 +38,7 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 >
 > Priya is fictional. The feeling isn't: coming back can be harder than leaving.
 >
-> AI Job Search Assistant is a free, open-source desktop app for running a return like a project:
+> Job Search Assistant is a free, open-source desktop app for running a return like a project:
 > → it finds roles from your saved searches and ranks them against your experience, with the gaps spelled out
 > → Studio drafts a tailored CV, and nothing is written until you allow it
 > → mock interview questions for the hard one: "Tell me about the gap."
@@ -59,18 +59,18 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 
 **X / Twitter** (≤280)
 > She told candidates a career break isn't a red flag. Then she took one. (A fictional story; a real app.)
-> AI Job Search Assistant ranks roles against your experience, drafts with your approval, and never applies for you.
+> Job Search Assistant ranks roles against your experience, drafts with your approval, and never applies for you.
 > Free, open source. job-search-assistant.rebound-ops.org
 
 **Instagram feed**
 > A pause isn't a full stop.
 > Priya (fictional) spent 11 years telling candidates a career break isn't a red flag, then took one herself.
-> AI Job Search Assistant helps you plan the way back: roles ranked against your experience, gaps named, drafts you approve, interview practice. You send every application yourself.
+> Job Search Assistant helps you plan the way back: roles ranked against your experience, gaps named, drafts you approve, interview practice. You send every application yourself.
 > Free and open source · Mac app for Apple Silicon · link in bio
 > #careerbreak #returntowork #jobsearch
 
 **Alt text**
-> Animated film. A fictional recruiter, Priya, takes an 18-month career break, then uses the AI Job Search Assistant desktop app to rank roles, see one skills gap, write her break into her CV in her own words, approve the file save, practice interview questions and track applications she submits herself. Ends with "A pause isn't a full stop."
+> Animated film. A fictional recruiter, Priya, takes an 18-month career break, then uses the Job Search Assistant desktop app to rank roles, see one skills gap, write her break into her CV in her own words, approve the file save, practice interview questions and track applications she submits herself. Ends with "A pause isn't a full stop."
 
 ---
 
@@ -82,7 +82,7 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 >
 > Daniel is fictional. He lost his job while he was getting better, rewrote his résumé nine times and heard nothing back. So he stopped, and treated the search like a project.
 >
-> That's what AI Job Search Assistant is for. It's a free, open-source desktop app:
+> That's what Job Search Assistant is for. It's a free, open-source desktop app:
 > → ranks roles against your experience and shows where you fit, and where you don't yet
 > → drafts a tailored CV in your words; every file write waits for your OK
 > → mock interviews, a pipeline, and follow-up drafts you send yourself
@@ -101,7 +101,7 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 
 **X / Twitter**
 > 14 months. 0 commits. Nine résumés, nothing back. (Fictional engineer, real app.)
-> AI Job Search Assistant: see where you fit, draft in your own words, approve every file write. You hit submit.
+> Job Search Assistant: see where you fit, draft in your own words, approve every file write. You hit submit.
 > Free, open source. job-search-assistant.rebound-ops.org
 
 **Instagram feed**
@@ -110,7 +110,7 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 > Free and open source · Mac app for Apple Silicon · link in bio
 
 **Alt text**
-> Animated film. A fictional engineer, Daniel, faces an empty contribution graph after 14 months away. He connects a workspace in the AI Job Search Assistant desktop app, sees a ranked role with its gaps, tailors his CV and approves the file save, practices interview questions, tracks applications and submits one himself on the employer's site. Ends with "Run your comeback like a project."
+> Animated film. A fictional engineer, Daniel, faces an empty contribution graph after 14 months away. He connects a workspace in the Job Search Assistant desktop app, sees a ranked role with its gaps, tailors his CV and approves the file save, practices interview questions, tracks applications and submits one himself on the employer's site. Ends with "Run your comeback like a project."
 
 ---
 
@@ -122,7 +122,7 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 >
 > Tomás is fictional. He used to build the reports that now build themselves. Then he looked at what a parser could actually read from his résumé PDF: columns crossed, icons turned into noise.
 >
-> AI Job Search Assistant's ATS text check shows you the text extracted from your PDF, so you can fix what breaks before you apply. It can't promise what any employer's screening system does. Nothing can. It shows you what yours reads.
+> Job Search Assistant's ATS text check shows you the text extracted from your PDF, so you can fix what breaks before you apply. It can't promise what any employer's screening system does. Nothing can. It shows you what yours reads.
 >
 > Then it ranks roles against your experience, and you send fewer, better applications yourself.
 >
@@ -138,7 +138,7 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 
 **X / Twitter**
 > 142 applications, 0 replies. (Fictional analyst, real feature.)
-> AI Job Search Assistant's ATS text check shows the text extracted from your résumé PDF, so two-column layouts and icon fonts stop hiding your experience. That is all it promises.
+> Job Search Assistant's ATS text check shows the text extracted from your résumé PDF, so two-column layouts and icon fonts stop hiding your experience. That is all it promises.
 > job-search-assistant.rebound-ops.org
 
 **Instagram feed**
@@ -147,4 +147,4 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 > Free and open source · Mac app for Apple Silicon · link in bio
 
 **Alt text**
-> Animated film. A fictional analyst, Tomás, sees 142 applications and no replies in his own spreadsheet. In the AI Job Search Assistant desktop app he runs the ATS text check on his résumé PDF and sees jumbled extracted text, rebuilds it as one column so the text reads in order, then ranks roles. A card says no tool can promise what every screening system does. Ends with "AI changed the market. Not your value."
+> Animated film. A fictional analyst, Tomás, sees 142 applications and no replies in his own spreadsheet. In the Job Search Assistant desktop app he runs the ATS text check on his résumé PDF and sees jumbled extracted text, rebuilds it as one column so the text reads in order, then ranks roles. A card says no tool can promise what every screening system does. Ends with "AI changed the market. Not your value."

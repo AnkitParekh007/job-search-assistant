@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Check, CircleCheck, CircleHelp, CircleX, FolderO
 import { api, ProfileFile } from "@ai-job-search/runtime";
 import { useStore } from "../store";
 import { Jobzuu } from "../components/Jobzuu";
+import { APP_NAME } from "../version";
 import { DepFixActions } from "../components/DepFixActions";
 
 type HelpTip = { id: string; title: string; body: string[] };
@@ -196,6 +197,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     <div key="0" className="text-center">
       <div className="flex justify-center"><Jobzuu size={92} /></div>
       <h1 className="h-title !text-[30px] mt-5">Hi, I'm Jobzuu.</h1>
+      <p className="text-ink-3 text-[12px] mt-1">{APP_NAME}</p>
       <p className="text-ink-2 text-[15px] mt-3 max-w-lg mx-auto leading-relaxed">
         Your guide for a local job-search workspace. Discover, rank, and draft with the AI provider you choose — or track applications offline. Sensitive writes wait for your approval.
       </p>

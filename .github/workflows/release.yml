@@ -168,7 +168,7 @@ jobs:
         with:
           workspaces: apps/macos-apple-silicon/src-tauri -> target
 
-      - name: Build + ad-hoc sign + validate (developer preview)
+      - name: Build + ad-hoc sign + validate
         run: bash scripts/build-macos-apple-silicon-preview.sh
 
       - name: Package native Apple Silicon zip
@@ -177,13 +177,22 @@ jobs:
           REQUIRE_NATIVE: "1"
         run: bash scripts/package-release-assets.sh "${{ needs.version.outputs.version }}"
 
+      - name: Reject beta artifact names
+        run: |
+          set -euo pipefail
+          if find dist-release -type f \( -iname '*beta*' -o -iname '*preview*' -o -iname '*prerelease*' \) | grep -q .; then
+            echo "Refusing a release artifact whose name contains beta, preview, or prerelease." >&2
+            find dist-release -type f \( -iname '*beta*' -o -iname '*preview*' -o -iname '*prerelease*' \) >&2
+            exit 1
+          fi
+
       - name: Upload Apple Silicon zip (Actions artifact only)
         uses: actions/upload-artifact@v4
         with:
           name: release-macos-arm64
           path: |
-            dist-release/AI-Job-Search-*-macos-arm64.zip
-            dist-release/SHA256SUMS.txt
+            dist-release/Job-Search-Assistant-*-macos-arm64.zip
+            dist-release/SHA256SUMS-*.txt
           if-no-files-found: error
 
   # Gate C proxies — advisory compile only; never gate publish or treat as installers.

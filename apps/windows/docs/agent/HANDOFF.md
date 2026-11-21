@@ -17,7 +17,7 @@ Ruthless visual UX audit of the live macOS app (light + dark, empty + populated,
 ## Open / not fully re-verified after last micro-tweaks
 - Studio “Stopped before finishing” checklist row and Activity 4-card strip need the **latest** rebuild (in progress / just finished).
 - Interview Prep, Documents, Onboarding, command palette, dark-mode native Settings toggle, and a live `awaiting_approval` approval card were not re-captured after rebuild.
-- Canonical app path: `src-tauri/target/release/bundle/macos/AI Job Search.app` (copy synced from nested `src-tauri/src-tauri/target/...` when CARGO_TARGET_DIR was set relative).
+- Current app path: `src-tauri/target/release/bundle/macos/Job Search Assistant.app`. Published v0.1.2 zips still contain `AI Job Search.app`.
 
 ## Next
 Reopen the rebuilt app and spot-check Studio checklist row + Activity Discover/Rank/Apply/Outcome strip; then pick the next product slice if desired.

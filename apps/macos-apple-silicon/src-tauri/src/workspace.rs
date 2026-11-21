@@ -509,7 +509,7 @@ Never invent facts that are not in these files. Ask before overwriting confirmed
 
 const SCAFFOLD_AGENTS_MD: &str = r#"# Agent instructions
 
-This is a Jobzuu / AI Job Search workspace. Prefer reading and writing files in this
+This is a Jobzuu / Job Search Assistant workspace. Prefer reading and writing files in this
 folder only. Treat `CLAUDE.md` and the profile markdown under `.claude/skills/` as the
 source of truth for the candidate. Ask before destructive changes.
 "#;

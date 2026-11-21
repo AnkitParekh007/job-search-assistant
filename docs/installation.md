@@ -2,7 +2,7 @@
 
 Primary path: **macOS Apple Silicon** (`apps/macos-apple-silicon`).
 
-Current release: **[`v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2)** — download `AI-Job-Search-0.1.2-macos-arm64.zip` (ad-hoc signed Apple Silicon `.app`, not notarized). Intel/Windows: build from source. Prefer `./scripts/build-macos-apple-silicon-preview.sh` for a validated local build. Do not disable Gatekeeper or strip quarantine to launch.
+Published package: **[`v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2)** — `AI-Job-Search-0.1.2-macos-arm64.zip` (the app inside that zip is still named `AI Job Search.app`; ad-hoc signed, not notarized). Prepared source version: **v0.1.3**, which builds `Job Search Assistant.app` and is not published. Intel/Windows: build from source. Prefer `./scripts/build-macos-apple-silicon-preview.sh` for a validated local build. Do not disable Gatekeeper or strip quarantine to launch.
 
 ## System requirements
 
@@ -54,7 +54,7 @@ npm test
 npm run tauri dev          # development
 # or
 npm run tauri build
-open "src-tauri/target/release/bundle/macos/AI Job Search.app"
+open "src-tauri/target/release/bundle/macos/Job Search Assistant.app"
 ```
 
 ## 5. Choose a workspace folder

@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve **AI Job Search**. Please read this before opening a PR.
+Thanks for helping improve **Job Search Assistant**. Please read this before opening a PR.
 
 ## Local development (primary client)
 

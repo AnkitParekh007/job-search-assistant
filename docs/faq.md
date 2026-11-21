@@ -1,6 +1,6 @@
 # FAQ
 
-**What is AI Job Search?**  
+**What is Job Search Assistant?**  
 A local-first macOS desktop shell (Jobzuu) for your own workspace folder, with **multi-provider AI support** (Claude Code, OpenAI Codex, and more).
 
 **Does it auto-apply to jobs?**  
@@ -16,13 +16,13 @@ The app has no subscription of its own. Cloud providers bill against your plan o
 In the local workspace folder you chose, plus SQLite for run history/settings under Application Support.
 
 **Is there a Windows / Intel app?**  
-Source trees exist under `apps/macos-intel` and `apps/windows`. Only **Apple Silicon** has a published developer-preview ZIP. Intel and Windows are build-from-source until native installers are smoke-verified. See [apps/README.md](../apps/README.md).
+Source trees exist under `apps/macos-intel` and `apps/windows`. Only **Apple Silicon** has a published ZIP (`v0.1.2`, ad-hoc signed, not notarized). Intel and Windows are build-from-source until native installers are smoke-verified. See [apps/README.md](../apps/README.md).
 
 **Where do I download a binary?**  
-Apple Silicon only: [GitHub Releases `v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2) and the [download page](https://job-search-assistant.rebound-ops.org/download). Notarized installers are not published yet — see [installation.md](./installation.md).
+Apple Silicon only: the published file is [GitHub Release `v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2). **v0.1.3 is prepared and not published.** Notarized installers are not published — see [installation.md](./installation.md).
 
 **Can I use a local LLM?**  
 Yes — Ollama is supported for structured inference workflows when the local service is running. It cannot scrape portals or run full agentic automation.
 
 **Why was the repo briefly named `job-search-assitant`?**  
-That misspelling was corrected. The canonical repository is [`AnkitParekh007/job-search-assistant`](https://github.com/AnkitParekh007/job-search-assistant). Product display name remains **AI Job Search Assistant**.
+That misspelling was corrected. The canonical repository is [`AnkitParekh007/job-search-assistant`](https://github.com/AnkitParekh007/job-search-assistant). Product display name is **Job Search Assistant**.

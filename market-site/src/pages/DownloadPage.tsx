@@ -47,7 +47,7 @@ export function DownloadPage() {
 
   useEffect(() => {
     applySeo({
-      title: "Download — AI Job Search Assistant",
+      title: "Download — Job Search Assistant",
       description: PAGE_SEO.download.description,
       path: "/download",
     });
@@ -76,40 +76,39 @@ export function DownloadPage() {
             </div>
 
             <div className="stack wide reveal reveal-delay-1">
-              <p className="kicker">Release {RELEASE_TAG}</p>
-              <h1>Install AI Job Search Assistant</h1>
+              <p className="kicker">Prepared release {RELEASE_TAG} · not published</p>
+              <h1>Install Job Search Assistant</h1>
               <p className="lede">
-                Download the desktop workspace for your platform. Discover, rank, prepare tailored documents,
-                and track outcomes with multi-provider AI support — without auto-submitting applications to
-                employers.
+                The desktop app helps you discover roles, prepare documents, and track applications on your own
+                files. You submit every application yourself. AI workflows run only with a provider you configure.
               </p>
               <div className="cta-row">
                 <a className="btn btn-primary btn-lg btn-icon" href={primaryUrl} rel="noopener">
                   <DownloadGlyph />
-                  Download for Apple Silicon
+                  Download Apple Silicon v0.1.2
                 </a>
                 <Link className="btn btn-soft btn-lg" to="/docs/install">
                   Install docs
                 </Link>
               </div>
               <p className="fine-print">
-                Current release{" "}
+                The last published package is{" "}
                 <a href={RELEASE_TAG_URL} rel="noopener">
-                  {RELEASE_TAG}
+                  v0.1.2
                 </a>{" "}
-                · assets on{" "}
+                (<span className="font-mono">AI-Job-Search-0.1.2-macos-arm64.zip</span>). {RELEASE_TAG} is prepared
+                in source and is not on{" "}
                 <a href={RELEASES_PAGE} rel="noopener">
                   GitHub Releases
-                </a>
-                . Developer-preview macOS builds may need right-click → Open the first time. Do not disable
-                Gatekeeper or strip quarantine attributes.
+                </a>{" "}
+                yet. The published app is ad-hoc signed and not notarized. First launch may need right-click → Open.
+                Do not disable Gatekeeper or strip quarantine.
               </p>
               <p className="fine-print">
-                <strong>Honest status:</strong> Apple Silicon is a <strong>developer preview</strong> — Gate A
-                verified offline job-tracking with Gate B local ATS helpers (synthetic regression only). Builds are
-                ad-hoc signed, <strong>not notarized</strong>, and auto-update is disabled. The Phase A pipeline no
-                longer ships source archives as if they were native installers; Intel Mac and Windows are build-from-source
-                until native artifacts exist on those hosts.
+                <strong>Platform:</strong> the published download is macOS Apple Silicon only. Intel Mac and Windows
+                are build-from-source. Linux is not a desktop release target. Auto-update is disabled. Local match
+                uses confirmed facts only and is not a universal ATS pass rate, a named-employer guarantee, or a
+                promise of interviews or job offers.
               </p>
             </div>
           </div>
@@ -118,8 +117,8 @@ export function DownloadPage() {
             <div className="platform-download-head">
               <h2 className="platform-download-title">Choose your platform</h2>
               <p className="platform-download-copy">
-                Only native Apple Silicon developer-preview zips are offered as downloads. Intel and Windows link to
-                install docs until real installers exist — source archives are not treated as installers.
+                The only published native download is the Apple Silicon zip. Intel and Windows link to install docs.
+                Source archives are not installers.
               </p>
             </div>
             <div className="platform-grid" role="list">
@@ -238,15 +237,15 @@ export function DownloadPage() {
               <h2>Build from source</h2>
               <p className="lede">
                 Prefer compiling locally? Clone the desktop app, install dependencies, and produce a
-                developer-preview <code>.app</code> with{" "}
-                <code>./scripts/build-macos-apple-silicon-preview.sh</code> (ad-hoc sign + validate).
+                an ad-hoc signed <code>.app</code> with{" "}
+                <code>./scripts/build-macos-apple-silicon-preview.sh</code> (not notarized).
               </p>
               <div className="cta-row">
                 <a className="btn btn-soft btn-lg" href={GITHUB_REPO} rel="noopener">
                   View repository
                 </a>
                 <a className="btn btn-soft btn-lg" href={RELEASE_TAG_URL} rel="noopener">
-                  Release {RELEASE_TAG}
+                  Published v0.1.2
                 </a>
                 <Link className="text-link" to="/features">
                   Explore features

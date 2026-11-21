@@ -1,6 +1,6 @@
 # macOS bundle identifier — audit & recommendation
 
-## Current (Phase A developer preview)
+## Current identifier (unchanged for v0.1.3)
 
 | App | `CFBundleIdentifier` / Tauri `identifier` |
 |-----|-------------------------------------------|
@@ -24,7 +24,7 @@ app.jobzuu.aijobsearch
 
 Rationale:
 
-- Matches in-product “Jobzuu” scaffolding language and “AI Job Search” product name.
+- Matches in-product “Jobzuu” scaffolding language. The user-facing product name is Job Search Assistant. The bundle id is an internal identifier and is not the product name.
 - Avoids a personal GitHub username in the permanent id (transferable if ownership moves).
 - Leaves room for related ids (`app.jobzuu.aijobsearch.helper`, etc.) without colliding with `dev.local`.
 
@@ -34,7 +34,7 @@ Rationale:
 |-----------|-------|
 | `com.ankitparekh.aijobsearch` | Fine if personal brand is intentional; less transferable |
 | `org.rebound-ops.aijobsearch` | Matches site host branding; hyphen awkward in some tooling |
-| Keep `dev.local.aijobsearch` | Acceptable only for private preview; do not notarize under this id |
+| Keep `dev.local.aijobsearch` | Kept for v0.1.3 because no migration shipped. Do not notarize under this id |
 
 ## Local-data implications of changing the id
 
@@ -50,14 +50,14 @@ macOS and Tauri key storage off the bundle id. A cut that flips `dev.local.aijob
 | Workspace on disk | user-chosen folder (`job_search_tracker.csv`, candidate, jobs) | **Unaffected** (path is absolute); but app may not remember the last path until re-selected |
 | Intel / Windows sibling ids | `.intel` / `.windows` suffixes | Still fragmented unless unified in the same cut |
 
-### Required migration (for 0.1.3 / first notarized build)
+### Required migration (before the first notarized build, not part of the v0.1.3 naming cut)
 
 1. On first launch of the new id, detect prior Support dir `dev.local.aijobsearch`.
 2. Offer one-shot copy/move of `app.db` (+ shims) into the new Support dir, or document a manual Reveal + copy.
 3. Re-select workspace if the stored path setting did not migrate.
 4. Re-enter provider credentials if Keychain items do not transfer.
 5. Do **not** delete the old Support folder automatically without explicit user confirmation.
-6. Document in release notes: “Upgrading from developer preview may ask for folder access and AI provider sign-in again.”
+6. Document in release notes: “Changing the bundle id may ask for folder access and AI provider sign-in again.”
 
 Clean-accept 2026-11-21 confirmed Support path isolation: swapping `~/Library/Application Support/dev.local.aijobsearch` fully resets in-app state while leaving workspace files intact — the same split applies to a bundle-id change.
 

@@ -1,6 +1,6 @@
 # Architecture
 
-AI Job Search (Jobzuu) is a **local-first desktop shell**. It does not host agents in the cloud. Your chosen folder is the workspace source of truth; the app stores only run history and preferences in its own SQLite database under Application Support.
+Job Search Assistant (Jobzuu) is a **local-first desktop shell**. It does not host agents in the cloud. Your chosen folder is the workspace source of truth; the app stores only run history and preferences in its own SQLite database under Application Support.
 
 ## Layers
 

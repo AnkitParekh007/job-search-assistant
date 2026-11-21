@@ -2,17 +2,19 @@
 
 Downloadable packages are published as GitHub Release assets and linked from the marketing `/download` page (`market-site/src/lib/releases.ts`).
 
-## Current release (developer preview)
+## Prepared release and last published package
 
 | Item | Value |
 |------|-------|
-| Tag / version | `v0.1.2` / `0.1.2` |
-| Channel | **Developer preview** — ad-hoc signed, not notarized |
-| Native asset (Phase A) | `AI-Job-Search-0.1.2-macos-arm64.zip` |
+| Prepared tag / version | `v0.1.3` / `0.1.3` (plain semver, not a prerelease) |
+| Published tag | `v0.1.2` — do not replace its assets |
+| Signing | Ad-hoc, **not notarized**. No Beta or Developer Preview channel label |
+| Next native asset name | `Job-Search-Assistant-0.1.3-macos-arm64.zip` (not built or uploaded) |
+| Published native asset | `AI-Job-Search-0.1.2-macos-arm64.zip` |
 | Site constants | `RELEASE_TAG` / `RELEASE_VERSION` in `market-site/src/lib/releases.ts` |
 | Auto-publish | **Off** — GitHub uploads require `workflow_dispatch` + `publish_assets=true` + `RELEASE_PUBLISH_APPROVED=1` |
 
-## Phase A — no-cost local preview (preferred)
+## Local Apple Silicon package (no upload)
 
 ```bash
 ./scripts/build-macos-apple-silicon-preview.sh
@@ -59,15 +61,15 @@ Keep these equal:
 
 ## Bundle identifier
 
-See [macos-bundle-identifier.md](./macos-bundle-identifier.md). Current preview id remains `dev.local.aijobsearch` until the next public cut.
+See [macos-bundle-identifier.md](./macos-bundle-identifier.md). v0.1.3 keeps `dev.local.aijobsearch`. Changing it without a migration orphans Application Support, Keychain items, and TCC grants.
 
-## Gatekeeper (developer preview)
+## Gatekeeper (ad-hoc, not notarized)
 
 Users may need **right-click → Open**. Do not instruct users to disable Gatekeeper or clear quarantine as a workaround.
 
 ## Explicit non-goals (Phase A)
 
-- Overwriting `v0.1.2` without human approval  
+- Overwriting `v0.1.2` or publishing `v0.1.3` without human approval  
 - Claiming notarized or Developer ID–signed installers  
 - Shipping source trees as platform “installers”  
 - Apple Developer Program enrollment / paid certificates  

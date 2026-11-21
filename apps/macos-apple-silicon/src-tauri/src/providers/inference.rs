@@ -116,7 +116,7 @@ impl InferenceBridge {
     ) -> Result<RunSummary, String> {
         if !req.workspace.join("CLAUDE.md").exists() {
             return Err(format!(
-                "{} does not look like an AI Job Search workspace (no CLAUDE.md)",
+                "{} does not look like an Job Search Assistant workspace (no CLAUDE.md)",
                 req.workspace.display()
             ));
         }

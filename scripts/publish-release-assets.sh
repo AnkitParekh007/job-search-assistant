@@ -22,7 +22,27 @@ TAG="${TAG:?TAG is required}"
 VERSION="${VERSION:?VERSION is required}"
 SHA="${RELEASE_SHA:?RELEASE_SHA is required}"
 REQUIRE_PLATFORMS="${REQUIRE_PLATFORMS:-macos-arm64}"
-TITLE="AI Job Search Assistant ${TAG}"
+TITLE="Job Search Assistant ${TAG}"
+ASSET_PREFIX="Job-Search-Assistant"
+
+case "$TAG" in
+  v0.1.2|v0.1.2-beta|v0.1.1|v0.1.1-beta)
+    echo "error: refusing to modify historical release $TAG" >&2
+    exit 1
+    ;;
+esac
+case "$VERSION" in
+  *beta*|*Beta*|*rc*|*alpha*|*preview*|*Preview*|*-*)
+    echo "error: refusing prerelease version '$VERSION'. Create a regular release, for example v0.1.3." >&2
+    exit 1
+    ;;
+esac
+case "$TAG" in
+  *beta*|*Beta*|*rc*|*alpha*|*preview*|*Preview*)
+    echo "error: refusing prerelease tag '$TAG'" >&2
+    exit 1
+    ;;
+esac
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -79,16 +99,16 @@ IFS=',' read -r -a PLATFORMS <<<"$REQUIRE_PLATFORMS"
 for p in "${PLATFORMS[@]}"; do
   case "$p" in
     macos-arm64)
-      require_zip "AI-Job-Search-${VERSION}-macos-arm64.zip"
-      assert_native_macos_zip "$COMBINED/AI-Job-Search-${VERSION}-macos-arm64.zip"
+      require_zip "${ASSET_PREFIX}-${VERSION}-macos-arm64.zip"
+      assert_native_macos_zip "$COMBINED/${ASSET_PREFIX}-${VERSION}-macos-arm64.zip"
       ;;
     macos-x64)
-      require_zip "AI-Job-Search-${VERSION}-macos-x64.zip"
-      assert_native_macos_zip "$COMBINED/AI-Job-Search-${VERSION}-macos-x64.zip"
+      require_zip "${ASSET_PREFIX}-${VERSION}-macos-x64.zip"
+      assert_native_macos_zip "$COMBINED/${ASSET_PREFIX}-${VERSION}-macos-x64.zip"
       ;;
     windows-x64)
-      require_zip "AI-Job-Search-${VERSION}-windows-x64.zip"
-      assert_native_windows_zip "$COMBINED/AI-Job-Search-${VERSION}-windows-x64.zip"
+      require_zip "${ASSET_PREFIX}-${VERSION}-windows-x64.zip"
+      assert_native_windows_zip "$COMBINED/${ASSET_PREFIX}-${VERSION}-windows-x64.zip"
       ;;
     *)
       echo "Unknown platform in REQUIRE_PLATFORMS: $p" >&2
@@ -99,8 +119,8 @@ done
 
 (
   cd "$COMBINED"
-  shasum -a 256 AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt 2>/dev/null \
-    || sha256sum AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt
+  shasum -a 256 ${ASSET_PREFIX}-${VERSION}-*.zip > SHA256SUMS.txt 2>/dev/null \
+    || sha256sum ${ASSET_PREFIX}-${VERSION}-*.zip > SHA256SUMS.txt
 )
 
 short="${SHA:0:7}"
@@ -109,7 +129,7 @@ STAMP="$(cat <<EOF
 <!-- assets-stamp -->
 Downloadable **native** assets on this release were refreshed from \`${short}\` on ${day}.
 Platforms required for this publish: ${REQUIRE_PLATFORMS}.
-Channel: developer preview until notarized.
+Channel: regular release. Signing: ad-hoc, not notarized. Auto-update: disabled.
 <!-- /assets-stamp -->
 EOF
 )"
@@ -141,19 +161,25 @@ if [[ "$EXISTS" == "1" ]]; then
 else
   notes="$(mktemp)"
   cat >"$notes" <<EOF
-Desktop packages for **AI Job Search Assistant** \`${TAG}\`.
+Desktop packages for **Job Search Assistant** \`${TAG}\`.
 
-- **macOS Apple Silicon** — developer-preview \`.app\` (ad-hoc signed unless notarized).
+This is a regular GitHub Release (not a prerelease).
+
+- **macOS Apple Silicon** — ad-hoc signed \`.app\`, not notarized.
 - First launch may need **right-click → Open**. Do not disable Gatekeeper.
-- The app does **not** submit applications automatically.
-- Multi-provider AI support (Claude Code or Codex) is required for AI workflows.
+- Intel Mac and Windows installers are not part of this package unless those native archives were explicitly built and required.
+- The app does **not** submit applications automatically and does not guarantee interviews or job outcomes.
+- AI workflows need a provider you configure. Offline tracking does not.
+- Local resume checks are not a universal ATS pass rate.
 
 ${STAMP}
 EOF
+  # Regular release: do not pass --prerelease.
   gh release create "$TAG" "${new_zips[@]}" "$COMBINED/SHA256SUMS.txt" \
     --target "$SHA" \
     --title "$TITLE" \
-    --notes-file "$notes"
+    --notes-file "$notes" \
+    --latest
   rm -f "$notes"
 fi
 

@@ -31,7 +31,7 @@ export const FAQ_ITEMS = [
   },
   {
     question: "Does it work on macOS, Windows and Linux?",
-    answer: "macOS Apple Silicon is the primary desktop target and the only platform with Gate A smoke verification and Gate B local ATS evidence. Its download is a developer preview (ad-hoc signed, not notarized, auto-update disabled — first launch may need right-click → Open; do not disable Gatekeeper). Intel Mac and Windows are build-from-source until native installers exist; source archives are no longer packaged as installers. Linux is not a supported desktop release target today.",
+    answer: "macOS Apple Silicon is the only platform with a published desktop package. That package is ad-hoc signed, not notarized, and auto-update is disabled. First launch may need right-click → Open. Do not disable Gatekeeper. Intel Mac and Windows are build-from-source. Linux is not a desktop release target. v0.1.3 is prepared and not published; the file on GitHub Releases is still v0.1.2.",
   },
   {
     question: "Do I need programming knowledge to get started?",
