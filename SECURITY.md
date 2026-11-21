@@ -5,7 +5,7 @@
 | Version | Supported |
 |---------|-----------|
 | `0.1.x` on `main` (source builds) | Yes — best effort |
-| Published GitHub Release `v0.1.5` (Apple Silicon zip) | Yes — best effort (when published) |
+| Published GitHub Release `v0.1.5` (Apple Silicon zip) | Yes — best effort |
 | Older published tags (`v0.1.2`–`v0.1.4`) | Best effort only; prefer latest |
 | Notarized / Developer ID installers | Not published yet |
 

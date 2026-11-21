@@ -6,9 +6,9 @@ export const RELEASE_VERSION = "0.1.5";
 
 /**
  * True only after the regular GitHub Release and its Apple Silicon zip exist.
- * Flip to true after v0.1.5 assets are uploaded.
+ * v0.1.5 was uploaded on 2026-11-21 and is not a prerelease.
  */
-export const RELEASE_PUBLISHED = false;
+export const RELEASE_PUBLISHED = true;
 
 /** Last GitHub Release that actually has a native Apple Silicon zip. Do not rename that asset. */
 export const LAST_PUBLISHED_TAG = "v0.1.4";
