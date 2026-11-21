@@ -4,8 +4,10 @@
 
 | Version | Supported |
 |---------|-----------|
-| `0.1.x` (source builds from `main`) | Yes — best effort |
-| Published GitHub Release binaries | None published yet |
+| `0.1.x` on `main` (source builds) | Yes — best effort |
+| Published GitHub Release `v0.1.4` (Apple Silicon zip) | Yes — best effort |
+| Older published tags (`v0.1.2`, `v0.1.3`) | Best effort only; prefer latest |
+| Notarized / Developer ID installers | Not published yet |
 
 ## Reporting a vulnerability
 
@@ -15,7 +17,7 @@ Prefer **GitHub Private Vulnerability Reporting** on this repository (Settings �
 
 If private reporting is not yet enabled, contact the maintainer via GitHub (@AnkitParekh007) using a private channel and include:
 
-- Affected commit or package version (`0.1.1` today)
+- Affected commit or package version (`0.1.4` today)
 - Platform (macOS version + CPU architecture)
 - Clear reproduction steps **without** secrets
 - Impact assessment (what an attacker could achieve)
@@ -26,16 +28,18 @@ Please allow reasonable time for triage before public disclosure.
 
 | In scope | Out of scope (examples) |
 |----------|-------------------------|
-| Path traversal / unsafe file joins in the Rust host | Social engineering of Claude prompts that does not bypass app approvals |
+| Path traversal / unsafe file joins / symlink escapes in the Rust host | Social engineering of Claude prompts that does not bypass app approvals |
 | Shell injection via argv construction | Issues solely in upstream ai-job-search (report upstream) |
 | XSS via Markdown rendering in the UI | Denial of service against Anthropic’s API |
 | Improper auto-approval of write/exec tools | Physical access to an unlocked Mac |
 | Credential or secret leakage introduced by this app | User pasting secrets into public issues |
+| Assisted-update downloads that skip SHA-256 verification | Third-party GitHub outages |
 
 ## Credential handling
 
-- This app must not store Claude, Gmail, Notion, or employer credentials.
-- Auth remains in Claude Code / OS keychains / connector configuration.
+- **SQLite / UI bundle:** never store API keys, OAuth tokens, or employer credentials.
+- **OS keychain (BYOK):** OpenAI Platform API and Gemini Developer API keys that you paste in Settings are stored via the OS credential store (macOS Keychain / Windows Credential Manager) under this app’s identity. Clearing a key in Settings removes that keychain item.
+- **Provider CLIs:** Claude Code and Codex authentication remain in those CLIs’ own credential stores. Gmail and Notion connectors stay in Claude Code.
 - Never commit `.env` files, tokens, cookies, or personal job archives.
 
 ## Prompt-injection considerations

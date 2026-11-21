@@ -1,4 +1,4 @@
-import { providerSupportsWorkflow, unsupportedReason } from "./providers";
+import { providerSupportsWorkflow, unsupportedReason, PROVIDER_LABEL } from "./providers";
 import type { Dep } from "./types";
 
 type Deps = Dep[] | null | undefined;
@@ -45,13 +45,69 @@ export function aiProviderBlockedReason(deps: Deps): string | null {
 }
 
 /**
- * Combined gate: a provider must be ready *and* support the workflow.
+ * Exact selected-provider readiness — never treat "some other provider is ready"
+ * as permission to start workflows under the user's chosen default.
+ */
+export function selectedProviderReady(deps: Deps, provider: string | null | undefined): boolean {
+  if (!provider) return false;
+  switch (provider) {
+    case "claude":
+      return ok(deps, "claude") && ok(deps, "claude_auth");
+    case "codex":
+      return ok(deps, "codex") && ok(deps, "codex_auth");
+    case "openai_api":
+      return ok(deps, "openai_api");
+    case "gemini":
+      return ok(deps, "gemini");
+    case "ollama":
+      return ok(deps, "ollama");
+    default:
+      return false;
+  }
+}
+
+export function selectedProviderBlockedReason(
+  deps: Deps,
+  provider: string | null | undefined,
+): string | null {
+  if (!provider) return "Choose a default AI provider in Settings.";
+  if (selectedProviderReady(deps, provider)) return null;
+
+  const label = PROVIDER_LABEL[provider] || provider;
+  switch (provider) {
+    case "claude":
+      if (ok(deps, "claude") && !ok(deps, "claude_auth")) {
+        return "Sign in to Claude Code in Settings → AI Providers.";
+      }
+      return "Claude Code is not ready. Install and sign in under Settings → AI Providers.";
+    case "codex":
+      if (ok(deps, "codex") && !ok(deps, "codex_auth")) {
+        return "Sign in to Codex in Settings → AI Providers.";
+      }
+      return "OpenAI Codex is not ready. Install the CLI and connect ChatGPT under Settings → AI Providers.";
+    case "openai_api":
+      return "Add an OpenAI Platform API key in Settings → AI Providers (stored in the OS keychain).";
+    case "gemini":
+      return "Add a Gemini API key in Settings → AI Providers (stored in the OS keychain).";
+    case "ollama": {
+      const ollama = find(deps, "ollama");
+      if (ollama && /installed but service not reachable/i.test(ollama.detail || "")) {
+        return "Start Ollama (`ollama serve`) and pull a model, then refresh Settings.";
+      }
+      return "Ollama is not ready. Install it, run `ollama serve`, and pull a model.";
+    }
+    default:
+      return `${label} is not ready. Finish setup in Settings → AI Providers.`;
+  }
+}
+
+/**
+ * Combined gate: the *selected* provider must be ready *and* support the workflow.
  * Use for Find jobs / Rank / Evaluate CTAs so unsupported providers stay disabled.
  */
 export function workflowReady(deps: Deps, provider: string | null | undefined, workflowId: string): boolean {
-  if (!aiProviderReady(deps)) return false;
-  if (!provider) return false;
-  return providerSupportsWorkflow(provider, workflowId);
+  if (!selectedProviderReady(deps, provider)) return false;
+  return providerSupportsWorkflow(provider!, workflowId);
 }
 
 export function workflowBlockedReason(
@@ -59,8 +115,7 @@ export function workflowBlockedReason(
   provider: string | null | undefined,
   workflowId: string,
 ): string | null {
-  const ai = aiProviderBlockedReason(deps);
-  if (ai) return ai;
-  if (!provider) return "Choose a default AI provider in Settings.";
-  return unsupportedReason(provider, workflowId);
+  const selected = selectedProviderBlockedReason(deps, provider);
+  if (selected) return selected;
+  return unsupportedReason(provider!, workflowId);
 }

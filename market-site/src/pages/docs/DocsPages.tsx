@@ -648,9 +648,10 @@ export function DocsSettings() {
           is default).
         </p>
         <div className="docs-callout">
-          <strong>No credentials here.</strong> Provider, Gmail, and Notion auth stay in the provider CLIs /
-          connectors. App data lives under Application Support (
-          <code>~/Library/Application Support/dev.local.aijobsearch</code>) for run history only.
+          <strong>Credentials stay off SQLite.</strong> Claude Code / Codex / Gmail / Notion auth remain in
+          those CLIs and connectors. Optional OpenAI Platform and Gemini API keys you paste in Settings are
+          stored only in the OS keychain. App data under Application Support (
+          <code>~/Library/Application Support/dev.local.aijobsearch</code>) holds run history, not secrets.
         </div>
       </article>
       <Pager
@@ -830,15 +831,16 @@ export function DocsSecurity() {
             <strong>Local files</strong> — tracker, archives, and profile stay on disk in your workspace.
           </li>
           <li>
-            <strong>No stored credentials</strong> — provider / Gmail / Notion auth remains in the provider
-            CLIs and connectors. No API keys in SQLite.
+            <strong>No secrets in SQLite</strong> — provider CLI / Gmail / Notion auth remain in those tools.
+            Optional OpenAI Platform and Gemini BYOK keys use the OS keychain only.
           </li>
           <li>
             <strong>Safe process spawn</strong> — argv vectors only; untrusted text reaches the provider as
             message content.
           </li>
           <li>
-            <strong>Path guards</strong> — workspace joins reject <code>..</code> and absolute escapes.
+            <strong>Path guards</strong> — workspace joins reject <code>..</code>, absolute paths, and
+            symlink escapes outside the selected workspace.
           </li>
           <li>
             <strong>Destructive resets</strong> — <code>/reset</code> needs confirmation in the app and

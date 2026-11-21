@@ -8,7 +8,5 @@
 pub mod prompts;
 pub mod schemas;
 
-pub use prompts::{
-    build_inference_system_prompt, build_inference_user_prompt, workspace_excerpt,
-};
+pub use prompts::{build_inference_system_prompt, build_inference_user_prompt, workspace_excerpt};
 pub use schemas::expected_schema_name;

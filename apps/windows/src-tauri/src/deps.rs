@@ -17,9 +17,17 @@ pub struct Dep {
 
 fn version_of(bin: &str, args: &[&str]) -> Option<(String, String)> {
     let p = env::which(bin)?;
-    let out = std::process::Command::new(&p).args(args).env("PATH", env::child_path()).output().ok()?;
-    let s = String::from_utf8_lossy(&out.stdout).to_string() + &String::from_utf8_lossy(&out.stderr);
-    Some((p.to_string_lossy().to_string(), s.lines().next().unwrap_or("").trim().to_string()))
+    let out = std::process::Command::new(&p)
+        .args(args)
+        .env("PATH", env::child_path())
+        .output()
+        .ok()?;
+    let s =
+        String::from_utf8_lossy(&out.stdout).to_string() + &String::from_utf8_lossy(&out.stderr);
+    Some((
+        p.to_string_lossy().to_string(),
+        s.lines().next().unwrap_or("").trim().to_string(),
+    ))
 }
 
 fn ollama_listening_fast() -> bool {
@@ -35,12 +43,36 @@ pub fn check(ws: &Path) -> Vec<Dep> {
     v.push(Dep { id: "claude".into(), name: "Claude Code CLI".into(), ok: claude.is_some(), required: false,
         detail: claude.as_ref().map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found".into()),
         fix: "Install Claude Code (brew install --cask claude-code) and run `claude` once to sign in. Runs use your Claude subscription or API credits; they are not free.".into() });
-    let auth = env::which("claude").and_then(|p| std::process::Command::new(p).args(["auth", "status"]).env("PATH", env::child_path()).output().ok())
+    let auth = env::which("claude")
+        .and_then(|p| {
+            std::process::Command::new(p)
+                .args(["auth", "status"])
+                .env("PATH", env::child_path())
+                .output()
+                .ok()
+        })
         .and_then(|o| serde_json::from_slice::<Value>(&o.stdout).ok());
-    let logged = auth.as_ref().and_then(|a| a.get("loggedIn")).and_then(|b| b.as_bool()).unwrap_or(false);
-    v.push(Dep { id: "claude_auth".into(), name: "Claude sign-in".into(), ok: logged, required: false,
-        detail: auth.map(|a| format!("{} via {}", if logged { "signed in" } else { "signed out" }, a.get("authMethod").and_then(|s| s.as_str()).unwrap_or("?"))).unwrap_or("unknown".into()),
-        fix: "Run `claude` in Terminal once and complete sign-in.".into() });
+    let logged = auth
+        .as_ref()
+        .and_then(|a| a.get("loggedIn"))
+        .and_then(|b| b.as_bool())
+        .unwrap_or(false);
+    v.push(Dep {
+        id: "claude_auth".into(),
+        name: "Claude sign-in".into(),
+        ok: logged,
+        required: false,
+        detail: auth
+            .map(|a| {
+                format!(
+                    "{} via {}",
+                    if logged { "signed in" } else { "signed out" },
+                    a.get("authMethod").and_then(|s| s.as_str()).unwrap_or("?")
+                )
+            })
+            .unwrap_or("unknown".into()),
+        fix: "Run `claude` in Terminal once and complete sign-in.".into(),
+    });
     let codex = version_of("codex", &["--version"]);
     let codex_cfg = env::home().join(".codex").is_dir();
     v.push(Dep {
@@ -48,7 +80,10 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         name: "OpenAI Codex CLI".into(),
         ok: codex.is_some(),
         required: false,
-        detail: codex.as_ref().map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found".into()),
+        detail: codex
+            .as_ref()
+            .map(|(p, s)| format!("{} ({})", s, p))
+            .unwrap_or("not found".into()),
         fix: "Install the Codex CLI, then connect ChatGPT from Settings → AI Providers.".into(),
     });
     v.push(Dep {
@@ -63,24 +98,34 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         },
         fix: "Use Connect in Settings to start ChatGPT sign-in for Codex.".into(),
     });
-    let openai_key =
-        crate::security::credentials::has_secret(crate::security::credentials::CredentialKind::OpenaiApi);
+    let openai_key = crate::security::credentials::has_secret(
+        crate::security::credentials::CredentialKind::OpenaiApi,
+    );
     v.push(Dep {
         id: "openai_api".into(),
         name: "OpenAI Platform API".into(),
         ok: openai_key,
         required: false,
-        detail: if openai_key { "API key in OS keychain".into() } else { "no key configured".into() },
+        detail: if openai_key {
+            "API key in OS keychain".into()
+        } else {
+            "no key configured".into()
+        },
         fix: "Add an OpenAI Platform API key in Settings → AI Providers.".into(),
     });
-    let gemini_key =
-        crate::security::credentials::has_secret(crate::security::credentials::CredentialKind::GeminiApi);
+    let gemini_key = crate::security::credentials::has_secret(
+        crate::security::credentials::CredentialKind::GeminiApi,
+    );
     v.push(Dep {
         id: "gemini".into(),
         name: "Google Gemini API".into(),
         ok: gemini_key,
         required: false,
-        detail: if gemini_key { "API key in OS keychain".into() } else { "no key configured".into() },
+        detail: if gemini_key {
+            "API key in OS keychain".into()
+        } else {
+            "no key configured".into()
+        },
         fix: "Add a Gemini API key in Settings → AI Providers.".into(),
     });
     let ollama_bin = env::which("ollama").is_some();
@@ -97,7 +142,8 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         } else {
             "not installed".into()
         },
-        fix: "Install from https://ollama.com, run `ollama serve`, then `ollama pull <model>`.".into(),
+        fix: "Install from https://ollama.com, run `ollama serve`, then `ollama pull <model>`."
+            .into(),
     });
     let any_ready = (claude.is_some() && logged)
         || (codex.is_some() && codex_cfg)
@@ -124,36 +170,86 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         },
     });
     let py = env::python();
-    v.push(Dep { id: "python".into(), name: "Python >= 3.10".into(), ok: py.is_some(), required: true,
-        detail: py.as_ref().map(|(p, s)| format!("{} ({})", s, p.display())).unwrap_or("Python >= 3.10 not found".into()),
-        fix: "Install Python 3.12+ and ensure it is on PATH.".into() });
+    v.push(Dep {
+        id: "python".into(),
+        name: "Python >= 3.10".into(),
+        ok: py.is_some(),
+        required: true,
+        detail: py
+            .as_ref()
+            .map(|(p, s)| format!("{} ({})", s, p.display()))
+            .unwrap_or("Python >= 3.10 not found".into()),
+        fix: "Install Python 3.12+ and ensure it is on PATH.".into(),
+    });
     for (id, bin, name, why) in [
         ("lualatex", "lualatex", "LuaLaTeX (CV)", "CV PDFs"),
-        ("xelatex", "xelatex", "XeLaTeX (cover letter)", "cover letter PDFs"),
+        (
+            "xelatex",
+            "xelatex",
+            "XeLaTeX (cover letter)",
+            "cover letter PDFs",
+        ),
     ] {
         let r = version_of(bin, &["--version"]);
-        v.push(Dep { id: id.into(), name: name.into(), ok: r.is_some(), required: true,
-            detail: r.map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found".into()),
-            fix: format!("Needed for {}. Install MiKTeX or TeX Live for PDF compile.
+        v.push(Dep {
+            id: id.into(),
+            name: name.into(),
+            ok: r.is_some(),
+            required: true,
+            detail: r
+                .map(|(p, s)| format!("{} ({})", s, p))
+                .unwrap_or("not found".into()),
+            fix: format!(
+                "Needed for {}. Install MiKTeX or TeX Live for PDF compile.",
+                why
+            ),
+        });
     }
     let pdft = version_of("pdftotext", &["-v"]);
-    v.push(Dep { id: "pdftotext".into(), name: "PDF text extraction".into(), ok: pdft.is_some(), required: false,
-        detail: pdft.map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found (pypdf may still work)".into()),
-        fix: "Install poppler or pip install pypdf".into() });
+    v.push(Dep {
+        id: "pdftotext".into(),
+        name: "PDF text extraction".into(),
+        ok: pdft.is_some(),
+        required: false,
+        detail: pdft
+            .map(|(p, s)| format!("{} ({})", s, p))
+            .unwrap_or("not found (pypdf may still work)".into()),
+        fix: "Install poppler or pip install pypdf".into(),
+    });
     let bun = version_of("bun", &["--version"]);
-    v.push(Dep { id: "bun".into(), name: "Bun (portal CLIs)".into(), ok: bun.is_some(), required: false,
-        detail: bun.map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not installed - /scrape falls back to WebSearch".into()),
-        fix: "Only needed for community portal CLIs: Install Bun from https://bun.sh".into() });
+    v.push(Dep {
+        id: "bun".into(),
+        name: "Bun (portal CLIs)".into(),
+        ok: bun.is_some(),
+        required: false,
+        detail: bun
+            .map(|(p, s)| format!("{} ({})", s, p))
+            .unwrap_or("not installed - /scrape falls back to WebSearch".into()),
+        fix: "Only needed for community portal CLIs: Install Bun from https://bun.sh".into(),
+    });
     let portals = ws.join(".agents/skills");
-    let n = std::fs::read_dir(&portals).map(|r| r.flatten().count()).unwrap_or(0);
-    v.push(Dep { id: "portals".into(), name: "Installed portals".into(), ok: n > 0, required: false,
-        detail: format!("{} installed", n), fix: "Use Add portal in the app (Jobs, Settings → Dependencies, or Workflows).".into() });
+    let n = std::fs::read_dir(&portals)
+        .map(|r| r.flatten().count())
+        .unwrap_or(0);
+    v.push(Dep {
+        id: "portals".into(),
+        name: "Installed portals".into(),
+        ok: n > 0,
+        required: false,
+        detail: format!("{} installed", n),
+        fix: "Use Add portal in the app (Jobs, Settings → Dependencies, or Workflows).".into(),
+    });
     v
 }
 
 pub fn upstream_version(ws: &Path) -> String {
-    let out = std::process::Command::new("git").args(["describe", "--tags", "--always"]).current_dir(ws).output();
-    let git = out.map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string()).unwrap_or_default();
+    let out = std::process::Command::new("git")
+        .args(["describe", "--tags", "--always"])
+        .current_dir(ws)
+        .output();
+    let git = out
+        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+        .unwrap_or_default();
     if !git.is_empty() {
         return git;
     }
@@ -162,13 +258,28 @@ pub fn upstream_version(ws: &Path) -> String {
 
 /// Runs an upstream deterministic tool with argv (never a shell string).
 pub fn run_tool(ws: &Path, script: &str, args: &[String]) -> Result<(i32, String, String), String> {
-    const ALLOWED: [&str; 5] = ["tools/posting_guard.py", "tools/verify_pdf.py", "tools/verify_layout.py", "tools/scrape_state.py", "tools/check_upstream_updates.py"];
+    const ALLOWED: [&str; 5] = [
+        "tools/posting_guard.py",
+        "tools/verify_pdf.py",
+        "tools/verify_layout.py",
+        "tools/scrape_state.py",
+        "tools/check_upstream_updates.py",
+    ];
     if !ALLOWED.contains(&script) {
         return Err(format!("{} is not on the app's allow-list", script));
     }
     let (py, _) = env::python().ok_or("Python >= 3.10 not found")?;
-    let out = env::command(&py, ws).arg("-I").arg(script).args(args).output().map_err(|e| e.to_string())?;
-    Ok((out.status.code().unwrap_or(-1), String::from_utf8_lossy(&out.stdout).to_string(), String::from_utf8_lossy(&out.stderr).to_string()))
+    let out = env::command(&py, ws)
+        .arg("-I")
+        .arg(script)
+        .args(args)
+        .output()
+        .map_err(|e| e.to_string())?;
+    Ok((
+        out.status.code().unwrap_or(-1),
+        String::from_utf8_lossy(&out.stdout).to_string(),
+        String::from_utf8_lossy(&out.stderr).to_string(),
+    ))
 }
 
 /// Compile a CV (lualatex) or cover letter (xelatex) in its own directory.
@@ -177,13 +288,31 @@ pub fn compile(ws: &Path, rel_tex: &str) -> Result<(bool, String), String> {
     if tex.extension().and_then(|e| e.to_str()) != Some("tex") {
         return Err("only .tex sources can be compiled here".into());
     }
-    let engine = if rel_tex.starts_with("cover_letters/") { "xelatex" } else { "lualatex" };
-    let bin = env::which(engine).ok_or(format!("{} not found - see Settings > Dependencies", engine))?;
+    let engine = if rel_tex.starts_with("cover_letters/") {
+        "xelatex"
+    } else {
+        "lualatex"
+    };
+    let bin = env::which(engine).ok_or(format!(
+        "{} not found - see Settings > Dependencies",
+        engine
+    ))?;
     let dir = tex.parent().ok_or("bad path")?;
     let name = tex.file_name().unwrap().to_string_lossy().to_string();
-    let out = env::command(&bin, dir).args(["-interaction=nonstopmode", "-halt-on-error", &name]).output().map_err(|e| e.to_string())?;
+    let out = env::command(&bin, dir)
+        .args(["-interaction=nonstopmode", "-halt-on-error", &name])
+        .output()
+        .map_err(|e| e.to_string())?;
     let log = String::from_utf8_lossy(&out.stdout).to_string();
-    let tail: String = log.lines().rev().take(25).collect::<Vec<_>>().into_iter().rev().collect::<Vec<_>>().join("\n");
+    let tail: String = log
+        .lines()
+        .rev()
+        .take(25)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+        .collect::<Vec<_>>()
+        .join("\n");
     Ok((out.status.success(), tail))
 }
 

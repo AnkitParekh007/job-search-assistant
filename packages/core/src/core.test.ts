@@ -3,7 +3,13 @@ import { canTransition, computeMetrics, lastContact, type LifecycleEvent } from 
 import { buildCodexPrompt, buildPrompt, buildPromptForProvider, WORKFLOWS } from "./workflows";
 import { PRODUCT_FEATURES, WORKFLOW_FEATURES } from "./features";
 import { providerSupportsWorkflow, unsupportedReason } from "./providers";
-import { aiProviderBlockedReason, workflowReady } from "./readiness";
+import {
+  aiProviderBlockedReason,
+  selectedProviderBlockedReason,
+  selectedProviderReady,
+  workflowBlockedReason,
+  workflowReady,
+} from "./readiness";
 import type { Dep, TrackerRow, SeenJob } from "./types";
 
 const dep = (id: string, okFlag: boolean, detail = "", fix = ""): Dep => ({
@@ -116,10 +122,32 @@ describe("readiness messaging", () => {
     expect(aiProviderBlockedReason(deps)).toMatch(/Install Claude Code \/ Codex \/ Ollama/);
   });
   it("disables scrape for inference-only providers even when ai_provider is ready", () => {
-    const deps = [dep("ai_provider", true), dep("ollama", true)];
+    const deps = [
+      dep("ai_provider", true),
+      dep("ollama", true),
+      dep("claude", true),
+      dep("claude_auth", true),
+    ];
     expect(workflowReady(deps, "ollama", "scrape")).toBe(false);
     expect(workflowReady(deps, "ollama", "rank")).toBe(true);
     expect(workflowReady(deps, "claude", "scrape")).toBe(true);
+  });
+  it("requires the exact selected provider to be ready, not merely any provider", () => {
+    const deps = [
+      dep("ai_provider", true),
+      dep("ollama", true),
+      dep("claude", true),
+      dep("claude_auth", false),
+      dep("openai_api", false),
+      dep("gemini", false),
+      dep("codex", false),
+      dep("codex_auth", false),
+    ];
+    expect(selectedProviderReady(deps, "ollama")).toBe(true);
+    expect(selectedProviderReady(deps, "claude")).toBe(false);
+    expect(workflowReady(deps, "claude", "scrape")).toBe(false);
+    expect(workflowBlockedReason(deps, "claude", "scrape")).toMatch(/Sign in to Claude/);
+    expect(selectedProviderBlockedReason(deps, "openai_api")).toMatch(/OpenAI Platform API key/);
   });
 });
 

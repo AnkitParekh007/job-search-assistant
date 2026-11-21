@@ -96,7 +96,10 @@ fn github_get_text(url: &str) -> Result<String, String> {
 fn fetch_latest_release() -> Result<Value, String> {
     let url = format!("https://api.github.com/repos/{REPO}/releases/latest");
     let release = github_get_json(&url)?;
-    if release.get("draft").and_then(|v| v.as_bool()).unwrap_or(false)
+    if release
+        .get("draft")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false)
         || release
             .get("prerelease")
             .and_then(|v| v.as_bool())
@@ -169,6 +172,20 @@ fn file_sha256(path: &Path) -> Result<String, String> {
         hasher.update(&buf[..n]);
     }
     Ok(format!("{:x}", hasher.finalize()))
+}
+
+/// Fail closed: require a matching SHA-256 entry before keeping a download.
+fn verify_sha256_or_err(path: &Path, sums_text: &str, asset_name: &str) -> Result<(), String> {
+    let expected = expected_sha256(sums_text, asset_name).ok_or_else(|| {
+        format!("SHA256SUMS.txt has no entry for {asset_name} — refusing unverified download.")
+    })?;
+    let actual = file_sha256(path)?;
+    if actual != expected {
+        return Err(format!(
+            "SHA-256 mismatch for {asset_name}. Expected {expected}, got {actual}."
+        ));
+    }
+    Ok(())
 }
 
 fn downloads_dir() -> Result<PathBuf, String> {
@@ -264,10 +281,10 @@ pub fn download_update(tag: &str, asset: &str) -> Result<Value, String> {
 
     let asset_url = asset_download_url(&release, asset)
         .ok_or_else(|| format!("Release {tag} has no asset named {asset}"))?;
-    let sums_url = asset_download_url(&release, "SHA256SUMS.txt").or_else(|| {
-        // Some publishes use SHA256SUMS-{version}.txt locally; on GitHub we standardize on SHA256SUMS.txt.
-        None
-    });
+    // Fail closed: never keep an unverified package.
+    let sums_url = asset_download_url(&release, "SHA256SUMS.txt").ok_or_else(|| {
+        format!("Release {tag} has no SHA256SUMS.txt — refusing unverified download.")
+    })?;
 
     let dest_dir = downloads_dir()?;
     fs::create_dir_all(&dest_dir).map_err(|e| e.to_string())?;
@@ -281,54 +298,33 @@ pub fn download_update(tag: &str, asset: &str) -> Result<Value, String> {
         f.sync_all().map_err(|e| e.to_string())?;
     }
 
-    let mut sha256_ok = false;
-    let mut message = format!(
-        "Downloaded to {}. Quit the app, replace your installed .app with the new one, then right-click → Open if Gatekeeper prompts. Do not disable Gatekeeper.",
-        dest.display()
-    );
+    let fail_closed = |msg: String| -> Result<Value, String> {
+        let _ = fs::remove_file(&partial);
+        Err(msg)
+    };
 
-    if let Some(sums_url) = sums_url {
-        match github_get_text(&sums_url) {
-            Ok(sums) => match expected_sha256(&sums, asset) {
-                Some(expected) => {
-                    let actual = file_sha256(&partial)?;
-                    if actual != expected {
-                        let _ = fs::remove_file(&partial);
-                        return Err(format!(
-                            "SHA-256 mismatch for {asset}. Expected {expected}, got {actual}. Partial download removed."
-                        ));
-                    }
-                    sha256_ok = true;
-                    message = format!(
-                        "Downloaded and SHA-256 verified to {}. Quit the app, replace your installed .app, then right-click → Open if Gatekeeper prompts. Do not disable Gatekeeper.",
-                        dest.display()
-                    );
-                }
-                None => {
-                    message = format!(
-                        "Downloaded to {} but SHA256SUMS.txt had no entry for {asset}. Verify manually before replacing the app.",
-                        dest.display()
-                    );
-                }
-            },
-            Err(e) => {
-                message = format!(
-                    "Downloaded to {} but could not fetch SHA256SUMS.txt ({e}). Verify manually before replacing the app.",
-                    dest.display()
-                );
-            }
+    let sums = match github_get_text(&sums_url) {
+        Ok(s) => s,
+        Err(e) => {
+            return fail_closed(format!(
+                "Could not fetch SHA256SUMS.txt ({e}). Partial download removed."
+            ));
         }
-    } else {
-        message = format!(
-            "Downloaded to {} but this release has no SHA256SUMS.txt. Verify manually before replacing the app.",
-            dest.display()
-        );
+    };
+    if let Err(e) = verify_sha256_or_err(&partial, &sums, asset) {
+        return fail_closed(format!("{e} Partial download removed."));
     }
 
     fs::rename(&partial, &dest).map_err(|e| {
         let _ = fs::remove_file(&partial);
         e.to_string()
     })?;
+
+    let message = format!(
+        "Downloaded and SHA-256 verified to {}. Quit the app, replace your installed .app, then right-click → Open if Gatekeeper prompts. Do not disable Gatekeeper.",
+        dest.display()
+    );
+    let sha256_ok = true;
 
     let current = env!("CARGO_PKG_VERSION");
     let latest = strip_v(tag);
@@ -376,5 +372,36 @@ mod tests {
         let cur = parse_version("0.1.3").unwrap();
         let lat = parse_version("v0.1.4").unwrap();
         assert!(lat > cur);
+    }
+
+    #[test]
+    fn verify_sha256_fail_closed_missing_entry() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("pkg.zip");
+        fs::write(&path, b"payload").unwrap();
+        let err = verify_sha256_or_err(&path, "deadbeef  other.zip\n", "pkg.zip").unwrap_err();
+        assert!(err.contains("no entry"), "{err}");
+    }
+
+    #[test]
+    fn verify_sha256_fail_closed_mismatch() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("pkg.zip");
+        fs::write(&path, b"payload").unwrap();
+        let actual = file_sha256(&path).unwrap();
+        let sums = "0000000000000000000000000000000000000000000000000000000000000000  pkg.zip\n";
+        let err = verify_sha256_or_err(&path, sums, "pkg.zip").unwrap_err();
+        assert!(err.contains("mismatch"), "{err}");
+        assert!(!err.contains(&actual) || err.contains("Expected"));
+    }
+
+    #[test]
+    fn verify_sha256_accepts_match() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("pkg.zip");
+        fs::write(&path, b"payload").unwrap();
+        let actual = file_sha256(&path).unwrap();
+        let sums = format!("{actual}  pkg.zip\n");
+        verify_sha256_or_err(&path, &sums, "pkg.zip").unwrap();
     }
 }

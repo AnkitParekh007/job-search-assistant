@@ -15,7 +15,8 @@ pub fn expected_schema_name(workflow: &str) -> &'static str {
 
 pub fn schema_hint(workflow: &str) -> &'static str {
     match workflow {
-        "rank" => r#"{
+        "rank" => {
+            r#"{
   "schema": "JobFitAnalysis",
   "jobs": [
     {
@@ -30,8 +31,10 @@ pub fn schema_hint(workflow: &str) -> &'static str {
   ],
   "notes": "string",
   "disclaimer": "Model output is advisory; verify against profile facts."
-}"#,
-        "apply" => r#"{
+}"#
+        }
+        "apply" => {
+            r#"{
   "schema": "ResumeSuggestions",
   "role": "string",
   "company": "string",
@@ -39,8 +42,10 @@ pub fn schema_hint(workflow: &str) -> &'static str {
   "cover_letter_outline": ["string"],
   "claims_requiring_user_confirmation": ["string"],
   "disclaimer": "Do not invent experience. Draft only."
-}"#,
-        "interview" => r#"{
+}"#
+        }
+        "interview" => {
+            r#"{
   "schema": "InterviewPreparation",
   "company": "string",
   "stage": "string",
@@ -48,32 +53,41 @@ pub fn schema_hint(workflow: &str) -> &'static str {
   "stories_to_prepare": ["string"],
   "questions_to_ask": ["string"],
   "disclaimer": "Based on provided context only."
-}"#,
-        "upskill" => r#"{
+}"#
+        }
+        "upskill" => {
+            r#"{
   "schema": "SkillGapReport",
   "priority_gaps": [{"skill":"string","evidence":"string","action":"string"}],
   "strengths": ["string"],
   "disclaimer": "Gaps are inferred from text; confirm before acting."
-}"#,
-        "setup" | "expand" => r#"{
+}"#
+        }
+        "setup" | "expand" => {
+            r#"{
   "schema": "ProfileInsights",
   "summary": "string",
   "missing_sections": ["string"],
   "suggested_next_steps": ["string"],
   "disclaimer": "Insights only; confirm before writing profile files."
-}"#,
-        "outcome" => r#"{
+}"#
+        }
+        "outcome" => {
+            r#"{
   "schema": "FollowUpDraft",
   "suggested_status": "string",
   "follow_up_email_draft": "string",
   "notes": "string",
   "disclaimer": "Never send email automatically. User must confirm status changes."
-}"#,
-        _ => r#"{
+}"#
+        }
+        _ => {
+            r#"{
   "schema": "JobSearchAssist",
   "answer": "string",
   "disclaimer": "Advisory only."
-}"#,
+}"#
+        }
     }
 }
 

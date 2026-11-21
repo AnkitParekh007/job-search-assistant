@@ -135,4 +135,17 @@ describe("readiness", () => {
     expect(aiProviderBlockedReason([dep("claude", true), dep("claude_auth", false)])).toMatch(/Claude/);
     expect(aiProviderBlockedReason([dep("claude", true), dep("claude_auth", true)])).toBeNull();
   });
+  it("gates on the exact selected provider even when another is ready", async () => {
+    const { selectedProviderReady, workflowReady } = await import("../readiness");
+    const deps = [
+      dep("ai_provider", true),
+      dep("ollama", true),
+      dep("claude", true),
+      dep("claude_auth", false),
+    ];
+    expect(selectedProviderReady(deps, "ollama")).toBe(true);
+    expect(selectedProviderReady(deps, "claude")).toBe(false);
+    expect(workflowReady(deps, "claude", "rank")).toBe(false);
+    expect(workflowReady(deps, "ollama", "rank")).toBe(true);
+  });
 });

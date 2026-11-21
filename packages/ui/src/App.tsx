@@ -52,7 +52,7 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
           <BrandMark size={collapsed ? 28 : 26} className="shrink-0" />
           {!collapsed && (
             <div className="min-w-0 leading-tight">
-              <div className="text-[13px] font-semibold text-ink truncate">AI Job <span className="text-accent-ink">Search</span></div>
+              <div className="text-[13px] font-semibold text-ink truncate">{APP_NAME}</div>
             </div>
           )}
         </div>

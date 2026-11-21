@@ -492,6 +492,12 @@ fn start_run(
         ));
     }
 
+    // Exact selected-provider readiness — never start because a different provider is ready.
+    providers::registry::ensure_ready(
+        provider,
+        state.db.get_setting("ollama_endpoint").as_deref(),
+    )?;
+
     state.runtime.start(
         app,
         state.db.clone(),

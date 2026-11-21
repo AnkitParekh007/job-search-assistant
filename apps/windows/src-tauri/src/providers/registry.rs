@@ -154,3 +154,40 @@ pub fn resolve_default(setting: Option<&str>) -> ProviderId {
         .and_then(ProviderId::parse)
         .unwrap_or(ProviderId::Claude)
 }
+
+/// Fail closed: the exact selected provider must be ready before any AI run starts.
+pub fn ensure_ready(id: ProviderId, ollama_endpoint: Option<&str>) -> Result<(), String> {
+    let status = match id {
+        ProviderId::Claude => claude_status(),
+        ProviderId::Codex => codex_status(),
+        ProviderId::OpenaiApi => super::openai_api::status(),
+        ProviderId::Gemini => super::gemini::status(),
+        ProviderId::Ollama => super::ollama::status(ollama_endpoint),
+    };
+    let ready = match id {
+        ProviderId::Claude | ProviderId::Codex => status.available && status.authenticated,
+        ProviderId::OpenaiApi | ProviderId::Gemini | ProviderId::Ollama => status.authenticated,
+    };
+    if ready {
+        Ok(())
+    } else {
+        Err(format!(
+            "{} is not ready ({}). {}",
+            status.name, status.detail, status.fix
+        ))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ensure_ready_rejects_unconfigured_openai() {
+        let err = ensure_ready(ProviderId::OpenaiApi, None).unwrap_err();
+        assert!(
+            err.contains("OpenAI") || err.contains("not ready") || err.contains("Not configured"),
+            "{err}"
+        );
+    }
+}

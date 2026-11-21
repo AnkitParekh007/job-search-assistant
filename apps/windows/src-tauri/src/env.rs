@@ -70,11 +70,24 @@ fn candidate_dirs() -> Vec<PathBuf> {
             PathBuf::from(r"C:\Windows"),
         ]);
         // MiKTeX / TeX Live common Windows locations
-        v.push(local.join("Programs").join("MiKTeX").join("miktex").join("bin").join("x64"));
+        v.push(
+            local
+                .join("Programs")
+                .join("MiKTeX")
+                .join("miktex")
+                .join("bin")
+                .join("x64"),
+        );
         v.push(PathBuf::from(r"C:\texlive\2025\bin\windows"));
         v.push(PathBuf::from(r"C:\texlive\2024\bin\windows"));
         if let Ok(pf) = std::env::var("ProgramFiles") {
-            v.push(PathBuf::from(pf.clone()).join("MiKTeX").join("miktex").join("bin").join("x64"));
+            v.push(
+                PathBuf::from(pf.clone())
+                    .join("MiKTeX")
+                    .join("miktex")
+                    .join("bin")
+                    .join("x64"),
+            );
             v.push(PathBuf::from(pf).join("Git").join("cmd"));
         }
         if let Ok(path) = std::env::var("PATH") {
@@ -111,7 +124,11 @@ fn candidate_dirs() -> Vec<PathBuf> {
             }
         }
         v.push(h.join("Library/TinyTeX/bin/universal-darwin"));
-        v.extend(["/usr/bin", "/bin", "/usr/sbin", "/sbin"].iter().map(PathBuf::from));
+        v.extend(
+            ["/usr/bin", "/bin", "/usr/sbin", "/sbin"]
+                .iter()
+                .map(PathBuf::from),
+        );
     }
 
     v

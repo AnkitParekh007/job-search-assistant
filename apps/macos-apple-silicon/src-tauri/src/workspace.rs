@@ -403,7 +403,7 @@ pub fn application_folder(ws: &Path, name: &str) -> Result<AppFolder, String> {
     })
 }
 
-/// Join a workspace-relative path, refusing absolute paths and `..`.
+/// Join a workspace-relative path, refusing absolute paths, `..`, and symlink escapes.
 pub fn safe_join(ws: &Path, rel: &str) -> Result<PathBuf, String> {
     let p = Path::new(rel);
     if p.is_absolute()
@@ -412,7 +412,47 @@ pub fn safe_join(ws: &Path, rel: &str) -> Result<PathBuf, String> {
     {
         return Err(format!("refusing path outside the workspace: {}", rel));
     }
-    Ok(ws.join(p))
+    let joined = ws.join(p);
+    let ws_root = ws.canonicalize().unwrap_or_else(|_| ws.to_path_buf());
+
+    // Walk to the deepest existing ancestor so a symlink under the workspace
+    // that points outside cannot be used to escape even for not-yet-created files.
+    let mut probe = joined.clone();
+    let mut missing = PathBuf::new();
+    loop {
+        if probe.exists() {
+            let canon = probe
+                .canonicalize()
+                .map_err(|e| format!("could not resolve {}: {}", probe.display(), e))?;
+            if !canon.starts_with(&ws_root) {
+                return Err(format!(
+                    "refusing path outside the workspace (symlink escape): {}",
+                    rel
+                ));
+            }
+            return Ok(if missing.as_os_str().is_empty() {
+                canon
+            } else {
+                canon.join(missing)
+            });
+        }
+        let Some(name) = probe.file_name() else {
+            break;
+        };
+        missing = Path::new(name).join(&missing);
+        let Some(parent) = probe.parent() else {
+            break;
+        };
+        if !parent.starts_with(ws) && parent != ws {
+            break;
+        }
+        probe = parent.to_path_buf();
+    }
+
+    if !joined.starts_with(ws) {
+        return Err(format!("refusing path outside the workspace: {}", rel));
+    }
+    Ok(joined)
 }
 
 #[derive(Serialize)]
@@ -1351,6 +1391,30 @@ mod tests {
         let d = tempfile::tempdir().unwrap();
         assert!(safe_join(d.path(), "../etc/passwd").is_err());
         assert!(safe_join(d.path(), "/etc/passwd").is_err());
+        assert!(safe_join(d.path(), "cv/main.tex").is_ok());
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn safe_join_blocks_symlink_escape() {
+        let d = tempfile::tempdir().unwrap();
+        let outside = tempfile::tempdir().unwrap();
+        fs::write(outside.path().join("secret.txt"), "leak").unwrap();
+        let leak = d.path().join("leak");
+        std::os::unix::fs::symlink(outside.path(), &leak).unwrap();
+        let err = safe_join(d.path(), "leak/secret.txt").unwrap_err();
+        assert!(
+            err.contains("symlink escape") || err.contains("outside"),
+            "{err}"
+        );
+        let err2 = safe_join(d.path(), "leak").unwrap_err();
+        assert!(
+            err2.contains("symlink escape") || err2.contains("outside"),
+            "{err2}"
+        );
+        // In-workspace path still works.
+        fs::create_dir_all(d.path().join("cv")).unwrap();
+        fs::write(d.path().join("cv/main.tex"), "x").unwrap();
         assert!(safe_join(d.path(), "cv/main.tex").is_ok());
     }
 

@@ -55,7 +55,11 @@ fn candidate_dirs() -> Vec<PathBuf> {
     }
     v.push(h.join("Library/TinyTeX/bin/universal-darwin"));
     v.push(h.join("Library/TinyTeX/bin/x86_64-darwin"));
-    v.extend(["/usr/bin", "/bin", "/usr/sbin", "/sbin"].iter().map(PathBuf::from));
+    v.extend(
+        ["/usr/bin", "/bin", "/usr/sbin", "/sbin"]
+            .iter()
+            .map(PathBuf::from),
+    );
     v
 }
 
@@ -71,7 +75,14 @@ pub fn which(name: &str) -> Option<PathBuf> {
 
 /// Interpreter >= 3.10, preferring the newest.
 pub fn python() -> Option<(PathBuf, String)> {
-    for name in ["python3.14", "python3.13", "python3.12", "python3.11", "python3.10", "python3"] {
+    for name in [
+        "python3.14",
+        "python3.13",
+        "python3.12",
+        "python3.11",
+        "python3.10",
+        "python3",
+    ] {
         if let Some(p) = which(name) {
             if let Ok(out) = Command::new(&p).arg("--version").output() {
                 let s = String::from_utf8_lossy(&out.stdout).to_string()

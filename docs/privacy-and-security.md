@@ -6,7 +6,7 @@ Summary of [`apps/macos-apple-silicon/docs/SECURITY-MODEL.md`](../apps/macos-app
 
 - **Local-first:** jobs, applications, and profile live in the workspace folder you chose.
 - **No product telemetry** and no remote app backend.
-- **No credential storage** in the app; provider / Gmail / Notion auth stay in the provider CLIs and connectors.
+- **No secrets in SQLite or the UI bundle.** Claude Code / Codex / Gmail / Notion auth stay in those CLIs and connectors. Optional OpenAI Platform and Gemini API keys you paste in Settings are stored only in the OS keychain (BYOK), never in app databases.
 - **Human approvals** for write and exec tools; no permission bypass flags.
 - **Applications are never marked applied** merely because documents were generated.
 

@@ -215,7 +215,7 @@ export default function Settings() {
     try {
       const r = await api.downloadUpdate(updateInfo.tag, updateInfo.asset);
       setUpdateInfo(r);
-      toast(r.message, r.sha256_ok === false ? "info" : "good");
+      toast(r.message, r.sha256_ok === true ? "good" : "info");
       if (r.downloaded_path) {
         try { await revealItemInDir(r.downloaded_path); } catch { /* ignore */ }
       }

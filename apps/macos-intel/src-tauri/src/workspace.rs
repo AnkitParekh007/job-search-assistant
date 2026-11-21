@@ -13,14 +13,39 @@ use std::fs;
 use std::path::{Component, Path, PathBuf};
 
 pub const TRACKER_HEADER: [&str; 14] = [
-    "date", "company", "sector", "role", "role_type", "channel", "status", "contact_person",
-    "fit_rating", "notes", "cv_file", "cover_letter_file", "source", "deadline",
+    "date",
+    "company",
+    "sector",
+    "role",
+    "role_type",
+    "channel",
+    "status",
+    "contact_person",
+    "fit_rating",
+    "notes",
+    "cv_file",
+    "cover_letter_file",
+    "source",
+    "deadline",
 ];
 pub const STATUSES: [&str; 9] = [
-    "drafted", "applied", "interview", "offer", "hired", "rejected", "no_response",
-    "offer_declined", "withdrawn",
+    "drafted",
+    "applied",
+    "interview",
+    "offer",
+    "hired",
+    "rejected",
+    "no_response",
+    "offer_declined",
+    "withdrawn",
 ];
-pub const FINAL: [&str; 5] = ["hired", "rejected", "no_response", "offer_declined", "withdrawn"];
+pub const FINAL: [&str; 5] = [
+    "hired",
+    "rejected",
+    "no_response",
+    "offer_declined",
+    "withdrawn",
+];
 
 pub fn canonical_status(s: &str) -> String {
     let t = s.trim().to_lowercase();
@@ -46,7 +71,9 @@ pub fn canonical_header(raw: &str) -> Option<&'static str> {
     let key = key.trim_matches('_');
     match key {
         // Keep aliases conservative — avoid remapping short custom columns like org/job/score/state.
-        "date" | "date_added" | "date_applied" | "applied_date" | "application_date" => Some("date"),
+        "date" | "date_added" | "date_applied" | "applied_date" | "application_date" => {
+            Some("date")
+        }
         "company" | "employer" | "organization" => Some("company"),
         "sector" | "industry" => Some("sector"),
         "role" | "job_title" | "title" | "position" => Some("role"),
@@ -106,10 +133,22 @@ pub fn tracker_path(ws: &Path) -> PathBuf {
 pub fn read_tracker(ws: &Path) -> Result<Tracker, String> {
     let p = tracker_path(ws);
     if !p.exists() {
-        return Ok(Tracker { header: TRACKER_HEADER.iter().map(|s| s.to_string()).collect(), rows: vec![], exists: false });
+        return Ok(Tracker {
+            header: TRACKER_HEADER.iter().map(|s| s.to_string()).collect(),
+            rows: vec![],
+            exists: false,
+        });
     }
-    let mut rdr = csv::ReaderBuilder::new().flexible(true).from_path(&p).map_err(|e| e.to_string())?;
-    let raw_header: Vec<String> = rdr.headers().map_err(|e| e.to_string())?.iter().map(|s| s.to_string()).collect();
+    let mut rdr = csv::ReaderBuilder::new()
+        .flexible(true)
+        .from_path(&p)
+        .map_err(|e| e.to_string())?;
+    let raw_header: Vec<String> = rdr
+        .headers()
+        .map_err(|e| e.to_string())?
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
     let header = normalize_tracker_headers(&raw_header)?;
     let mut rows = vec![];
     for (i, rec) in rdr.records().enumerate() {
@@ -122,26 +161,47 @@ pub fn read_tracker(ws: &Path) -> Result<Tracker, String> {
         }
         rows.push(TrackerRow { index: i, fields });
     }
-    Ok(Tracker { header, rows, exists: true })
+    Ok(Tracker {
+        header,
+        rows,
+        exists: true,
+    })
 }
 
 pub fn sanitize_note(s: &str) -> String {
-    s.replace([',', '"', '\n', '\r'], " ").split_whitespace().collect::<Vec<_>>().join(" ")
+    s.replace([',', '"', '\n', '\r'], " ")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<(), String> {
     let dir = path.parent().ok_or("no parent dir")?;
-    let tmp = dir.join(format!(".{}.tmp-{}", path.file_name().unwrap().to_string_lossy(), uuid::Uuid::new_v4()));
+    let tmp = dir.join(format!(
+        ".{}.tmp-{}",
+        path.file_name().unwrap().to_string_lossy(),
+        uuid::Uuid::new_v4()
+    ));
     fs::write(&tmp, bytes).map_err(|e| e.to_string())?;
     fs::rename(&tmp, path).map_err(|e| e.to_string())
 }
 
 /// Status change per `/outcome` Step 4. `expected_status` guards against a
 /// concurrent write by Claude Code between the UI read and this write.
-pub fn update_status(ws: &Path, index: usize, expected_status: &str, new_status: &str, note: &str, today: &str) -> Result<TrackerRow, String> {
+pub fn update_status(
+    ws: &Path,
+    index: usize,
+    expected_status: &str,
+    new_status: &str,
+    note: &str,
+    today: &str,
+) -> Result<TrackerRow, String> {
     let new_status = canonical_status(new_status);
     if !STATUSES.contains(&new_status.as_str()) {
-        return Err(format!("'{}' is not a canonical tracker status", new_status));
+        return Err(format!(
+            "'{}' is not a canonical tracker status",
+            new_status
+        ));
     }
     let t = read_tracker(ws)?;
     if !t.exists {
@@ -151,7 +211,10 @@ pub fn update_status(ws: &Path, index: usize, expected_status: &str, new_status:
     let row = rows.get_mut(index).ok_or("row not found")?;
     let cur = canonical_status(row.fields.get("status").map(|s| s.as_str()).unwrap_or(""));
     if cur != canonical_status(expected_status) {
-        return Err(format!("The tracker changed on disk (status is now '{}'). Reload and try again.", cur));
+        return Err(format!(
+            "The tracker changed on disk (status is now '{}'). Reload and try again.",
+            cur
+        ));
     }
     if FINAL.contains(&cur.as_str()) && cur != new_status {
         return Err(format!("'{}' is a final status; upstream never reopens a closed application. Record a new application instead.", cur));
@@ -160,21 +223,42 @@ pub fn update_status(ws: &Path, index: usize, expected_status: &str, new_status:
     // and applications/<id>/events.jsonl — never rewrite `date` on status change.
     row.fields.insert("status".into(), new_status.clone());
     let note = sanitize_note(note);
-    let entry = if note.is_empty() { format!("{} {}", today, new_status) } else { format!("{} {}", today, note) };
+    let entry = if note.is_empty() {
+        format!("{} {}", today, new_status)
+    } else {
+        format!("{} {}", today, note)
+    };
     let notes = row.fields.get("notes").cloned().unwrap_or_default();
-    row.fields.insert("notes".into(), if notes.trim().is_empty() { entry } else { format!("{}; {}", notes, entry) });
+    row.fields.insert(
+        "notes".into(),
+        if notes.trim().is_empty() {
+            entry
+        } else {
+            format!("{}; {}", notes, entry)
+        },
+    );
     let updated = row.clone();
 
-    let mut wtr = csv::WriterBuilder::new().quote_style(csv::QuoteStyle::Necessary).from_writer(vec![]);
+    let mut wtr = csv::WriterBuilder::new()
+        .quote_style(csv::QuoteStyle::Necessary)
+        .from_writer(vec![]);
     wtr.write_record(&t.header).map_err(|e| e.to_string())?;
     for r in &rows {
-        let rec: Vec<String> = t.header.iter().map(|h| r.fields.get(h).cloned().unwrap_or_default()).collect();
+        let rec: Vec<String> = t
+            .header
+            .iter()
+            .map(|h| r.fields.get(h).cloned().unwrap_or_default())
+            .collect();
         wtr.write_record(&rec).map_err(|e| e.to_string())?;
     }
     let bytes = wtr.into_inner().map_err(|e| e.to_string())?;
     atomic_write(&tracker_path(ws), &bytes)?;
 
-    let company = updated.fields.get("company").map(|s| s.as_str()).unwrap_or("");
+    let company = updated
+        .fields
+        .get("company")
+        .map(|s| s.as_str())
+        .unwrap_or("");
     let role = updated.fields.get("role").map(|s| s.as_str()).unwrap_or("");
     let event_type = match new_status.as_str() {
         "applied" => "user_confirmed_submitted",
@@ -190,7 +274,14 @@ pub fn update_status(ws: &Path, index: usize, expected_status: &str, new_status:
     let _ = append_application_event(ws, company, role, event_type, &note, today);
     // Funnel honesty: first interview step also records recruiter screen scheduled.
     if new_status == "interview" {
-        let _ = append_application_event(ws, company, role, "recruiter_screen_scheduled", &note, today);
+        let _ = append_application_event(
+            ws,
+            company,
+            role,
+            "recruiter_screen_scheduled",
+            &note,
+            today,
+        );
     }
 
     Ok(updated)
@@ -233,7 +324,12 @@ pub fn read_seen(ws: &Path) -> Result<Vec<Value>, String> {
         return Ok(vec![]);
     }
     let txt = fs::read_to_string(&p).map_err(|e| e.to_string())?;
-    let v: Value = serde_json::from_str(&txt).map_err(|e| format!("seen_jobs.json is not valid JSON ({}); it may be mid-write", e))?;
+    let v: Value = serde_json::from_str(&txt).map_err(|e| {
+        format!(
+            "seen_jobs.json is not valid JSON ({}); it may be mid-write",
+            e
+        )
+    })?;
     let mut out = vec![];
     if let Some(m) = v.get("seen").and_then(|s| s.as_object()) {
         for (k, e) in m {
@@ -249,8 +345,13 @@ pub fn read_seen(ws: &Path) -> Result<Vec<Value>, String> {
 
 /// documents/README.md "Subfolder naming".
 pub fn folder_name(company: &str, role: &str) -> String {
-    let raw = format!("{}_{}", company, role).to_lowercase().replace(' ', "_");
-    let kept: String = raw.chars().filter(|c| c.is_ascii_alphanumeric() || *c == '_').collect();
+    let raw = format!("{}_{}", company, role)
+        .to_lowercase()
+        .replace(' ', "_");
+    let kept: String = raw
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '_')
+        .collect();
     let mut out = String::new();
     for c in kept.chars() {
         if c == '_' && out.ends_with('_') {
@@ -302,12 +403,54 @@ pub fn application_folder(ws: &Path, name: &str) -> Result<AppFolder, String> {
 }
 
 /// Join a workspace-relative path, refusing absolute paths and `..`.
+/// Join a workspace-relative path, refusing absolute paths, `..`, and symlink escapes.
 pub fn safe_join(ws: &Path, rel: &str) -> Result<PathBuf, String> {
     let p = Path::new(rel);
-    if p.is_absolute() || p.components().any(|c| matches!(c, Component::ParentDir | Component::Prefix(_))) {
+    if p.is_absolute()
+        || p.components()
+            .any(|c| matches!(c, Component::ParentDir | Component::Prefix(_)))
+    {
         return Err(format!("refusing path outside the workspace: {}", rel));
     }
-    Ok(ws.join(p))
+    let joined = ws.join(p);
+    let ws_root = ws.canonicalize().unwrap_or_else(|_| ws.to_path_buf());
+
+    let mut probe = joined.clone();
+    let mut missing = PathBuf::new();
+    loop {
+        if probe.exists() {
+            let canon = probe
+                .canonicalize()
+                .map_err(|e| format!("could not resolve {}: {}", probe.display(), e))?;
+            if !canon.starts_with(&ws_root) {
+                return Err(format!(
+                    "refusing path outside the workspace (symlink escape): {}",
+                    rel
+                ));
+            }
+            return Ok(if missing.as_os_str().is_empty() {
+                canon
+            } else {
+                canon.join(missing)
+            });
+        }
+        let Some(name) = probe.file_name() else {
+            break;
+        };
+        missing = Path::new(name).join(&missing);
+        let Some(parent) = probe.parent() else {
+            break;
+        };
+        if !parent.starts_with(ws) && parent != ws {
+            break;
+        }
+        probe = parent.to_path_buf();
+    }
+
+    if !joined.starts_with(ws) {
+        return Err(format!("refusing path outside the workspace: {}", rel));
+    }
+    Ok(joined)
 }
 
 #[derive(Serialize)]
@@ -335,7 +478,11 @@ pub fn read_profile(ws: &Path) -> Vec<ProfileFile> {
         .filter_map(|rel| {
             let content = fs::read_to_string(ws.join(rel)).ok()?;
             let placeholders = content.matches("[YOUR_").count();
-            Some(ProfileFile { path: rel.to_string(), content, placeholders })
+            Some(ProfileFile {
+                path: rel.to_string(),
+                content,
+                placeholders,
+            })
         })
         .collect()
 }
@@ -674,7 +821,11 @@ pub fn add_tracker_row(
         return Err(format!("'{}' is not a canonical tracker status", status));
     }
     fields.insert("status".into(), status.clone());
-    if fields.get("date").map(|s| s.trim().is_empty()).unwrap_or(true) {
+    if fields
+        .get("date")
+        .map(|s| s.trim().is_empty())
+        .unwrap_or(true)
+    {
         fields.insert("date".into(), today.to_string());
     }
 
@@ -694,10 +845,7 @@ pub fn add_tracker_row(
         fields: {
             let mut complete = BTreeMap::new();
             for h in &header {
-                complete.insert(
-                    h.clone(),
-                    fields.get(h).cloned().unwrap_or_default(),
-                );
+                complete.insert(h.clone(), fields.get(h).cloned().unwrap_or_default());
             }
             // Preserve any extra keys the caller passed that aren't in the header.
             for (k, v) in &fields {
@@ -829,7 +977,10 @@ pub fn upsert_seen_job(ws: &Path, job: Value) -> Result<Value, String> {
         .and_then(|e| e.get("first_seen"))
         .cloned();
 
-    let mut entry = seen_obj.get(&key).cloned().unwrap_or_else(|| serde_json::json!({}));
+    let mut entry = seen_obj
+        .get(&key)
+        .cloned()
+        .unwrap_or_else(|| serde_json::json!({}));
     let entry_obj = entry
         .as_object_mut()
         .ok_or("existing seen job entry is not an object")?;
@@ -974,13 +1125,15 @@ pub fn ensure_posting_guard(ws: &Path) -> Result<bool, String> {
         return Err(format!("{} is not a folder", ws.display()));
     }
     fs::create_dir_all(ws.join("tools")).map_err(|e| format!("mkdir tools: {e}"))?;
-    fs::write(&script, SCAFFOLD_POSTING_GUARD).map_err(|e| format!("write posting_guard.py: {e}"))?;
+    fs::write(&script, SCAFFOLD_POSTING_GUARD)
+        .map_err(|e| format!("write posting_guard.py: {e}"))?;
     Ok(true)
 }
 
 pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
     if !ws.exists() {
-        fs::create_dir_all(ws).map_err(|e| format!("could not create folder {}: {}", ws.display(), e))?;
+        fs::create_dir_all(ws)
+            .map_err(|e| format!("could not create folder {}: {}", ws.display(), e))?;
     }
     if !ws.is_dir() {
         return Err(format!("{} is not a folder", ws.display()));
@@ -1030,7 +1183,11 @@ pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
     }
 
     write_new("meta.json", SCAFFOLD_META_JSON, &mut created)?;
-    write_new("tools/posting_guard.py", SCAFFOLD_POSTING_GUARD, &mut created)?;
+    write_new(
+        "tools/posting_guard.py",
+        SCAFFOLD_POSTING_GUARD,
+        &mut created,
+    )?;
     write_new("CLAUDE.md", SCAFFOLD_CLAUDE_MD, &mut created)?;
     write_new("AGENTS.md", SCAFFOLD_AGENTS_MD, &mut created)?;
     write_new(
@@ -1038,7 +1195,11 @@ pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
         &(TRACKER_HEADER.join(",") + "\n"),
         &mut created,
     )?;
-    write_new("job_scraper/seen_jobs.json", "{\"seen\":{}}\n", &mut created)?;
+    write_new(
+        "job_scraper/seen_jobs.json",
+        "{\"seen\":{}}\n",
+        &mut created,
+    )?;
     write_new(
         ".claude/skills/job-application-assistant/01-candidate-profile.md",
         SCAFFOLD_PROFILE_STUB,
@@ -1079,9 +1240,17 @@ pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
         SCAFFOLD_SEARCH_QUERIES,
         &mut created,
     )?;
-    write_new(".claude/commands/setup.md", SCAFFOLD_SETUP_CMD, &mut created)?;
+    write_new(
+        ".claude/commands/setup.md",
+        SCAFFOLD_SETUP_CMD,
+        &mut created,
+    )?;
     write_new(".claude/commands/rank.md", SCAFFOLD_RANK_CMD, &mut created)?;
-    write_new(".claude/commands/apply.md", SCAFFOLD_APPLY_CMD, &mut created)?;
+    write_new(
+        ".claude/commands/apply.md",
+        SCAFFOLD_APPLY_CMD,
+        &mut created,
+    )?;
 
     Ok(created)
 }
@@ -1099,20 +1268,37 @@ mod tests {
 
     #[test]
     fn folder_naming_matches_upstream_rule() {
-        assert_eq!(folder_name("Novo Nordisk A/S", "ML Engineer"), "novo_nordisk_as_ml_engineer");
-        assert_eq!(folder_name("ClickUp", "Staff Frontend Engineer"), "clickup_staff_frontend_engineer");
+        assert_eq!(
+            folder_name("Novo Nordisk A/S", "ML Engineer"),
+            "novo_nordisk_as_ml_engineer"
+        );
+        assert_eq!(
+            folder_name("ClickUp", "Staff Frontend Engineer"),
+            "clickup_staff_frontend_engineer"
+        );
         assert_eq!(folder_name("  __", "!!"), "");
     }
 
     #[test]
     fn status_update_round_trips_and_preserves_columns() {
         let d = ws_with_tracker(&format!("{}2026-11-01,Acme,,Dev,,online,drafted,,80,first note,cv/a.tex,cover_letters/a.tex,https://x.test/1,2026-12-01\n", H));
-        let r = update_status(d.path(), 0, "drafted", "applied", "sent via portal, today", "2026-11-19").unwrap();
+        let r = update_status(
+            d.path(),
+            0,
+            "drafted",
+            "applied",
+            "sent via portal, today",
+            "2026-11-19",
+        )
+        .unwrap();
         assert_eq!(r.fields["status"], "applied");
         // Original application date must be preserved (BUG-04).
         assert_eq!(r.fields["date"], "2026-11-01");
         assert_eq!(r.fields["deadline"], "2026-12-01");
-        assert_eq!(r.fields["notes"], "first note; 2026-11-19 sent via portal today");
+        assert_eq!(
+            r.fields["notes"],
+            "first note; 2026-11-19 sent via portal today"
+        );
         let t = read_tracker(d.path()).unwrap();
         assert_eq!(t.rows[0].fields["cv_file"], "cv/a.tex");
         assert_eq!(t.rows[0].fields["source"], "https://x.test/1");
@@ -1158,10 +1344,37 @@ mod tests {
     }
 
     #[test]
+    #[cfg(unix)]
+    fn safe_join_blocks_symlink_escape() {
+        let d = tempfile::tempdir().unwrap();
+        let outside = tempfile::tempdir().unwrap();
+        fs::write(outside.path().join("secret.txt"), "leak").unwrap();
+        let leak = d.path().join("leak");
+        std::os::unix::fs::symlink(outside.path(), &leak).unwrap();
+        let err = safe_join(d.path(), "leak/secret.txt").unwrap_err();
+        assert!(
+            err.contains("symlink escape") || err.contains("outside"),
+            "{err}"
+        );
+        let err2 = safe_join(d.path(), "leak").unwrap_err();
+        assert!(
+            err2.contains("symlink escape") || err2.contains("outside"),
+            "{err2}"
+        );
+        fs::create_dir_all(d.path().join("cv")).unwrap();
+        fs::write(d.path().join("cv/main.tex"), "x").unwrap();
+        assert!(safe_join(d.path(), "cv/main.tex").is_ok());
+    }
+
+    #[test]
     fn seen_jobs_parse_and_bad_json_reported() {
         let d = tempfile::tempdir().unwrap();
         fs::create_dir_all(d.path().join("job_scraper")).unwrap();
-        fs::write(d.path().join("job_scraper/seen_jobs.json"), r#"{"seen":{"k1":{"title":"T","company":"C","fit":"high"}}}"#).unwrap();
+        fs::write(
+            d.path().join("job_scraper/seen_jobs.json"),
+            r#"{"seen":{"k1":{"title":"T","company":"C","fit":"high"}}}"#,
+        )
+        .unwrap();
         let v = read_seen(d.path()).unwrap();
         assert_eq!(v[0]["key"], "k1");
         fs::write(d.path().join("job_scraper/seen_jobs.json"), "{\"seen\":").unwrap();
@@ -1186,11 +1399,18 @@ mod tests {
         assert!(d.path().join(".claude/commands").is_dir());
         assert!(d.path().join("job_search_tracker.csv").exists());
         let again = ensure_workspace(d.path()).unwrap();
-        assert!(again.is_empty(), "second pass must not overwrite: {:?}", again);
+        assert!(
+            again.is_empty(),
+            "second pass must not overwrite: {:?}",
+            again
+        );
         let original = fs::read_to_string(d.path().join("CLAUDE.md")).unwrap();
         fs::write(d.path().join("CLAUDE.md"), "custom").unwrap();
         let _ = ensure_workspace(d.path()).unwrap();
-        assert_eq!(fs::read_to_string(d.path().join("CLAUDE.md")).unwrap(), "custom");
+        assert_eq!(
+            fs::read_to_string(d.path().join("CLAUDE.md")).unwrap(),
+            "custom"
+        );
         assert!(original.contains("[YOUR_NAME]"));
     }
 
@@ -1225,11 +1445,7 @@ mod tests {
     fn migrate_backs_up_and_is_idempotent() {
         let d = tempfile::tempdir().unwrap();
         ensure_workspace(d.path()).unwrap();
-        fs::write(
-            d.path().join("CLAUDE.md"),
-            "# custom profile\n",
-        )
-        .unwrap();
+        fs::write(d.path().join("CLAUDE.md"), "# custom profile\n").unwrap();
         let mut fields = BTreeMap::new();
         fields.insert("company".into(), "Beta".into());
         fields.insert("role".into(), "Eng".into());
@@ -1240,7 +1456,11 @@ mod tests {
         assert_eq!(first["schema_version"], 2);
         assert_eq!(first["applications_written"], 1);
         let backup = first["backup"].as_str().unwrap();
-        assert!(d.path().join(backup).join("job_search_tracker.csv").is_file());
+        assert!(d
+            .path()
+            .join(backup)
+            .join("job_search_tracker.csv")
+            .is_file());
         assert!(d.path().join(backup).join("CLAUDE.md").is_file());
         assert!(d
             .path()

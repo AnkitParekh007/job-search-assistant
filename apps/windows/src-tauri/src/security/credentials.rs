@@ -89,8 +89,14 @@ mod tests {
 
     #[test]
     fn parse_kinds() {
-        assert_eq!(CredentialKind::parse("openai_api"), Some(CredentialKind::OpenaiApi));
-        assert_eq!(CredentialKind::parse("gemini"), Some(CredentialKind::GeminiApi));
+        assert_eq!(
+            CredentialKind::parse("openai_api"),
+            Some(CredentialKind::OpenaiApi)
+        );
+        assert_eq!(
+            CredentialKind::parse("gemini"),
+            Some(CredentialKind::GeminiApi)
+        );
         assert!(CredentialKind::parse("codex").is_none());
     }
 
