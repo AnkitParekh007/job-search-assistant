@@ -6,8 +6,8 @@ import { PAGE_SEO } from "../lib/pages";
 import { applySeo } from "../lib/seo";
 import { GITHUB_REPO } from "../lib/site";
 
-/** Hardcoded from audit-reports/production-readiness/evidence/GATE-B-BENCHMARK-20261121.json (2026-11-21). */
-const EVIDENCE_PATH = "audit-reports/production-readiness/evidence/GATE-B-BENCHMARK-20261121.json";
+/** Hardcoded synthetic Gate B snapshot (2026-11-21). Source of truth: packages/core ATS benchmark suite. */
+const EVIDENCE_REF = "packages/core/src/ats (runBenchmark synthetic corpus)";
 const SYNTHETIC_RESULT = [
   ["Suite result (ok)", "true"],
   ["Name extracted (nameOk)", "true"],
@@ -100,8 +100,8 @@ export function BenchmarksPage() {
             <strong>This is NOT a universal ATS pass rate and NOT recruiter outcomes.</strong>
             <p>
               It is one synthetic document pair, consented-by-construction, with no real candidate data. It says
-              nothing about any employer's ATS, interview rates or hiring results. Evidence file:{" "}
-              <a href={`${GITHUB_REPO}/blob/main/${EVIDENCE_PATH}`} rel="noopener"><code>{EVIDENCE_PATH}</code></a>.
+              nothing about any employer's ATS, interview rates or hiring results. Re-run locally via{" "}
+              <a href={`${GITHUB_REPO}/tree/main/packages/core/src/ats`} rel="noopener"><code>{EVIDENCE_REF}</code></a>.
             </p>
           </div>
         </section>

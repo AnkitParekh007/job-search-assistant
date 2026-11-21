@@ -25,3 +25,24 @@ jobs:
         run: npm run build:features
       - name: Test Apple Silicon shell
         run: npm run test -w ai-job-search-macos-apple-silicon
+
+  # Advisory only — Tauri trees often need OS GUI deps; never block merge on this.
+  rust-platform-trees:
+    name: cargo check Intel + Windows trees (advisory)
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            crate: apps/macos-intel/src-tauri
+          - os: windows-latest
+            crate: apps/windows/src-tauri
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: cargo check
+        working-directory: ${{ matrix.crate }}
+        run: cargo check --locked
+        continue-on-error: true

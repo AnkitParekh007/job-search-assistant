@@ -195,7 +195,7 @@ export function DocsInstall() {
           Download {RELEASE_TAG} for Apple Silicon, or build Intel/Windows (and Apple Silicon) from source.
         </p>
 
-        <h2>Download packages ({RELEASE_TAG})</h2>
+        <h2>Download packages — Apple Silicon ({RELEASE_TAG})</h2>
         <p>
           Prebuilt packages ship on{" "}
           <a href={RELEASE_TAG_URL} rel="noopener">
@@ -424,8 +424,14 @@ export function DocsProviders() {
                 <td>
                   OpenAI API / Gemini / Ollama
                 </td>
-                <td>Stubs only — not runnable yet</td>
-                <td>Shown as planned in Settings</td>
+                <td>
+                  Structured inference (rank / apply drafts / interview / upskill) — not portal scrape or agentic tools.
+                  Live verification status varies; see Settings and{" "}
+                  <code>docs/providers/08-test-evidence.md</code>
+                </td>
+                <td>
+                  API key in OS keychain (OpenAI / Gemini) or local <code>ollama serve</code>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -434,9 +440,10 @@ export function DocsProviders() {
         <h2>Settings → AI Providers</h2>
         <ul>
           <li>
-            Set the <strong>default provider</strong> (<code>claude</code> or <code>codex</code>).
+            Set the <strong>default provider</strong> (<code>claude</code>, <code>codex</code>,{" "}
+            <code>openai_api</code>, <code>gemini</code>, or <code>ollama</code>).
           </li>
-          <li>Optional Claude model override (opus / sonnet / haiku) and Codex model id.</li>
+          <li>Optional per-provider model overrides in Settings.</li>
           <li>Resumed runs stick to the session&apos;s stored provider — no silent switch mid-run.</li>
           <li>The app does not store API keys in SQLite or the UI bundle.</li>
         </ul>
@@ -471,8 +478,9 @@ export function DocsProviders() {
         </div>
 
         <div className="docs-callout">
-          <strong>Platform note.</strong> The full Rust provider runtime ships on Apple Silicon today. Intel
-          Mac and Windows clients include UI stubs; porting the providers module is on the roadmap.
+          <strong>Platform note.</strong> The full Rust provider runtime and published developer-preview ZIP
+          ship on Apple Silicon today. Intel Mac and Windows are build-from-source until native installers
+          are smoke-verified — they are not offered as downloadable installers.
         </div>
       </article>
       <Pager

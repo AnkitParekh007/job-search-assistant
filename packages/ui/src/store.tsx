@@ -113,6 +113,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         toast(unsupportedReason(provider, workflow) || "Unsupported workflow for this provider", "bad");
         return null;
       }
+      // Cloud / subscription providers may spend credits — confirm before starting (#20).
+      // Ollama stays local by default and skips this prompt.
+      if (!resume && provider !== "ollama") {
+        const label =
+          provider === "openai_api" ? "OpenAI Platform API"
+          : provider === "gemini" ? "Google Gemini"
+          : provider === "codex" ? "OpenAI Codex"
+          : provider === "claude" ? "Claude Code"
+          : provider;
+        const ok = window.confirm(
+          `${label} usage may be billed to your account or subscription. Continue with this ${workflow} run?`,
+        );
+        if (!ok) {
+          toast("Cancelled — no provider call was started.", "info");
+          return null;
+        }
+      }
       // Prefer the session's original provider when resuming — never silent-switch engines.
       const resumeProvider = resume
         ? (runs.find((x) => x.session_id === resume)?.provider || undefined)

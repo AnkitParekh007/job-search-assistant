@@ -1,37 +1,41 @@
 # Test Evidence
 
-Date: 2026-11-20  
-Branch: `feat/complete-multi-provider-runtime`
+Date: 2026-11-21  
+Branch: `fix/issues-17-20-acceptance`
 
 ## Commands run
 
 | Command | Result |
 |---------|--------|
-| `npm run test:core` | **9 passed** |
-| `cargo test` (macos-apple-silicon) | **27 passed** |
-| `cargo fmt --all -- --check` | Pass |
-| `cargo clippy --all-targets -- -D warnings` | Pass (with `clippy.toml` arg threshold) |
+| `npm run test:core` | See CI / local run on this branch |
+| `cargo test` (macos-apple-silicon `workspace` tracker header tests) | See local run on this branch |
+| `cargo fmt` / `clippy` | As available in CI |
 
-## New Rust unit coverage
+## New / updated coverage (this branch)
 
-- OpenAI SSE delta parsing
-- Responses output text extraction
-- Ollama NDJSON chunk parsing / tags / endpoint SSRF
-- Gemini URL encoding / generateContent path
-- Inference JSON extraction + schema validation
-- Credential kind parse + redaction
-- Workspace excerpt builder
+- Tracker CSV human-header aliases → canonical keys; missing Status rejected
+- Empty/unknown tracker status no longer counts as Submitted (`computeMetrics`)
+- Studio “Evaluate fit with AI” gated on `aiProviderReady`
+- `ai_provider` dep includes OpenAI API keychain, Gemini keychain, and Ollama service readiness
+- Billable confirm before OpenAI API / Gemini workflow starts
+- Settings shows live / unit / untested evidence chips (`PROVIDER_EVIDENCE`)
 
 ## Live provider tests
 
-| Provider | Live result |
-|----------|-------------|
-| Claude Code | Not re-run in this session (adapter preserved) |
-| OpenAI Codex | **Blocked** — CLI not installed |
-| OpenAI API | **Blocked** — no Platform API key (by policy) |
-| Gemini | **Blocked** — CLI not installed; no API key requested |
-| Ollama | **Blocked** — `ollama` binary found; service not listening on `:11434` |
+| Provider | Live result | Notes |
+|----------|-------------|-------|
+| Claude Code | **Prior live evidence preserved** (adapter + Gate A acceptance path) | Marked `live` in Settings |
+| OpenAI Codex | **Blocked** — CLI not installed / not live-probed this session | Marked `untested` |
+| OpenAI API | **Unit only** — parsers + keychain path; no Platform API key used | Marked `unit` |
+| Gemini | **Unit only** — request builders; no API key used | Marked `unit` |
+| Ollama | **Blocked** unless `ollama serve` is running with a pulled model | Marked `untested` until a live probe is recorded |
 
 ## Mock vs live
 
-CI and agent environments use mock/unit tests only. No paid API calls.
+CI and agent environments use mock/unit tests by default. No paid API calls without an explicit user confirm in the app. Label anything not live-probed as untested or unit-only — never “Ready for all workflows.”
+
+## Honesty rules
+
+- Installed ≠ signed in ≠ workflow-capable
+- Inference providers cannot scrape portals or run agentic tool loops
+- Do not claim live verification without a dated row in this file

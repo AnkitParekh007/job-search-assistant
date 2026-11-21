@@ -30,6 +30,14 @@ fn version_of(bin: &str, args: &[&str]) -> Option<(String, String)> {
     ))
 }
 
+/// Sub-second loopback check so deps refresh does not stall on a dead Ollama.
+fn ollama_listening_fast() -> bool {
+    use std::net::{SocketAddr, TcpStream};
+    use std::time::Duration;
+    let addr = SocketAddr::from(([127, 0, 0, 1], 11434));
+    TcpStream::connect_timeout(&addr, Duration::from_millis(200)).is_ok()
+}
+
 pub fn check(ws: &Path) -> Vec<Dep> {
     let mut v = vec![];
     let claude = version_of("claude", &["--version"]);
@@ -91,25 +99,79 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         },
         fix: "Use Connect in Settings to start ChatGPT sign-in for Codex.".into(),
     });
-    // Installed ≠ authenticated. Require at least one provider that can actually run.
-    let any_ready = (claude.is_some() && logged) || (codex.is_some() && codex_cfg);
+    let openai_key = crate::security::credentials::has_secret(
+        crate::security::credentials::CredentialKind::OpenaiApi,
+    );
+    v.push(Dep {
+        id: "openai_api".into(),
+        name: "OpenAI Platform API".into(),
+        ok: openai_key,
+        required: false,
+        detail: if openai_key {
+            "API key in OS keychain".into()
+        } else {
+            "no key configured".into()
+        },
+        fix: "Add an OpenAI Platform API key in Settings → AI Providers (separate from ChatGPT / Codex).".into(),
+    });
+    let gemini_key = crate::security::credentials::has_secret(
+        crate::security::credentials::CredentialKind::GeminiApi,
+    );
+    v.push(Dep {
+        id: "gemini".into(),
+        name: "Google Gemini API".into(),
+        ok: gemini_key,
+        required: false,
+        detail: if gemini_key {
+            "API key in OS keychain".into()
+        } else {
+            "no key configured".into()
+        },
+        fix: "Add a Gemini API key in Settings → AI Providers.".into(),
+    });
+    // Fast path only — avoid a multi-second HTTP probe on every deps refresh.
+    // Settings → AI Providers still runs the full Ollama status probe.
+    let ollama_bin = env::which("ollama").is_some();
+    let ollama_up = ollama_listening_fast();
+    v.push(Dep {
+        id: "ollama".into(),
+        name: "Ollama".into(),
+        ok: ollama_up,
+        required: false,
+        detail: if ollama_up {
+            "service listening on 127.0.0.1:11434".into()
+        } else if ollama_bin {
+            "installed but service not reachable — run `ollama serve`".into()
+        } else {
+            "not installed".into()
+        },
+        fix: "Install from https://ollama.com, run `ollama serve`, then `ollama pull <model>`."
+            .into(),
+    });
+    // Installed ≠ authenticated. Any configured provider that can actually run counts.
+    let any_ready = (claude.is_some() && logged)
+        || (codex.is_some() && codex_cfg)
+        || openai_key
+        || gemini_key
+        || ollama_up;
+    let any_cli = claude.is_some() || codex.is_some() || ollama_bin;
     v.push(Dep {
         id: "ai_provider".into(),
         name: "At least one AI provider".into(),
         ok: any_ready,
         required: true,
         detail: if any_ready {
-            "At least one provider is installed and signed in".into()
-        } else if claude.is_some() || codex.is_some() {
-            "Provider CLI found but not signed in — open Settings → AI Providers".into()
+            "At least one provider is configured and ready for its supported workflows".into()
+        } else if any_cli || openai_key || gemini_key {
+            "A provider is installed or partially configured — finish sign-in / key setup in Settings → AI Providers".into()
         } else {
-            "neither Claude Code nor Codex CLI found".into()
+            "No AI provider ready (Claude Code, Codex, OpenAI API, Gemini, or Ollama)".into()
         },
-        fix: if claude.is_some() || codex.is_some() {
-            "Sign in to your AI account from Settings → AI Providers (installed is not the same as ready)."
+        fix: if any_cli || openai_key || gemini_key {
+            "Finish provider setup in Settings → AI Providers (installed is not the same as ready)."
                 .into()
         } else {
-            "Install Claude Code and/or the Codex CLI, then sign in and choose a default provider in Settings."
+            "Install Claude Code / Codex / Ollama, or add an OpenAI / Gemini API key in Settings, then choose a default provider."
                 .into()
         },
     });
@@ -183,8 +245,17 @@ pub fn upstream_version(ws: &Path) -> String {
         .args(["describe", "--tags", "--always"])
         .current_dir(ws)
         .output();
-    out.map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
-        .unwrap_or_default()
+    let git = out
+        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+        .unwrap_or_default();
+    if !git.is_empty() {
+        return git;
+    }
+    // Non-git / synthetic workspaces: surface schema_version from meta.json (CA-P2-01).
+    match crate::workspace::read_meta_schema_version(ws) {
+        Some(v) => format!("schema {v}"),
+        None => "no version (not a git checkout)".into(),
+    }
 }
 
 /// Runs an upstream deterministic tool with argv (never a shell string).

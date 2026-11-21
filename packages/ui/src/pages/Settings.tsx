@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { CircleCheck, CircleX, FolderOpen, KeyRound, Loader2, PlugZap, RefreshCw, Trash2, Zap } from "lucide-react";
 import { api } from "@ai-job-search/runtime";
 import type { ProviderStatus } from "@ai-job-search/core";
-import { PROVIDER_LABEL, PROVIDER_META, providerUiStatus, type ProviderId } from "@ai-job-search/core";
+import { PROVIDER_LABEL, PROVIDER_META, providerEvidenceLabel, providerUiStatus, type ProviderId } from "@ai-job-search/core";
 import { useStore } from "../store";
 import { PageHeader } from "../components/ui";
 import { DepFixActions } from "../components/DepFixActions";
@@ -212,7 +212,7 @@ export default function Settings() {
         <div className="text-ink-2 text-[12.5px] mb-3">Any local folder you choose. Missing starter files (including <span className="font-mono">CLAUDE.md</span>) are created automatically; existing files stay authoritative. The app keeps only run history and preferences in its own database.</div>
         <div className="flex gap-2"><input className="input flex-1 font-mono text-[12px]" value={path} onChange={(e) => setPath(e.target.value)} /><button className="btn" onClick={browse}><FolderOpen size={14} />Choose…</button><button className="btn btn-primary" onClick={saveWs} disabled={!path.trim() || path === ws?.path}>Switch</button></div>
         <div className="grid grid-cols-2 gap-2 mt-3 text-[12.5px]">
-          <div className="flex justify-between border-b border-line py-1"><span className="text-ink-3">Workspace version</span><span className="font-mono">{ws?.upstream_version || "?"}</span></div>
+          <div className="flex justify-between border-b border-line py-1"><span className="text-ink-3">Workspace version</span><span className="font-mono">{ws?.upstream_version?.trim() || "no version (not a git checkout)"}</span></div>
           <div className="flex justify-between border-b border-line py-1 gap-2"><span className="text-ink-3">App data</span><button className="font-mono truncate text-accent-ink" onClick={() => ws && revealItemInDir(ws.data_dir)}>{ws?.data_dir}</button></div>
         </div>
         <div className="flex gap-2 mt-3"><button className="btn" onClick={() => ws && revealItemInDir(ws.path)}><FolderOpen size={14} />Reveal workspace</button></div>
@@ -240,6 +240,7 @@ export default function Settings() {
                       {meta?.experimental && <span className="chip bg-sunken text-ink-3">Experimental</span>}
                       {selected && <span className="chip bg-accent-soft text-accent-ink">Default</span>}
                       {statusChip(p)}
+                      <span className="chip bg-sunken text-ink-3">{providerEvidenceLabel(p.id)}</span>
                       {meta?.local ? <span className="chip bg-sunken text-ink-3">Local</span> : <span className="chip bg-sunken text-ink-3">Cloud</span>}
                     </div>
                     <div className="text-[12.5px] text-ink-2 mt-1 selectable">{accountDetail[p.id] || p.detail}</div>
