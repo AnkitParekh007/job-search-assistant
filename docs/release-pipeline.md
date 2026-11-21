@@ -6,9 +6,9 @@ Downloadable packages are published as GitHub Release assets and linked from the
 
 | Item | Value |
 |------|-------|
-| Tag / version | `v0.1.2-beta` / `0.1.2-beta` |
+| Tag / version | `v0.1.2` / `0.1.2` |
 | Channel | **Developer preview** — ad-hoc signed, not notarized |
-| Native asset (Phase A) | `AI-Job-Search-0.1.2-beta-macos-arm64.zip` |
+| Native asset (Phase A) | `AI-Job-Search-0.1.2-macos-arm64.zip` |
 | Site constants | `RELEASE_TAG` / `RELEASE_VERSION` in `market-site/src/lib/releases.ts` |
 | Auto-publish | **Off** — GitHub uploads require `workflow_dispatch` + `publish_assets=true` + `RELEASE_PUBLISH_APPROVED=1` |
 
@@ -67,7 +67,7 @@ Users may need **right-click → Open**. Do not instruct users to disable Gateke
 
 ## Explicit non-goals (Phase A)
 
-- Overwriting `v0.1.2-beta` without human approval  
+- Overwriting `v0.1.2` without human approval  
 - Claiming notarized or Developer ID–signed installers  
 - Shipping source trees as platform “installers”  
 - Apple Developer Program enrollment / paid certificates  

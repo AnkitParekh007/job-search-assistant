@@ -249,7 +249,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 ### Key limitations
 
 - Primary support target is **macOS Apple Silicon**.
-- GitHub Release `v0.1.2-beta` is a **developer preview** (Apple Silicon ad-hoc `.app`). Notarized installers are not published. Source archives are no longer packaged as native installers.
+- GitHub Release `v0.1.2` is a **developer preview** (Apple Silicon ad-hoc `.app`). Notarized installers are not published. Source archives are no longer packaged as native installers.
 - Does **not** auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
 

@@ -1,8 +1,8 @@
-# Packaging status — Phase A developer preview (`0.1.2-beta`)
+# Packaging status — Phase A developer preview (`0.1.2`)
 
 | Item | Status |
 |------|--------|
-| App version | `0.1.2-beta` (package.json · tauri · Cargo · UI · market-site aligned) |
+| App version | `0.1.2` (package.json · tauri · Cargo · UI · market-site aligned) |
 | Channel | **Developer preview** |
 | Gate A | Verified job-tracking (Apple Silicon smoke) |
 | Gate B | Local ATS helpers evidence-backed (synthetic only — not a universal pass rate) |
@@ -10,7 +10,7 @@
 | Notarization | Not done — optional scripts ready for Phase B |
 | Auto-update | Disabled |
 | Native packaging | Source-archive fallbacks **removed**; incomplete artifacts refused |
-| GitHub asset publish | **Gated** — will not overwrite `v0.1.2-beta` without approval |
+| GitHub asset publish | **Gated** — will not overwrite `v0.1.2` without approval |
 | Artifact (local) | `apps/macos-apple-silicon/.../AI Job Search.app` after preview build |
 
 ## Claims allowed
