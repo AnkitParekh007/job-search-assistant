@@ -190,3 +190,25 @@ export function providerUiStatus(p: ProviderStatus): string {
   if (p.authenticated && p.available) return "Ready";
   return "Unavailable";
 }
+
+/**
+ * Live end-to-end verification against a real provider account/service.
+ * Unit/mock coverage alone is not "live". Keep in sync with
+ * `docs/providers/08-test-evidence.md`.
+ */
+export type ProviderEvidenceLevel = "live" | "unit" | "untested";
+
+export const PROVIDER_EVIDENCE: Record<ProviderId, ProviderEvidenceLevel> = {
+  claude: "live",
+  codex: "untested",
+  openai_api: "unit",
+  gemini: "unit",
+  ollama: "untested",
+};
+
+export function providerEvidenceLabel(id: string): string {
+  const level = PROVIDER_EVIDENCE[id as ProviderId];
+  if (level === "live") return "Live verified";
+  if (level === "unit") return "Unit-tested only";
+  return "Live untested";
+}

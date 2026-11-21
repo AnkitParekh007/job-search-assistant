@@ -186,6 +186,35 @@ jobs:
             dist-release/SHA256SUMS.txt
           if-no-files-found: error
 
+  # Gate C proxies — advisory compile only; never gate publish or treat as installers.
+  macos-intel-check:
+    name: cargo check macOS Intel tree (advisory)
+    needs: version
+    if: needs.version.outputs.ship == 'true'
+    continue-on-error: true
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: cargo check (macos-intel host)
+        working-directory: apps/macos-intel/src-tauri
+        continue-on-error: true
+        run: cargo check --locked
+
+  windows-check:
+    name: cargo check Windows tree (advisory)
+    needs: version
+    if: needs.version.outputs.ship == 'true'
+    continue-on-error: true
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: cargo check (windows)
+        working-directory: apps/windows/src-tauri
+        continue-on-error: true
+        run: cargo check --locked
+
   publish:
     name: Publish GitHub Release assets (manual approval only)
     needs: [version, macos-app]

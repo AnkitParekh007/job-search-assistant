@@ -398,11 +398,16 @@ fn verify_pdf(state: State<AppState>, rel: String) -> Result<Value, String> {
 fn posting_guard(state: State<AppState>, text: String) -> Result<Value, String> {
     let w = ws(&state);
     let script = w.join("tools/posting_guard.py");
+    // CA-P2-03: hand-seeded workspaces may lack tools/ — create only posting_guard.py.
+    if !script.is_file() {
+        let _ = workspace::ensure_posting_guard(&w);
+    }
+    let script = w.join("tools/posting_guard.py");
     if !script.is_file() {
         return Ok(json!({
             "code": 1,
             "stdout": "",
-            "stderr": "Integrity checker is not installed in this workspace. Reconnect the folder or create a new workspace so starter tools are scaffolded."
+            "stderr": "Integrity checker is not installed in this workspace. Use Settings → Switch to reconnect so starter tools are scaffolded."
         }));
     }
     let tmp = env::app_data_dir().join(format!("guard-{}.txt", uuid::Uuid::new_v4()));

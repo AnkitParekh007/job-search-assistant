@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { ArrowRight, BellRing, CalendarClock, CircleAlert, FileClock, Hand, ListOrdered, Radar, RotateCcw, Sparkles, Sun } from "lucide-react";
 import { api, canonical } from "@ai-job-search/runtime";
 import { useStore } from "../store";
-import { aiProviderBlockedReason, aiProviderReady, computeMetrics, type LifecycleEvent } from "@ai-job-search/core";
+import { computeMetrics, workflowBlockedReason, workflowReady, type LifecycleEvent } from "@ai-job-search/core";
 import { Actor, ScoreRing, Section } from "../components/ui";
 import { RunStatusPill } from "../components/RunConsole";
 
@@ -26,11 +26,15 @@ export default function Dashboard() {
     return () => { cancelled = true; };
   }, [tracker]);
   const m = useMemo(() => computeMetrics(rows, seen, new Date(), lifecycle), [rows, seen, lifecycle]);
-  const aiReady = aiProviderReady(deps);
-  const aiBlock = aiProviderBlockedReason(deps);
+  const [provider, setProvider] = useState("claude");
+  useEffect(() => {
+    api.getSetting("ai_provider").then((p) => setProvider((p || "claude").trim())).catch(() => setProvider("claude"));
+  }, [deps]);
+  const scrapeReady = workflowReady(deps, provider, "scrape");
+  const scrapeBlock = workflowBlockedReason(deps, provider, "scrape");
   const open = (route: string, key?: string, val?: string) => { if (key && val != null) sessionStorage.setItem(key, val); go(route); };
   const runIt = (wf: string, p: string) => {
-    if (!aiProviderReady(deps)) {
+    if (!workflowReady(deps, provider, wf)) {
       go("settings");
       return Promise.resolve();
     }
@@ -82,12 +86,12 @@ export default function Dashboard() {
             <div className="text-ink-3 text-[12px] tnum">{new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}</div>
             <h1 className="h-title mt-0.5">{greeting()}</h1>
             <div className="text-ink-2 mt-1">{(() => { const n = tasks.filter((t) => t.who === "you").length; return n ? `${n} thing${n === 1 ? "" : "s"} ${n === 1 ? "needs" : "need"} you today.` : "Nothing is waiting on you right now."; })()} {m.open} open application{m.open === 1 ? "" : "s"}.</div>
-            {!aiReady && aiBlock && <div className="text-[12.5px] text-warn mt-1">{aiBlock}</div>}
+            {!scrapeReady && scrapeBlock && <div className="text-[12.5px] text-warn mt-1">{scrapeBlock}</div>}
           </div>
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <button className="btn btn-lg" disabled={!aiReady} title={aiBlock || undefined} onClick={() => runIt("scrape", "/scrape")}><Radar size={14} />Find jobs</button>
+            <button className="btn btn-lg" disabled={!scrapeReady} title={scrapeBlock || undefined} onClick={() => runIt("scrape", "/scrape")}><Radar size={14} />Find jobs</button>
             <button className="btn btn-primary btn-lg" onClick={() => go("studio")}><Sparkles size={14} />Start application</button>
-            {!aiReady && <button className="btn btn-lg" onClick={() => go("settings")}>Sign in</button>}
+            {!scrapeReady && <button className="btn btn-lg" onClick={() => go("settings")}>Sign in</button>}
           </div>
         </div>
 

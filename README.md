@@ -107,14 +107,14 @@ Deep dive: [Architecture](./docs/architecture.md) · [App architecture](./apps/m
 
 ## Quick start (build from source)
 
-Primary conversion path until a verified installer ships: **build the macOS Apple Silicon app from source**.
+**Download:** developer-preview Apple Silicon ZIP from [GitHub Releases `v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2) (ad-hoc signed, not notarized — right-click → Open). Intel Mac and Windows: **build from source** (no native installer published).
 
 ### Prerequisites
 
 | Requirement | Why |
 |-------------|-----|
-| Apple Silicon Mac, macOS 13+ | Native arm64 Tauri target |
-| AI provider CLI (Claude Code and/or OpenAI Codex), signed in | Multi-provider AI support for workflows (uses your plan or API credits) |
+| Apple Silicon Mac, macOS 13+ | Native arm64 Tauri target (public ZIP) |
+| At least one AI provider for AI workflows (Claude Code, Codex, OpenAI API, Gemini, or Ollama) — capability varies | Offline tracking works with no provider; AI CTAs stay gated until a provider is ready |
 | Python ≥ 3.10 | Upstream tools (`brew install python@3.12` recommended) |
 | Local workspace folder | Any folder; Jobzuu scaffolds starter files on connect |
 | Node.js 20+ + npm | Frontend toolchain |
@@ -242,9 +242,9 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 
 ### Release honesty (Gate A)
 
-- macOS Apple Silicon builds are labeled **verified** for Gate A job-tracking ([checklist](./audit-reports/production-readiness/GATE-A-PACKAGING.md)).
+- macOS Apple Silicon builds are labeled **verified** for Gate A job-tracking (local acceptance evidence; not published in-repo).
 - Auto-update is **disabled**. Notarized installers are **not** claimed for the developer-preview channel.
-- Local resume parse, evidence-grounded match, and export validation are Gate B–backed ([checklist](./audit-reports/production-readiness/GATE-B-ATS.md)) — we still do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
+- Local resume parse, evidence-grounded match, and export validation are Gate B–backed via the synthetic corpus in [`packages/core/src/ats`](./packages/core/src/ats) — we still do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
 
 ### Key limitations
 

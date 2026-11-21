@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Check, Columns2, ExternalLink, HeartPulse, LayoutGrid, ListOrdered, MapPin, Minus, Plus, Radar, Rows3, Search, ShieldAlert, Sparkles, X } from "lucide-react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { SeenJob } from "@ai-job-search/runtime";
-import { aiProviderBlockedReason, aiProviderReady } from "@ai-job-search/core";
+import { workflowBlockedReason, workflowReady } from "@ai-job-search/core";
 import { useStore } from "../store";
 import { ContextMenu, Empty, MenuItem, ScoreRing } from "../components/ui";
 import { AddPortalAction } from "../components/DepFixActions";
@@ -156,8 +156,14 @@ function Compare({ jobs, onClose }: { jobs: SeenJob[]; onClose: () => void }) {
 
 export default function Jobs() {
   const { seen, startWorkflow, go, tracker, deps, toast } = useStore();
-  const aiReady = aiProviderReady(deps);
-  const aiBlock = aiProviderBlockedReason(deps);
+  const [provider, setProvider] = useState("claude");
+  useEffect(() => {
+    api.getSetting("ai_provider").then((p) => setProvider((p || "claude").trim())).catch(() => setProvider("claude"));
+  }, [deps]);
+  const scrapeReady = workflowReady(deps, provider, "scrape");
+  const scrapeBlock = workflowBlockedReason(deps, provider, "scrape");
+  const rankReady = workflowReady(deps, provider, "rank");
+  const rankBlock = workflowBlockedReason(deps, provider, "rank");
   /** Prefer URL/source match (UX-05); fall back to company|title. */
   const trackedFor = useMemo(() => {
     const rows = tracker?.rows || [];
@@ -220,8 +226,8 @@ export default function Jobs() {
   }, [list, sel]);
   const current = list.find((j) => j.key === sel);
   const run = (wf: string, p: string) => {
-    if (!aiProviderReady(deps)) {
-      toast(aiBlock || "Sign in to an AI provider in Settings first.", "bad");
+    if (!workflowReady(deps, provider, wf)) {
+      toast(workflowBlockedReason(deps, provider, wf) || "Sign in to an AI provider in Settings first.", "bad");
       go("settings");
       return Promise.resolve();
     }
@@ -249,9 +255,9 @@ export default function Jobs() {
           <div className="flex items-center gap-1.5 rounded-xl border border-line bg-surface p-1 pl-2.5">
             <Radar size={14} className="text-ai shrink-0" />
             <input className="bg-transparent outline-none w-40 sm:w-48 text-[12.5px] placeholder:text-ink-3" placeholder="Focus, e.g. AI agents" value={focus} onChange={(e) => setFocus(e.target.value)} onKeyDown={(e) => e.key === "Enter" && run("scrape", focus.trim() ? `/scrape ${focus.trim()}` : "/scrape")} />
-            <button className="btn btn-primary" disabled={!aiReady} title={aiBlock || undefined} onClick={() => run("scrape", focus.trim() ? `/scrape ${focus.trim()}` : "/scrape")}>Find jobs</button>
+            <button className="btn btn-primary" disabled={!scrapeReady} title={scrapeBlock || undefined} onClick={() => run("scrape", focus.trim() ? `/scrape ${focus.trim()}` : "/scrape")}>Find jobs</button>
           </div>
-          {seen.length > 0 && <button className="btn btn-lg" disabled={!aiReady} title={aiBlock || undefined} onClick={() => run("rank", "/rank")}><ListOrdered size={14} />Rank new</button>}
+          {seen.length > 0 && <button className="btn btn-lg" disabled={!rankReady} title={rankBlock || undefined} onClick={() => run("rank", "/rank")}><ListOrdered size={14} />Rank new</button>}
           <button className="btn btn-lg" onClick={() => setShowAddJob(true)}><Plus size={14} />Add job manually</button>
           <button className="btn btn-lg" title="Add a job-board portal scraper" onClick={() => setShowAddPortal((v) => !v)} aria-label="Add portal"><Plus size={14} />Add portal</button>
           <button className="btn btn-lg btn-ghost" title="Probe installed portal CLIs" onClick={() => run("scrape", "/scrape health")} aria-label="Probe installed portal CLIs"><HeartPulse size={14} /></button>
@@ -296,7 +302,7 @@ export default function Jobs() {
       <Group orientation="horizontal" className="flex-1 min-h-0 border-t border-line">
         <Panel defaultSize={current ? 58 : 100} minSize={35}>
           <div className="h-full overflow-auto">
-            {list.length === 0 ? <Empty icon={<Radar size={18} />} title={seen.length ? "No jobs match these filters" : "No jobs discovered yet"} body={seen.length ? `${hidden} job${hidden === 1 ? " is" : "s are"} hidden by the current filters.` : "Find jobs searches your installed portals, or the web if you have none. Add a portal if you want a board-specific scraper — or add a job manually."} action={seen.length ? <button className="btn" onClick={clearFilters}>Clear filters</button> : <div className="flex flex-wrap gap-2 justify-center"><button className="btn btn-primary" disabled={!aiReady} title={aiBlock || undefined} onClick={() => run("scrape", "/scrape")}>Find jobs</button><button className="btn" onClick={() => setShowAddJob(true)}><Plus size={14} />Add job manually</button><button className="btn" onClick={() => setShowAddPortal(true)}><Plus size={14} />Add portal</button></div>} /> :
+            {list.length === 0 ? <Empty icon={<Radar size={18} />} title={seen.length ? "No jobs match these filters" : "No jobs discovered yet"} body={seen.length ? `${hidden} job${hidden === 1 ? " is" : "s are"} hidden by the current filters.` : "Find jobs searches your installed portals, or the web if you have none. Add a portal if you want a board-specific scraper — or add a job manually."} action={seen.length ? <button className="btn" onClick={clearFilters}>Clear filters</button> : <div className="flex flex-wrap gap-2 justify-center"><button className="btn btn-primary" disabled={!scrapeReady} title={scrapeBlock || undefined} onClick={() => run("scrape", "/scrape")}>Find jobs</button><button className="btn" onClick={() => setShowAddJob(true)}><Plus size={14} />Add job manually</button><button className="btn" onClick={() => setShowAddPortal(true)}><Plus size={14} />Add portal</button></div>} /> :
               view === "cards" ? (
                 <div className="p-5 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
                   {list.map((j, i) => (

@@ -16,3 +16,6 @@ dist-release/
 # Local smoke / journey sandboxes (never commit)
 audit-reports/**/sandbox-home/
 audit-reports/job-seeker-journey/
+
+# Local production-readiness / acceptance evidence — keep off GitHub
+audit-reports/

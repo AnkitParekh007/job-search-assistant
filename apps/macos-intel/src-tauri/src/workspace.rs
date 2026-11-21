@@ -31,6 +31,61 @@ pub fn canonical_status(s: &str) -> String {
     }
 }
 
+/// Map a tracker CSV header cell to a canonical `TRACKER_HEADER` key.
+pub fn canonical_header(raw: &str) -> Option<&'static str> {
+    let mut s = raw.trim();
+    if let Some(stripped) = s.strip_prefix('\u{feff}') {
+        s = stripped.trim();
+    }
+    let key = s
+        .to_lowercase()
+        .replace([' ', '-'], "_")
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '_')
+        .collect::<String>();
+    let key = key.trim_matches('_');
+    match key {
+        // Keep aliases conservative — avoid remapping short custom columns like org/job/score/state.
+        "date" | "date_added" | "date_applied" | "applied_date" | "application_date" => Some("date"),
+        "company" | "employer" | "organization" => Some("company"),
+        "sector" | "industry" => Some("sector"),
+        "role" | "job_title" | "title" | "position" => Some("role"),
+        "role_type" | "employment_type" | "job_type" => Some("role_type"),
+        "channel" | "application_channel" => Some("channel"),
+        "status" | "application_status" => Some("status"),
+        "contact_person" | "contact" | "recruiter" | "hiring_manager" => Some("contact_person"),
+        "fit_rating" | "fit" | "fit_score" => Some("fit_rating"),
+        "notes" | "note" | "comments" | "comment" => Some("notes"),
+        "cv_file" | "cv" | "resume" | "resume_file" | "cv_path" => Some("cv_file"),
+        "cover_letter_file" | "cover_letter" | "cover_letter_path" => Some("cover_letter_file"),
+        "source" | "url" | "link" | "job_url" | "posting_url" => Some("source"),
+        "deadline" | "due_date" | "closing_date" => Some("deadline"),
+        _ => None,
+    }
+}
+
+fn normalize_tracker_headers(raw: &[String]) -> Result<Vec<String>, String> {
+    let mut seen_status = false;
+    let mut out = Vec::with_capacity(raw.len());
+    for h in raw {
+        if let Some(canon) = canonical_header(h) {
+            if canon == "status" {
+                seen_status = true;
+            }
+            out.push(canon.to_string());
+        } else {
+            out.push(h.clone());
+        }
+    }
+    if !raw.is_empty() && !seen_status {
+        return Err(format!(
+            "job_search_tracker.csv has no recognizable Status column (headers: {}). Rename it to `status` or use Settings → Switch to scaffold a canonical tracker.",
+            raw.join(", ")
+        ));
+    }
+    Ok(out)
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TrackerRow {
     pub index: usize,
@@ -54,13 +109,16 @@ pub fn read_tracker(ws: &Path) -> Result<Tracker, String> {
         return Ok(Tracker { header: TRACKER_HEADER.iter().map(|s| s.to_string()).collect(), rows: vec![], exists: false });
     }
     let mut rdr = csv::ReaderBuilder::new().flexible(true).from_path(&p).map_err(|e| e.to_string())?;
-    let header: Vec<String> = rdr.headers().map_err(|e| e.to_string())?.iter().map(|s| s.to_string()).collect();
+    let raw_header: Vec<String> = rdr.headers().map_err(|e| e.to_string())?.iter().map(|s| s.to_string()).collect();
+    let header = normalize_tracker_headers(&raw_header)?;
     let mut rows = vec![];
     for (i, rec) in rdr.records().enumerate() {
         let rec = rec.map_err(|e| format!("tracker row {}: {}", i + 2, e))?;
         let mut fields = BTreeMap::new();
         for (j, h) in header.iter().enumerate() {
-            fields.insert(h.clone(), rec.get(j).unwrap_or("").to_string());
+            fields
+                .entry(h.clone())
+                .or_insert_with(|| rec.get(j).unwrap_or("").to_string());
         }
         rows.push(TrackerRow { index: i, fields });
     }
@@ -906,6 +964,20 @@ fn chrono_like_now() -> String {
 
 /// Ensure `ws` is a usable job-search workspace. Creates missing starter files only —
 /// never overwrites existing content. Returns the relative paths that were created.
+/// Create only `tools/posting_guard.py` when missing (no full workspace scaffold).
+pub fn ensure_posting_guard(ws: &Path) -> Result<bool, String> {
+    let script = ws.join("tools/posting_guard.py");
+    if script.is_file() {
+        return Ok(false);
+    }
+    if !ws.is_dir() {
+        return Err(format!("{} is not a folder", ws.display()));
+    }
+    fs::create_dir_all(ws.join("tools")).map_err(|e| format!("mkdir tools: {e}"))?;
+    fs::write(&script, SCAFFOLD_POSTING_GUARD).map_err(|e| format!("write posting_guard.py: {e}"))?;
+    Ok(true)
+}
+
 pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
     if !ws.exists() {
         fs::create_dir_all(ws).map_err(|e| format!("could not create folder {}: {}", ws.display(), e))?;

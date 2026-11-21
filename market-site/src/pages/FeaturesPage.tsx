@@ -157,7 +157,7 @@ export function FeaturesPage() {
               </p>
               <div className="cta-row">
                 <Link className="btn btn-primary btn-lg" to="/download">
-                  Download for macOS
+                  Download for Apple Silicon
                 </Link>
               </div>
             </div>

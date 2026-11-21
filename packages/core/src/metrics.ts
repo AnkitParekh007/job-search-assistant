@@ -60,20 +60,31 @@ export function lastContact(row: Record<string, string>): string {
  * Submitted, Interview and Offer funnel stages (and interviewRate) are computed from events only
  * (confirmed facts), not from tracker CSV status. With no such events the CSV rules apply.
  */
+/** Known tracker statuses — empty/unknown never count as Submitted (CA-P1-01). */
+const KNOWN_STATUS = new Set([
+  "drafted", "applied", "interview", "offer", "hired", "rejected", "no_response", "offer_declined", "withdrawn",
+]);
+
+function knownStatus(raw: string | undefined): string {
+  const s = canonical(raw || "");
+  return KNOWN_STATUS.has(s) ? s : "";
+}
+
 export function computeMetrics(rows: TrackerRow[], seen: SeenJob[], now = new Date(), lifecycleEvents?: LifecycleEvent[]): Metrics {
   const byStatus: Record<string, number> = {};
   for (const r of rows) {
-    const s = canonical(r.fields.status);
+    const s = knownStatus(r.fields.status) || "unknown";
     byStatus[s] = (byStatus[s] || 0) + 1;
   }
   // "Submitted" = user-confirmed applied (or later). Drafted count is status===drafted only (BUG-04).
-  const drafted = rows.filter((r) => canonical(r.fields.status) === "drafted").length;
+  // Empty/unmapped status must not inflate Submitted (CA-P1-01).
+  const drafted = rows.filter((r) => knownStatus(r.fields.status) === "drafted").length;
   let submitted = rows.filter((r) => {
-    const s = canonical(r.fields.status);
-    return s !== "drafted" && s !== "withdrawn";
+    const s = knownStatus(r.fields.status);
+    return !!s && s !== "drafted" && s !== "withdrawn";
   }).length;
-  let reachedInterview = rows.filter((r) => ["interview", "offer", "hired", "offer_declined"].includes(canonical(r.fields.status)) || /interview/i.test(r.fields.notes || "")).length;
-  let offers = rows.filter((r) => ["offer", "hired", "offer_declined"].includes(canonical(r.fields.status))).length;
+  let reachedInterview = rows.filter((r) => ["interview", "offer", "hired", "offer_declined"].includes(knownStatus(r.fields.status)) || /interview/i.test(r.fields.notes || "")).length;
+  let offers = rows.filter((r) => ["offer", "hired", "offer_declined"].includes(knownStatus(r.fields.status))).length;
   let lifecycleSource: "events" | "tracker" = "tracker";
   if (lifecycleEvents?.length) {
     const f = funnelFromEvents(lifecycleEvents);
@@ -86,7 +97,7 @@ export function computeMetrics(rows: TrackerRow[], seen: SeenJob[], now = new Da
   }
 
   const deadlines = rows
-    .filter((r) => r.fields.deadline && !FINAL.has(canonical(r.fields.status)))
+    .filter((r) => r.fields.deadline && !FINAL.has(knownStatus(r.fields.status)))
     .map((r) => ({ company: r.fields.company, role: r.fields.role, deadline: r.fields.deadline, days: -daysBetween(r.fields.deadline, now) }))
     .sort((a, b) => a.days - b.days);
   for (const j of seen) {
@@ -97,7 +108,7 @@ export function computeMetrics(rows: TrackerRow[], seen: SeenJob[], now = new Da
   deadlines.sort((a, b) => a.days - b.days);
 
   const followUps = rows
-    .filter((r) => ["applied", "interview"].includes(canonical(r.fields.status)))
+    .filter((r) => ["applied", "interview"].includes(knownStatus(r.fields.status)))
     .map((r) => ({ company: r.fields.company, role: r.fields.role, quiet: daysBetween(lastContact(r.fields), now), sent: ((r.fields.notes || "").match(/followed up \d{4}-\d{2}-\d{2}/g) || []).length }))
     .filter((r) => r.quiet >= 10 && r.sent < 2)
     .map(({ company, role, quiet }) => ({ company, role, quiet }));
@@ -106,14 +117,20 @@ export function computeMetrics(rows: TrackerRow[], seen: SeenJob[], now = new Da
   for (const j of seen) if (j.fit && j.fit in bands) bands[j.fit as keyof typeof bands]++;
 
   const months: Record<string, number> = {};
-  for (const r of rows) if (canonical(r.fields.status) !== "drafted" && r.fields.date) months[r.fields.date.slice(0, 7)] = (months[r.fields.date.slice(0, 7)] || 0) + 1;
+  for (const r of rows) {
+    const s = knownStatus(r.fields.status);
+    if (s && s !== "drafted" && r.fields.date) months[r.fields.date.slice(0, 7)] = (months[r.fields.date.slice(0, 7)] || 0) + 1;
+  }
 
   return {
     discovered: seen.length,
     newMatches: seen.filter((j) => j.status === "new").length,
     ranked: seen.filter((j) => j.status === "ranked").length,
     byStatus,
-    open: rows.filter((r) => !FINAL.has(canonical(r.fields.status))).length,
+    open: rows.filter((r) => {
+      const s = knownStatus(r.fields.status);
+      return !!s && !FINAL.has(s);
+    }).length,
     deadlines,
     followUps,
     funnel: [

@@ -1,3 +1,0 @@
-9a6a3aae3435e35b95e60fe87017978c53a6228cd45aed1ed51fed6324174985  AI-Job-Search-0.1.2-beta-macos-arm64.zip
-fe800e72e6f9c086c2edb040a8fb79f641534602a6b7733663d40012422f70c4  AI-Job-Search-0.1.2-beta-macos-x64.zip
-3b82faecae36e7a25b6d3144707ecb1ee7df817db8988c904f981dcddf869111  AI-Job-Search-0.1.2-beta-windows-x64.zip

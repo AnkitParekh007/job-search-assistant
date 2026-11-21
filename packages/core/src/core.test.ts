@@ -3,7 +3,12 @@ import { canTransition, computeMetrics, lastContact, type LifecycleEvent } from 
 import { buildCodexPrompt, buildPrompt, buildPromptForProvider, WORKFLOWS } from "./workflows";
 import { PRODUCT_FEATURES, WORKFLOW_FEATURES } from "./features";
 import { providerSupportsWorkflow, unsupportedReason } from "./providers";
-import type { TrackerRow, SeenJob } from "./types";
+import { aiProviderBlockedReason, workflowReady } from "./readiness";
+import type { Dep, TrackerRow, SeenJob } from "./types";
+
+const dep = (id: string, okFlag: boolean, detail = "", fix = ""): Dep => ({
+  id, name: id, ok: okFlag, required: false, detail, fix,
+});
 
 const row = (i: number, f: Partial<Record<string, string>>): TrackerRow => ({
   index: i,
@@ -36,6 +41,17 @@ describe("metrics", () => {
   });
   it("deadlines are days-until", () => {
     expect(m.deadlines[0]).toMatchObject({ company: "C0", days: 3 });
+  });
+  it("empty or unknown status does not count as Submitted (CA-P1-01)", () => {
+    const orphan = [
+      row(0, { status: "drafted" }),
+      row(1, { status: "" }),
+      row(2, { status: "Status" }), // unmapped human header leftover as value
+    ];
+    const orphanMetrics = computeMetrics(orphan, [], new Date("2026-11-19T12:00:00"));
+    expect(orphanMetrics.funnel.find((f) => f.label === "Drafted")!.value).toBe(1);
+    expect(orphanMetrics.funnel.find((f) => f.label === "Submitted")!.value).toBe(0);
+    expect(orphanMetrics.byStatus.unknown).toBe(2);
   });
 });
 
@@ -84,6 +100,26 @@ describe("workflow catalog", () => {
     expect(providerSupportsWorkflow("gemini", "interview")).toBe(true);
     expect(unsupportedReason("ollama", "scrape")).toMatch(/structured analysis/);
     expect(buildPromptForProvider(WORKFLOWS.find((w) => w.id === "rank")!, "", "openai_api")).toContain("structured inference");
+  });
+});
+
+describe("readiness messaging", () => {
+  it("does not default to OpenAI key messaging just because the openai_api dep row exists", () => {
+    const deps = [
+      dep("claude", false),
+      dep("claude_auth", false),
+      dep("openai_api", false, "no key configured", "Add an OpenAI Platform API key"),
+      dep("gemini", false, "no key configured"),
+      dep("ollama", false, "not installed"),
+      dep("ai_provider", false, "No AI provider ready", "Install Claude Code / Codex / Ollama, or add an OpenAI / Gemini API key in Settings."),
+    ];
+    expect(aiProviderBlockedReason(deps)).toMatch(/Install Claude Code \/ Codex \/ Ollama/);
+  });
+  it("disables scrape for inference-only providers even when ai_provider is ready", () => {
+    const deps = [dep("ai_provider", true), dep("ollama", true)];
+    expect(workflowReady(deps, "ollama", "scrape")).toBe(false);
+    expect(workflowReady(deps, "ollama", "rank")).toBe(true);
+    expect(workflowReady(deps, "claude", "scrape")).toBe(true);
   });
 });
 

@@ -22,42 +22,111 @@ fn version_of(bin: &str, args: &[&str]) -> Option<(String, String)> {
     Some((p.to_string_lossy().to_string(), s.lines().next().unwrap_or("").trim().to_string()))
 }
 
+fn ollama_listening_fast() -> bool {
+    use std::net::{SocketAddr, TcpStream};
+    use std::time::Duration;
+    let addr = SocketAddr::from(([127, 0, 0, 1], 11434));
+    TcpStream::connect_timeout(&addr, Duration::from_millis(200)).is_ok()
+}
+
 pub fn check(ws: &Path) -> Vec<Dep> {
     let mut v = vec![];
     let claude = version_of("claude", &["--version"]);
-    v.push(Dep { id: "claude".into(), name: "Claude Code CLI".into(), ok: claude.is_some(), required: true,
+    v.push(Dep { id: "claude".into(), name: "Claude Code CLI".into(), ok: claude.is_some(), required: false,
         detail: claude.as_ref().map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found".into()),
         fix: "Install Claude Code (brew install --cask claude-code) and run `claude` once to sign in. Runs use your Claude subscription or API credits; they are not free.".into() });
     let auth = env::which("claude").and_then(|p| std::process::Command::new(p).args(["auth", "status"]).env("PATH", env::child_path()).output().ok())
         .and_then(|o| serde_json::from_slice::<Value>(&o.stdout).ok());
     let logged = auth.as_ref().and_then(|a| a.get("loggedIn")).and_then(|b| b.as_bool()).unwrap_or(false);
-    v.push(Dep { id: "claude_auth".into(), name: "Claude sign-in".into(), ok: logged, required: true,
+    v.push(Dep { id: "claude_auth".into(), name: "Claude sign-in".into(), ok: logged, required: false,
         detail: auth.map(|a| format!("{} via {}", if logged { "signed in" } else { "signed out" }, a.get("authMethod").and_then(|s| s.as_str()).unwrap_or("?"))).unwrap_or("unknown".into()),
         fix: "Run `claude` in Terminal once and complete sign-in.".into() });
-    // Installed ≠ authenticated. Require Claude CLI signed in before runs can proceed.
-    let any_ready = claude.is_some() && logged;
+    let codex = version_of("codex", &["--version"]);
+    let codex_cfg = env::home().join(".codex").is_dir();
+    v.push(Dep {
+        id: "codex".into(),
+        name: "OpenAI Codex CLI".into(),
+        ok: codex.is_some(),
+        required: false,
+        detail: codex.as_ref().map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found".into()),
+        fix: "Install the Codex CLI, then connect ChatGPT from Settings → AI Providers.".into(),
+    });
+    v.push(Dep {
+        id: "codex_auth".into(),
+        name: "Codex config".into(),
+        ok: codex.is_some() && codex_cfg,
+        required: false,
+        detail: if codex_cfg {
+            "Codex home present — verify sign-in from Settings → AI Providers".into()
+        } else {
+            "not signed in yet".into()
+        },
+        fix: "Use Connect in Settings to start ChatGPT sign-in for Codex.".into(),
+    });
+    let openai_key =
+        crate::security::credentials::has_secret(crate::security::credentials::CredentialKind::OpenaiApi);
+    v.push(Dep {
+        id: "openai_api".into(),
+        name: "OpenAI Platform API".into(),
+        ok: openai_key,
+        required: false,
+        detail: if openai_key { "API key in OS keychain".into() } else { "no key configured".into() },
+        fix: "Add an OpenAI Platform API key in Settings → AI Providers.".into(),
+    });
+    let gemini_key =
+        crate::security::credentials::has_secret(crate::security::credentials::CredentialKind::GeminiApi);
+    v.push(Dep {
+        id: "gemini".into(),
+        name: "Google Gemini API".into(),
+        ok: gemini_key,
+        required: false,
+        detail: if gemini_key { "API key in OS keychain".into() } else { "no key configured".into() },
+        fix: "Add a Gemini API key in Settings → AI Providers.".into(),
+    });
+    let ollama_bin = env::which("ollama").is_some();
+    let ollama_up = ollama_listening_fast();
+    v.push(Dep {
+        id: "ollama".into(),
+        name: "Ollama".into(),
+        ok: ollama_up,
+        required: false,
+        detail: if ollama_up {
+            "service listening on 127.0.0.1:11434".into()
+        } else if ollama_bin {
+            "installed but service not reachable — run `ollama serve`".into()
+        } else {
+            "not installed".into()
+        },
+        fix: "Install from https://ollama.com, run `ollama serve`, then `ollama pull <model>`.".into(),
+    });
+    let any_ready = (claude.is_some() && logged)
+        || (codex.is_some() && codex_cfg)
+        || openai_key
+        || gemini_key
+        || ollama_up;
+    let any_cli = claude.is_some() || codex.is_some() || ollama_bin;
     v.push(Dep {
         id: "ai_provider".into(),
         name: "At least one AI provider".into(),
         ok: any_ready,
         required: true,
         detail: if any_ready {
-            "Claude Code is installed and signed in".into()
-        } else if claude.is_some() {
-            "Claude Code found but not signed in — open Settings → Dependencies".into()
+            "At least one provider is configured and ready for its supported workflows".into()
+        } else if any_cli || openai_key || gemini_key {
+            "A provider is installed or partially configured — finish sign-in / key setup in Settings → AI Providers".into()
         } else {
-            "Claude Code CLI not found".into()
+            "No AI provider ready (Claude Code, Codex, OpenAI API, Gemini, or Ollama)".into()
         },
-        fix: if claude.is_some() {
-            "Sign in to Claude Code from Terminal (`claude`) — installed is not the same as ready.".into()
+        fix: if any_cli || openai_key || gemini_key {
+            "Finish provider setup in Settings → AI Providers (installed is not the same as ready).".into()
         } else {
-            "Install Claude Code, then run `claude` once to sign in.".into()
+            "Install Claude Code / Codex / Ollama, or add an OpenAI / Gemini API key in Settings, then choose a default provider.".into()
         },
     });
     let py = env::python();
     v.push(Dep { id: "python".into(), name: "Python >= 3.10".into(), ok: py.is_some(), required: true,
-        detail: py.as_ref().map(|(p, s)| format!("{} ({})", s, p.display())).unwrap_or("only Python < 3.10 found — install Python 3.12+".into()),
-        fix: "brew install python@3.12. The app maps python3 to it for upstream tools automatically.".into() });
+        detail: py.as_ref().map(|(p, s)| format!("{} ({})", s, p.display())).unwrap_or("Python >= 3.10 not found".into()),
+        fix: "Install Python 3.12+ and ensure it is on PATH.".into() });
     for (id, bin, name, why) in [
         ("lualatex", "lualatex", "LuaLaTeX (CV)", "CV PDFs"),
         ("xelatex", "xelatex", "XeLaTeX (cover letter)", "cover letter PDFs"),
@@ -65,16 +134,16 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         let r = version_of(bin, &["--version"]);
         v.push(Dep { id: id.into(), name: name.into(), ok: r.is_some(), required: true,
             detail: r.map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found".into()),
-            fix: format!("Needed for {}. brew install --cask basictex, then tlmgr install moderncv fontawesome5 fontawesome6 academicons import luatexbase pgf titlesec textpos xltxtra xunicode cite realscripts needspace (see upstream SETUP.md).", why) });
+            fix: format!("Needed for {}. Install MiKTeX or TeX Live for PDF compile.
     }
     let pdft = version_of("pdftotext", &["-v"]);
     v.push(Dep { id: "pdftotext".into(), name: "PDF text extraction".into(), ok: pdft.is_some(), required: false,
         detail: pdft.map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not found (pypdf may still work)".into()),
-        fix: "brew install poppler, or pip install pypdf".into() });
+        fix: "Install poppler or pip install pypdf".into() });
     let bun = version_of("bun", &["--version"]);
     v.push(Dep { id: "bun".into(), name: "Bun (portal CLIs)".into(), ok: bun.is_some(), required: false,
         detail: bun.map(|(p, s)| format!("{} ({})", s, p)).unwrap_or("not installed - /scrape falls back to WebSearch".into()),
-        fix: "Only needed for community portal CLIs: brew install oven-sh/bun/bun".into() });
+        fix: "Only needed for community portal CLIs: Install Bun from https://bun.sh".into() });
     let portals = ws.join(".agents/skills");
     let n = std::fs::read_dir(&portals).map(|r| r.flatten().count()).unwrap_or(0);
     v.push(Dep { id: "portals".into(), name: "Installed portals".into(), ok: n > 0, required: false,
@@ -83,8 +152,12 @@ pub fn check(ws: &Path) -> Vec<Dep> {
 }
 
 pub fn upstream_version(ws: &Path) -> String {
-    let out = std::process::Command::new("/usr/bin/git").args(["describe", "--tags", "--always"]).current_dir(ws).output();
-    out.map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string()).unwrap_or_default()
+    let out = std::process::Command::new("git").args(["describe", "--tags", "--always"]).current_dir(ws).output();
+    let git = out.map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string()).unwrap_or_default();
+    if !git.is_empty() {
+        return git;
+    }
+    "no version (not a git checkout)".into()
 }
 
 /// Runs an upstream deterministic tool with argv (never a shell string).

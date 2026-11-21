@@ -16,7 +16,7 @@ If a future benchmark uses real (anonymized) resumes:
 
 1. Written consent recorded outside the public tree (or an explicit consent statement in the evidence pack).
 2. Corpus lives in a private artifact store — **not** this repo by default.
-3. Evidence pack under `audit-reports/production-readiness/evidence/` may include hashes and aggregate metrics only.
+3. Any evidence pack (hashes / aggregate metrics only) stays in a private local store — not this public repository.
 4. Market copy must not present private corpus results as a universal ATS pass rate.
 
 ## What we publish

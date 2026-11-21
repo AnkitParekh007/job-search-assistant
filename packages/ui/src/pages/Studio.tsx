@@ -9,6 +9,8 @@ import {
   explainMatch,
   extractJobRequirements,
   NORDLICHT_POSTING,
+  workflowBlockedReason,
+  workflowReady,
   type CandidateFact,
   type CandidateProfile,
   type MatchExplanation,
@@ -77,7 +79,7 @@ function stepsReached(events: any[]): number {
 }
 
 export default function Studio() {
-  const { startWorkflow, runs, events, live, toast, ws } = useStore();
+  const { startWorkflow, runs, events, live, toast, ws, deps, go } = useStore();
   const [mode, setMode] = useState<"url" | "text">("url");
   const [url, setUrl] = useState(sessionStorage.getItem("studioUrl") || "");
   const [text, setText] = useState("");
@@ -85,6 +87,12 @@ export default function Studio() {
   const [runId, setRunId] = useState<string | null>(() => runs.find((r) => r.workflow === "apply")?.id || null);
   const [doc, setDoc] = useState<string | null>(null);
   const [profile, setProfile] = useState<CandidateProfile>(() => emptyProfile());
+  const [provider, setProvider] = useState("claude");
+  useEffect(() => {
+    api.getSetting("ai_provider").then((p) => setProvider((p || "claude").trim())).catch(() => setProvider("claude"));
+  }, [deps]);
+  const applyReady = workflowReady(deps, provider, "apply");
+  const applyBlock = workflowBlockedReason(deps, provider, "apply") || undefined;
   useEffect(() => { sessionStorage.removeItem("studioUrl"); }, []);
   useEffect(() => {
     api.candidateProfile().then((raw) => setProfile(normalizeProfile(raw))).catch(() => setProfile(emptyProfile()));
@@ -204,7 +212,21 @@ export default function Studio() {
               )}
             </div>
           )}
-          <button className="btn btn-primary w-full justify-center h-9" disabled={mode === "url" ? !validUrl : !text.trim()} onClick={start}><Sparkles size={14} />Evaluate fit with AI</button>
+          <button
+            className="btn btn-primary w-full justify-center h-9"
+            disabled={!applyReady || (mode === "url" ? !validUrl : !text.trim())}
+            title={applyBlock}
+            onClick={start}
+          >
+            <Sparkles size={14} />Evaluate fit with AI
+          </button>
+          {!applyReady && (
+            <div className="text-[12px] text-ink-3 space-y-1.5">
+              <div>Local integrity + match above work without a provider. AI drafting needs a signed-in, workflow-capable provider.</div>
+              {applyBlock && <div className="text-warn">{applyBlock}</div>}
+              <button type="button" className="btn h-8 text-[12px]" onClick={() => go("settings")}>Sign in</button>
+            </div>
+          )}
           <div>
             <div className="label mb-2">Workflow</div>
             <ol className="space-y-1.5">
