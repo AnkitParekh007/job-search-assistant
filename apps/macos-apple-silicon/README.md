@@ -1,4 +1,4 @@
-# AI Job Search — macOS (Apple Silicon)
+# Job Search Assistant — macOS (Apple Silicon)
 
 Local-first **Apple Silicon** (`arm64`) desktop app for macOS. Connects to a local workspace folder you choose (scaffolded on connect if empty) with **multi-provider AI support** (Claude Code and/or OpenAI Codex).
 
@@ -37,10 +37,10 @@ npm run tauri build
 Open:
 
 ```bash
-open "src-tauri/target/release/bundle/macos/AI Job Search.app"
+open "src-tauri/target/release/bundle/macos/Job Search Assistant.app"
 ```
 
-Developer preview (ad-hoc signed) — first launch may need right-click → Open. Do not disable Gatekeeper or strip quarantine. Prefer `../../scripts/build-macos-apple-silicon-preview.sh`.
+Ad-hoc signed, not notarized. First launch may need right-click → Open. Do not disable Gatekeeper or strip quarantine. Prefer `../../scripts/build-macos-apple-silicon-preview.sh`.
 
 On first launch it looks for `~/Desktop/Projects/Automations/Job-Automations/ai-job-search` as the workspace. Change it in Settings.
 

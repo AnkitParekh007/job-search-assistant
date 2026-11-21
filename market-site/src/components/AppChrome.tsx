@@ -18,7 +18,7 @@ export function AppChrome({
         <span className="dot" />
         <span className="dot" />
         <span className="dot" />
-        <span className="app-title mono">AI Job Search</span>
+        <span className="app-title mono">Job Search Assistant</span>
       </div>
       <div className="app-body">
         <div className="app-side">

@@ -115,7 +115,7 @@ impl CodexBridge {
         )?;
         if !workspace.join("CLAUDE.md").exists() {
             return Err(format!(
-                "{} does not look like an AI Job Search workspace (no CLAUDE.md)",
+                "{} does not look like an Job Search Assistant workspace (no CLAUDE.md)",
                 workspace.display()
             ));
         }
@@ -191,7 +191,7 @@ impl CodexBridge {
                 "params": {
                     "clientInfo": {
                         "name": "ai_job_search_desktop",
-                        "title": "AI Job Search",
+                        "title": "Job Search Assistant",
                         "version": env!("CARGO_PKG_VERSION")
                     }
                 }
@@ -976,7 +976,7 @@ pub fn oneshot_rpc(method: &str, params: Value, timeout_ms: u64) -> Result<Value
             "params": {
                 "clientInfo": {
                     "name": "ai_job_search_desktop",
-                    "title": "AI Job Search",
+                    "title": "Job Search Assistant",
                     "version": env!("CARGO_PKG_VERSION")
                 }
             }

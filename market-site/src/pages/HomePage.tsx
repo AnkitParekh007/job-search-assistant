@@ -53,7 +53,7 @@ export function HomePage() {
               One shortlist. <em>Your call.</em>
             </h1>
             <p className="lede load-in" style={{ ["--d" as string]: 2 }}>
-              AI Job Search Assistant brings job discovery, fit assessment, application drafts and
+              Job Search Assistant brings job discovery, fit assessment, application drafts and
               tracking into one desktop workspace. Configure a supported AI provider for advanced workflows,
               keep your files local, and stay in charge of what you submit.
             </p>

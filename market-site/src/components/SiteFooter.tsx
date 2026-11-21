@@ -50,7 +50,7 @@ export function SiteFooter({
         </div>
       </div>
       <div className="footer-bottom">
-        <span>© 2026 AI Job Search</span>
+        <span>© 2026 Job Search Assistant</span>
         <span>{note}</span>
       </div>
     </footer>

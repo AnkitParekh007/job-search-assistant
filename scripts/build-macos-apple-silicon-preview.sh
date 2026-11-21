@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# No-cost developer-preview pipeline: Tauri build → ad-hoc sign → validate.
+# Local Apple Silicon pipeline: Tauri build → ad-hoc sign → validate.
 # Does not publish GitHub Release assets and does not require Apple Developer credentials.
 set -euo pipefail
 
@@ -8,10 +8,10 @@ APP_DIR="$ROOT/apps/macos-apple-silicon"
 # Keep artifacts under the app tree so sign/validate/package scripts agree
 # (ignore sandbox/CI CARGO_TARGET_DIR redirects that would leave a stale .app behind).
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR_OVERRIDE:-$APP_DIR/src-tauri/target}"
-APP="$CARGO_TARGET_DIR/release/bundle/macos/AI Job Search.app"
+APP="$CARGO_TARGET_DIR/release/bundle/macos/Job Search Assistant.app"
 VERSION="$(node -p "require('$ROOT/package.json').version")"
 
-echo "== Phase A preview build (v${VERSION}) =="
+echo "== Apple Silicon release build (v${VERSION}) =="
 echo "Working directory: $APP_DIR"
 echo "CARGO_TARGET_DIR=$CARGO_TARGET_DIR"
 
@@ -30,6 +30,6 @@ EXPECT_VERSION="$VERSION" EXPECT_ARCH=arm64 FRESH_INSTALL_TEST=1 \
   "$ROOT/scripts/validate-macos-release.sh" "$APP"
 
 echo
-echo "Preview build ready: $APP"
+echo "Build ready: $APP"
 echo "Package locally (no upload): REQUIRE_NATIVE=1 ./scripts/package-release-assets.sh ${VERSION}"
 echo "Do not upload to GitHub Releases without explicit approval."

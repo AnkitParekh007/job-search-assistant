@@ -13,7 +13,7 @@ cd job-search-assistant.wiki
 cp /path/to/job-search-assistant/docs/wiki-staging/*.md .
 # Rename Home.md as needed; commit & push
 git add .
-git commit -m "Initialize AI Job Search wiki"
+git commit -m "Initialize Job Search Assistant wiki"
 git push
 ```
 

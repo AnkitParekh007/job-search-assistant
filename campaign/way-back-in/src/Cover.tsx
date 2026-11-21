@@ -31,7 +31,7 @@ export const Cover: React.FC<{who: keyof typeof COPY}> = ({who}) => {
       <div style={{position: 'absolute', left: M, right: M, bottom: 210, display: 'flex', alignItems: 'center', gap: 20}}>
         <AscendMark size={84} draw={1} id={`cv-${who}`} />
         <div>
-          <div style={{fontFamily: F.body, fontWeight: 600, fontSize: 36, color: C.paper}}>AI Job Search Assistant</div>
+          <div style={{fontFamily: F.body, fontWeight: 600, fontSize: 36, color: C.paper}}>Job Search Assistant</div>
           <div style={{fontFamily: F.mono, fontSize: 24, color: C.haze, marginTop: 4}}>{CLAIMS.url}</div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-# AI Job Search — macOS (Intel)
+# Job Search Assistant — macOS (Intel)
 
 Local-first **Intel** (`x86_64`) desktop app for macOS. Same product as the Apple Silicon client, built for Intel Macs.
 
@@ -38,4 +38,4 @@ rustup target add x86_64-apple-darwin
 npm run build:intel
 ```
 
-Artifact: `src-tauri/target/x86_64-apple-darwin/release/bundle/macos/AI Job Search.app`
+Artifact: `src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Job Search Assistant.app`

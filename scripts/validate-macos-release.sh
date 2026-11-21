@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Secure, reusable macOS release validation for developer-preview and future DID builds.
+# macOS release validation for ad-hoc and future Developer ID builds.
 # Never strips quarantine, never changes Gatekeeper, never suggests disabling system security.
 #
 # Usage:
@@ -16,7 +16,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 DEFAULT_TARGET="${CARGO_TARGET_DIR_OVERRIDE:-$ROOT/apps/macos-apple-silicon/src-tauri/target}"
-INPUT="${1:-$DEFAULT_TARGET/release/bundle/macos/AI Job Search.app}"
+INPUT="${1:-$DEFAULT_TARGET/release/bundle/macos/Job Search Assistant.app}"
 
 EXPECT_VERSION="${EXPECT_VERSION:-$(node -p "require('$ROOT/package.json').version")}"
 EXPECT_BUNDLE_ID="${EXPECT_BUNDLE_ID:-$(node -p "require('$ROOT/apps/macos-apple-silicon/src-tauri/tauri.conf.json').identifier")}"
@@ -162,7 +162,7 @@ if [[ "$REQUIRE_DEVELOPER_ID" == "1" ]]; then
   else bad "REQUIRE_DEVELOPER_ID=1 but app is not Developer ID signed"
   fi
 elif [[ "$IS_ADHOC" == "1" ]]; then
-  ok "ad-hoc / developer-preview signature (not for public notarized distribution)"
+  ok "ad-hoc signature (not notarized)"
 elif [[ "$IS_DID" == "1" ]]; then
   ok "Developer ID Application signature present"
 else
@@ -176,7 +176,7 @@ if echo "$STAPLE_OUT" | grep -qi 'The validate action worked\|explicitly stapled
 elif [[ "$REQUIRE_NOTARIZED" == "1" ]]; then
   bad "REQUIRE_NOTARIZED=1 but stapler validate failed: $STAPLE_OUT"
 else
-  warn "not stapled / not notarized (expected for developer preview): $STAPLE_OUT"
+  warn "not stapled / not notarized (expected for ad-hoc builds): $STAPLE_OUT"
 fi
 
 SPCTL_OUT="$(spctl --assess --type execute -vv "$APP" 2>&1 || true)"
@@ -210,8 +210,9 @@ if [[ "$FRESH_INSTALL_TEST" == "1" ]]; then
     CLEANUPS+=("$WORK")
     STAGE="$WORK/stage"
     mkdir -p "$STAGE"
-    ditto "$APP" "$STAGE/AI Job Search.app"
-    ditto -c -k --sequesterRsrc --keepParent "$STAGE/AI Job Search.app" "$WORK/download.zip"
+    APP_BASENAME="$(basename "$APP")"
+    ditto "$APP" "$STAGE/$APP_BASENAME"
+    ditto -c -k --sequesterRsrc --keepParent "$STAGE/$APP_BASENAME" "$WORK/download.zip"
     ZIP_FOR_HASH="$WORK/download.zip"
   fi
   FRESH="$(mktemp -d "${TMPDIR:-/tmp}/ajs-fresh-install.XXXXXX")"

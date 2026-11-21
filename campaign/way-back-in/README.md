@@ -1,6 +1,6 @@
 # The Way Back In · launch films
 
-Three 4:5 (1080×1350, 30 fps) films for AI Job Search Assistant, each with a short cut and a cover, built in code
+Three 4:5 (1080×1350, 30 fps) films for Job Search Assistant, each with a short cut and a cover, built in code
 with [Remotion](https://www.remotion.dev).
 
 | Composition | Film | Length | Presenter (fictional) | Product on screen from |

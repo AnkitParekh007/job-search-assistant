@@ -7,7 +7,7 @@ Local `gh` auth was **invalid** during professionalization — run these after `
 
 ```bash
 gh repo edit AnkitParekh007/job-search-assistant \
-  --description "Local-first AI job search desktop app for macOS with multi-provider AI support. Discover and rank jobs, prepare tailored resumes, track applications, and run Claude Code or Codex workflows." \
+  --description "Job Search Assistant — local-first desktop app for macOS Apple Silicon. Discover roles, prepare applications, and track them on your own files. Ad-hoc signed, not notarized. You submit applications yourself." \
   --homepage "https://job-search-assistant.rebound-ops.org/"
 ```
 

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-label="AI Job Search Assistant — local-first job search desktop workspace for macOS">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-label="Job Search Assistant — local-first job search desktop workspace for macOS">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#f4f5fb"/>
@@ -18,7 +18,7 @@
     <path d="M50 86 q14 12 28 0" stroke="#5b5b66" stroke-width="5" fill="none" stroke-linecap="round"/>
   </g>
 
-  <text x="248" y="270" fill="#17171c" font-family="Helvetica, Arial, sans-serif" font-size="48" font-weight="700">AI Job Search Assistant</text>
+  <text x="248" y="270" fill="#17171c" font-family="Helvetica, Arial, sans-serif" font-size="48" font-weight="700">Job Search Assistant</text>
   <text x="248" y="328" fill="#5b5b66" font-family="Helvetica, Arial, sans-serif" font-size="24">Your AI job-search workflows. One visual desktop workspace.</text>
   <text x="248" y="380" fill="#8b8b96" font-family="Helvetica, Arial, sans-serif" font-size="18">Local-first · Open source · macOS · Multi-provider AI</text>
 

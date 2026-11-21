@@ -22,7 +22,7 @@ import Settings from "./pages/Settings";
 import Interview from "./pages/Interview";
 import Onboarding from "./pages/Onboarding";
 import Scout from "./pages/Scout";
-import { APP_VERSION } from "./version";
+import { APP_NAME, APP_VERSION, PACKAGING_VERIFIED } from "./version";
 
 type NavItem = { id: string; label: string; icon: any; key: string; /** Extra palette search tokens */ aliases?: string[] };
 export const NAV_GROUPS: { title: string | null; items: NavItem[] }[] = [
@@ -79,8 +79,8 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
       {!collapsed && <div className="px-4 py-3 text-[11px] text-ink-3 leading-snug border-t border-line">
         <div className="font-medium text-ink-2">Local workspace</div>
         <div className="truncate font-mono">{ws?.valid ? (ws.upstream_version ? `workspace ${ws.upstream_version}` : "connected") : "not connected"}</div>
-        <div className="mt-1.5 text-[10.5px] uppercase tracking-wide text-ink-3">App v{APP_VERSION} · verified</div>
-        <div className="text-[10.5px] text-ink-3 leading-snug">Developer preview · Gate A job-tracking (ad-hoc sign).</div>
+        <div className="mt-1.5 text-[10.5px] uppercase tracking-wide text-ink-3">{APP_NAME} v{APP_VERSION}</div>
+        <div className="text-[10.5px] text-ink-3 leading-snug">{PACKAGING_VERIFIED ? "Packaging verified for this version." : "This version is not packaging-verified yet."} Ad-hoc signed, not notarized.</div>
       </div>}
     </motion.aside>
   );

@@ -1,7 +1,7 @@
 # Architecture
 
 ```
-┌──────────────── AI Job Search.app (Tauri 2, WKWebView, ~10 MB) ────────────────┐
+┌──────────────── Job Search Assistant.app (Tauri 2, WKWebView, ~10 MB) ────────────────┐
 │ React 19 + TS + Tailwind 4 UI                                                   │
 │  Dashboard · Jobs · Studio · Pipeline · Documents · Activity · Workflows · ...  │
 │        │ invoke()                       ▲ events: run-event, run-status,        │

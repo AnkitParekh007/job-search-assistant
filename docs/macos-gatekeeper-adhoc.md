@@ -1,6 +1,6 @@
 # Gatekeeper limitations — free / ad-hoc macOS builds
 
-Applies to **developer preview** builds signed with `codesign -s -` (no Apple Developer Program).
+Applies to builds signed with `codesign -s -` (no Apple Developer Program). These builds are ad-hoc signed and not notarized.
 
 ## What works without a paid membership
 
@@ -25,7 +25,7 @@ Applies to **developer preview** builds signed with `codesign -s -` (no Apple De
 ## Allowed user guidance
 
 - Unzip the archive.
-- **Right-click** `AI Job Search.app` → **Open** → confirm Open.
+- **Right-click** the `.app` → **Open** → confirm Open. The published v0.1.2 zip contains `AI Job Search.app`. Builds from current source produce `Job Search Assistant.app`.
 - Or: build locally with `./scripts/build-macos-apple-silicon-preview.sh` and run from the build tree.
 
 ## Forbidden workarounds (do not document as install steps)
@@ -44,4 +44,4 @@ Scripts and validators in this repo preserve quarantine during fresh-install tes
 4. Notary credentials + `scripts/notarize-macos.sh`  
 5. Staple + `spctl` accept  
 
-Until then, market the channel as **developer preview (ad-hoc, not notarized)**.
+Until then, say the build is **ad-hoc signed and not notarized**. Do not use a Beta or Developer Preview product label.

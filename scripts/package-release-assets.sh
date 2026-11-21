@@ -16,6 +16,8 @@ OUT="$ROOT/dist-release"
 STAGE="$OUT/stage"
 REQUIRE_NATIVE="${REQUIRE_NATIVE:-1}"
 SKIP_VALIDATE="${SKIP_VALIDATE:-0}"
+APP_BUNDLE_NAME="Job Search Assistant.app"
+ASSET_PREFIX="Job-Search-Assistant"
 
 want() {
   [[ "$ONLY" == "all" || ",$ONLY," == *",$1,"* ]]
@@ -23,30 +25,43 @@ want() {
 
 die() { echo "error: $*" >&2; exit 1; }
 
+case "$VERSION" in
+  *beta*|*Beta*|*rc*|*RC*|*alpha*|*preview*|*Preview*|*-*)
+    die "refusing prerelease version '$VERSION'. Official releases use plain semver, for example 0.1.3."
+    ;;
+esac
+case "$ASSET_PREFIX" in
+  *beta*|*Beta*|*preview*|*Preview*)
+    die "refusing release artifact prefix '$ASSET_PREFIX'"
+    ;;
+esac
+
 note() { printf '%s\n' "$*"; }
 
-write_preview_readme() {
+write_install_readme() {
   local dest="$1"
   local platform="$2"
   cat >"$dest" <<EOF
-# AI Job Search Assistant ${VERSION} — ${platform}
+# Job Search Assistant ${VERSION} — ${platform}
 
-**Channel:** developer preview (ad-hoc signed / unsigned — not notarized).
+**Signing:** ad-hoc signed, not notarized. This is a regular release version, not a prerelease tag.
 
 ## Install
 1. Unzip this archive.
-2. Drag **AI Job Search.app** to Applications (or run in place).
+2. Drag **Job Search Assistant.app** to Applications (or run in place).
 3. First launch may require **right-click → Open** (Gatekeeper).
 4. Select your local workspace when prompted.
 
 ## Security policy
 - Do **not** disable Gatekeeper or run \`spctl --master-disable\`.
 - Do **not** strip quarantine attributes (\`xattr -d com.apple.quarantine\`) as a workaround.
-- This build is a developer preview until Developer ID signing + notarization ship.
+- This package is not Apple notarized.
 
 ## Notes
-- The app does **not** submit applications to employers.
-- Multi-provider AI support (Claude Code or Codex) is required for AI workflows.
+- The published desktop platform for this project is macOS Apple Silicon unless this archive is an explicitly built native installer for another platform.
+- The app does **not** submit applications to employers and does not guarantee interviews or job outcomes.
+- AI workflows need a provider you configure. Offline tracking does not.
+- Local resume checks are not a universal ATS pass rate.
 - Do not push populated workspaces or personal resumes to public remotes.
 EOF
 }
@@ -72,7 +87,8 @@ assert_zip_is_native_macos() {
   fi
 }
 
-rm -rf "$OUT"
+# Never delete dist-release wholesale. Historical zips and checksums stay.
+rm -rf "$STAGE"
 mkdir -p "$STAGE" "$OUT"
 
 PACKAGED=0
@@ -80,8 +96,8 @@ PACKAGED=0
 # --- macOS Apple Silicon ---
 if want macos-arm64; then
   AS_TARGET="${CARGO_TARGET_DIR_OVERRIDE:-$ROOT/apps/macos-apple-silicon/src-tauri/target}"
-  AS_APP="$AS_TARGET/release/bundle/macos/AI Job Search.app"
-  AS_ASSET="AI-Job-Search-${VERSION}-macos-arm64.zip"
+  AS_APP="$AS_TARGET/release/bundle/macos/$APP_BUNDLE_NAME"
+  AS_ASSET="${ASSET_PREFIX}-${VERSION}-macos-arm64.zip"
   if [[ ! -d "$AS_APP" ]]; then
     if [[ "$REQUIRE_NATIVE" == "1" ]]; then
       die "macos-arm64: no built .app (REQUIRE_NATIVE=1). Build first: ./scripts/build-macos-apple-silicon-preview.sh"
@@ -92,8 +108,9 @@ if want macos-arm64; then
   assert_macos_app "$AS_APP" "macos-arm64"
   rm -rf "$STAGE/macos-arm64"
   mkdir -p "$STAGE/macos-arm64"
-  ditto "$AS_APP" "$STAGE/macos-arm64/AI Job Search.app"
-  write_preview_readme "$STAGE/macos-arm64/README.md" "macOS Apple Silicon"
+  rm -f "$OUT/$AS_ASSET"
+  ditto "$AS_APP" "$STAGE/macos-arm64/$APP_BUNDLE_NAME"
+  write_install_readme "$STAGE/macos-arm64/README.md" "macOS Apple Silicon"
   # Do not use --sequesterRsrc: AppleDouble/__MACOSX breaks codesign resources on extract.
   (
     cd "$STAGE"
@@ -110,20 +127,21 @@ fi
 
 # --- macOS Intel ---
 if want macos-x64; then
-  INTEL_APP="$ROOT/apps/macos-intel/src-tauri/target/x86_64-apple-darwin/release/bundle/macos/AI Job Search.app"
+  INTEL_APP="$ROOT/apps/macos-intel/src-tauri/target/x86_64-apple-darwin/release/bundle/macos/$APP_BUNDLE_NAME"
   # Also accept default release bundle path when building on Intel hardware
   if [[ ! -d "$INTEL_APP" ]]; then
-    INTEL_APP="$ROOT/apps/macos-intel/src-tauri/target/release/bundle/macos/AI Job Search.app"
+    INTEL_APP="$ROOT/apps/macos-intel/src-tauri/target/release/bundle/macos/$APP_BUNDLE_NAME"
   fi
-  INTEL_ASSET="AI-Job-Search-${VERSION}-macos-x64.zip"
+  INTEL_ASSET="${ASSET_PREFIX}-${VERSION}-macos-x64.zip"
   if [[ ! -d "$INTEL_APP" ]]; then
     die "macos-x64: no built .app — source fallback removed. Cross-build or build on Intel first."
   fi
   assert_macos_app "$INTEL_APP" "macos-x64"
   rm -rf "$STAGE/macos-x64"
   mkdir -p "$STAGE/macos-x64"
-  ditto "$INTEL_APP" "$STAGE/macos-x64/AI Job Search.app"
-  write_preview_readme "$STAGE/macos-x64/README.md" "macOS Intel"
+  rm -f "$OUT/$INTEL_ASSET"
+  ditto "$INTEL_APP" "$STAGE/macos-x64/$APP_BUNDLE_NAME"
+  write_install_readme "$STAGE/macos-x64/README.md" "macOS Intel"
   (
     cd "$STAGE"
     ditto -c -k --keepParent macos-x64 "$OUT/$INTEL_ASSET"
@@ -141,7 +159,8 @@ fi
 # --- Windows (NSIS/MSI only) ---
 if want windows-x64; then
   WIN_BUNDLE_DIR="$ROOT/apps/windows/src-tauri/target/release/bundle"
-  WIN_ASSET="AI-Job-Search-${VERSION}-windows-x64.zip"
+  WIN_ASSET="${ASSET_PREFIX}-${VERSION}-windows-x64.zip"
+  rm -f "$OUT/$WIN_ASSET"
   shopt -s nullglob
   WIN_EXES=("$WIN_BUNDLE_DIR"/nsis/*.exe)
   WIN_MSIS=("$WIN_BUNDLE_DIR"/msi/*.msi)
@@ -154,11 +173,12 @@ if want windows-x64; then
   [[ ${#WIN_EXES[@]} -gt 0 ]] && cp "${WIN_EXES[@]}" "$STAGE/windows-x64/"
   [[ ${#WIN_MSIS[@]} -gt 0 ]] && cp "${WIN_MSIS[@]}" "$STAGE/windows-x64/"
   cat >"$STAGE/windows-x64/README.md" <<EOF
-# AI Job Search Assistant ${VERSION} — Windows x64
+# Job Search Assistant ${VERSION} — Windows x64
 
 Native installer package (NSIS and/or MSI). Not a source archive.
+This file is produced only from a Windows build. It is not offered as a published download until that build exists.
 
-Run the installer, then launch AI Job Search.
+Run the installer, then launch Job Search Assistant.
 EOF
   (
     cd "$STAGE"
@@ -174,8 +194,8 @@ fi
 
 (
   cd "$OUT"
-  shasum -a 256 AI-Job-Search-${VERSION}-*.zip > SHA256SUMS.txt
+  shasum -a 256 ${ASSET_PREFIX}-${VERSION}-*.zip > "SHA256SUMS-${VERSION}.txt"
 )
-note "Wrote SHA256SUMS.txt"
+note "Wrote SHA256SUMS-${VERSION}.txt (left older checksum files in place)"
 note "Release assets ready in $OUT (local only — not uploaded)"
 ls -lh "$OUT"

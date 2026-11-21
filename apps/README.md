@@ -1,6 +1,6 @@
 # Apps
 
-Native desktop clients for **AI Job Search**.
+Native desktop clients for **Job Search Assistant**.
 
 | Client | Path | Host | Status |
 |--------|------|------|--------|

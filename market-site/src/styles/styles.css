@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI Job Search — "Signal" design system
+   Job Search Assistant — "Signal" design system
    Dark-first: deep ink night, aurora gradients (azure → violet → magenta),
    and a warm coral flare for actions. Light theme keeps the same accents on
    warm paper. Tokens consumed by docs.css keep their original names.
@@ -223,6 +223,10 @@ button {
   font-size: 18px;
   letter-spacing: -0.02em;
   justify-self: start;
+}
+
+.brand-word {
+  white-space: nowrap;
 }
 
 .brand-word span {

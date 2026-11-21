@@ -6,13 +6,13 @@ import type { SeoMeta } from "./site";
  */
 export const PAGE_SEO = {
   home: {
-    title: "AI Job Search Assistant — Local-first job search command center",
+    title: "Job Search Assistant — Local-first job search command center",
     description:
       "Local-first desktop app with multi-provider AI support (Claude Code or OpenAI Codex) for a workspace folder you own — discover, rank, prepare applications, and track outcomes on files you keep.",
     path: "/",
   },
   features: {
-    title: "Features — AI Job Search Assistant",
+    title: "Features — Job Search Assistant",
     description:
       "Discover jobs, rank matches, prepare documents in Studio, track your pipeline, prep interviews, and supervise multi-provider AI runs — local-first on macOS.",
     path: "/features",
@@ -36,9 +36,9 @@ export const PAGE_SEO = {
     path: "/faq",
   },
   download: {
-    title: "Download — AI Job Search Assistant",
+    title: "Download — Job Search Assistant",
     description:
-      "Download AI Job Search Assistant v0.1.2 developer preview for macOS Apple Silicon (ad-hoc signed, not notarized). Intel and Windows: build from source.",
+      "Job Search Assistant for macOS Apple Silicon. The published package is v0.1.2 (ad-hoc signed, not notarized). v0.1.3 is prepared and not published. Intel and Windows: build from source.",
     path: "/download",
   },
 } satisfies Record<string, SeoMeta>;

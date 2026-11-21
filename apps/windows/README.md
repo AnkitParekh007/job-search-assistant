@@ -1,4 +1,4 @@
-# AI Job Search — Windows
+# Job Search Assistant — Windows
 
 Local-first **Windows** desktop app. Same multi-provider workspace model as the macOS clients (Claude Code / Codex when ported).
 

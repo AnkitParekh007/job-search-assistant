@@ -11,7 +11,7 @@ Provider usage uses your plan allowances or API credits. AI workflows are not fr
 
 ## First-run checklist
 
-1. **Launch** — `npm run tauri dev` from `apps/macos-apple-silicon`, or open the built `AI Job Search.app`.
+1. **Launch** — `npm run tauri dev` from `apps/macos-apple-silicon`, or open the built `Job Search Assistant.app`.
 2. **Choose a workspace folder** — any local folder; Jobzuu scaffolds starter files (including `CLAUDE.md`) if missing. Change it later in Settings.
 3. **Verify dependencies** — Settings → Dependencies / AI Providers (provider signed in, Python ≥ 3.10, LaTeX if you need PDFs).
 4. **Configure profile** — Import from CV or Guided interview in onboarding, or use Profile → Full setup.

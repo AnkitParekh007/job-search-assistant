@@ -1,4 +1,4 @@
-# Project Map — AI Job Search Desktop
+# Project Map — Job Search Assistant Desktop
 
 - Purpose: Local-first macOS shell (Tauri 2) that drives an unmodified `ai-job-search` workspace through a multi-provider AI runtime (Claude Code and OpenAI Codex today). Upstream files are the source of truth for jobs, applications, and profile.
 - Product entrypoints: `src/main.tsx` → shared `@ai-job-search/ui`; `src-tauri/src/main.rs` → `lib.rs` (Rust host).

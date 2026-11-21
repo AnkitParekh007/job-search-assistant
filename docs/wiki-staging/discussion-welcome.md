@@ -1,4 +1,4 @@
-# Welcome to AI Job Search
+# Welcome to Job Search Assistant
 
 This project is a local-first macOS shell over the upstream ai-job-search workspace, with multi-provider AI support (Claude Code or OpenAI Codex).
 

@@ -32,7 +32,7 @@ export function SiteHeader({
   return (
     <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
       <div className="nav-inner">
-        <Link className="brand" to="/" aria-label="AI Job Search home">
+        <Link className="brand" to="/" aria-label="Job Search Assistant home">
           <BrandLockup />
         </Link>
         <nav className={`nav-links${menuOpen ? " is-open" : ""}`} aria-label="Primary">
