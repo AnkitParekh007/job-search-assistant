@@ -32,7 +32,8 @@ export type RunSummary = {
 };
 export type RunEvent = { run_id: string; seq: number; ts: number; kind: string; data: any };
 export type Pending = { request_id: string; request: { tool_name: string; input: any; display_name?: string; [k: string]: any } };
-export type AppFolder = { name: string; files: string[]; outcome: string | null; posting: string | null };
+export type AppEvent = { ts?: string; type?: string; detail?: string };
+export type AppFolder = { name: string; files: string[]; outcome: string | null; posting: string | null; events?: AppEvent[] };
 export type ProfileFile = { path: string; content: string; placeholders: number };
 
 export const STATUSES = ["drafted", "applied", "interview", "offer", "hired", "rejected", "no_response", "offer_declined", "withdrawn"] as const;

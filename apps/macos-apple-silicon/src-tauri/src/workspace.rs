@@ -296,6 +296,8 @@ pub struct AppFolder {
     pub files: Vec<String>,
     pub outcome: Option<String>,
     pub posting: Option<String>,
+    /// Lifecycle events from `events.jsonl` (best-effort; malformed lines skipped).
+    pub events: Vec<serde_json::Value>,
 }
 
 pub fn application_folder(ws: &Path, name: &str) -> Result<AppFolder, String> {
@@ -307,11 +309,24 @@ pub fn application_folder(ws: &Path, name: &str) -> Result<AppFolder, String> {
         }
     }
     files.sort();
+    let mut events: Vec<serde_json::Value> = vec![];
+    if let Ok(raw) = fs::read_to_string(d.join("events.jsonl")) {
+        for line in raw.lines() {
+            let line = line.trim();
+            if line.is_empty() {
+                continue;
+            }
+            if let Ok(v) = serde_json::from_str::<serde_json::Value>(line) {
+                events.push(v);
+            }
+        }
+    }
     Ok(AppFolder {
         name: name.into(),
         outcome: fs::read_to_string(d.join("outcome.md")).ok(),
         posting: fs::read_to_string(d.join("job_posting.md")).ok(),
         files,
+        events,
     })
 }
 

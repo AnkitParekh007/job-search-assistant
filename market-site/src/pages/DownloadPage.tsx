@@ -103,6 +103,12 @@ export function DownloadPage() {
                 </a>
                 . Unsigned macOS builds may need right-click → Open the first time.
               </p>
+              <p className="fine-print">
+                <strong>Honest status:</strong> Apple Silicon is Gate A verified (offline job-tracking smoke) with
+                Gate B local ATS helpers backed by a synthetic regression suite. Packages are unsigned / ad-hoc
+                internal builds — there is no notarized installer yet and auto-update is disabled. Intel Mac and
+                Windows have source and release paths but no Gate A smoke on our hardware yet.
+              </p>
             </div>
           </div>
 
@@ -111,6 +117,8 @@ export function DownloadPage() {
               <h2 className="platform-download-title">Choose your platform</h2>
               <p className="platform-download-copy">
                 Each card downloads the {RELEASE_VERSION} package for that client from GitHub Releases.
+                Only Apple Silicon has been smoke-verified; Intel and Windows packages are unverified, unsigned
+                client builds.
               </p>
             </div>
             <div className="platform-grid" role="list">

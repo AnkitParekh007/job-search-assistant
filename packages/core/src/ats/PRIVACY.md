@@ -7,6 +7,7 @@ Gate B regression corpus rules for `runBenchmark()` and fixtures in this package
 - The committed Alex / Nordlicht corpus in `fixtures.ts` / `benchmark.ts` is **fully synthetic**.
 - No real resumes, employer PII, or production tracker rows belong in CI.
 - Do not commit candidate PDFs, DOCX, or workspace CSVs under `packages/core/src/ats/`.
+- **Sole exception:** `fixtures/alex-resume.docx` is a tiny (~1 KB) hand-built synthetic DOCX containing only the fictional Alex Morgan text. `extractFixtures.test.ts` skips the DOCX check if the file is absent. There is no committed PDF fixture; PDF extraction is covered by the app's native extractor and is not part of this synthetic suite.
 
 ## Optional consented corpora
 

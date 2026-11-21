@@ -6,6 +6,19 @@ import { PAGE_SEO } from "../lib/pages";
 import { applySeo } from "../lib/seo";
 import { GITHUB_REPO } from "../lib/site";
 
+/** Hardcoded from audit-reports/production-readiness/evidence/GATE-B-BENCHMARK-20261121.json (2026-11-21). */
+const EVIDENCE_PATH = "audit-reports/production-readiness/evidence/GATE-B-BENCHMARK-20261121.json";
+const SYNTHETIC_RESULT = [
+  ["Suite result (ok)", "true"],
+  ["Name extracted (nameOk)", "true"],
+  ["Employer extracted (employerOk)", "true"],
+  ["Requirements extracted", "4"],
+  ["Local match (matchOk)", "true"],
+  ["Skills recall", "1.0"],
+  ["Export validation (exportOk)", "true"],
+  ["Corpus SHA-256 (prefix)", "a65236e4e9a2…"],
+] as const;
+
 const TESTS = [
   {
     id: "01",
@@ -52,14 +65,43 @@ export function BenchmarksPage() {
               We are designing an open, reproducible way to evaluate resume readability,
               job relevance, claim integrity and real recruiter responses.
             </p>
-            <span className="status-pill status-pill--planned">Benchmark results: not yet published</span>
+            <span className="status-pill status-pill--planned">Synthetic regression published (Gate B)</span>
           </div>
           <div className="benchmark-notice reveal" role="note">
             <strong>No invented success rates.</strong>
             <p>
               There is no single ATS algorithm to defeat, and we have not published an independently validated
-              ATS pass rate or interview-rate improvement for this app. The checks below describe a proposed
+              ATS pass rate or interview-rate improvement for this app. The only published result is a small
+              synthetic regression suite (below). The four-check protocol further down is still a proposed
               test program, not completed product results.
+            </p>
+          </div>
+        </section>
+        <section className="band band-tight" id="synthetic-regression">
+          <div className="section-head reveal">
+            <p className="kicker">Published · 2026-11-21</p>
+            <h2>Synthetic regression suite. <em>Not a pass rate.</em></h2>
+            <p className="lede">
+              A private regression gate over one fictional candidate (Alex Morgan) and one fictional posting
+              (Nordlicht). It protects the local parser, matcher and export validator from regressions.
+            </p>
+          </div>
+          <div className="table-wrap reveal">
+            <table className="data-table benchmark-table">
+              <thead><tr><th>Check</th><th>Result</th></tr></thead>
+              <tbody>
+                {SYNTHETIC_RESULT.map(([k, v]) => (
+                  <tr key={k}><td>{k}</td><td className="mono">{v}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="benchmark-notice reveal" role="note" style={{ marginTop: 24 }}>
+            <strong>This is NOT a universal ATS pass rate and NOT recruiter outcomes.</strong>
+            <p>
+              It is one synthetic document pair, consented-by-construction, with no real candidate data. It says
+              nothing about any employer's ATS, interview rates or hiring results. Evidence file:{" "}
+              <a href={`${GITHUB_REPO}/blob/main/${EVIDENCE_PATH}`} rel="noopener"><code>{EVIDENCE_PATH}</code></a>.
             </p>
           </div>
         </section>
@@ -89,15 +131,15 @@ export function BenchmarksPage() {
             <table className="data-table benchmark-table">
               <thead><tr><th>Evidence</th><th>What readers will be able to verify</th><th>Current status</th></tr></thead>
               <tbody>
-                <tr><td>Parsing fixtures</td><td>Document types, ground-truth fields, observed misses and repeatable extraction tests</td><td>Planned</td></tr>
-                <tr><td>Fit judgments</td><td>Requirement-level agreement with independent human reviewers and error categories</td><td>Planned</td></tr>
-                <tr><td>Truthfulness tests</td><td>Regression fixtures for unsupported claims and final-file content loss</td><td>Planned</td></tr>
+                <tr><td>Parsing fixtures</td><td>Document types, ground-truth fields, observed misses and repeatable extraction tests</td><td>Synthetic suite green (name, contact, skills, export validation); real-document corpus planned</td></tr>
+                <tr><td>Fit judgments</td><td>Requirement-level agreement with independent human reviewers and error categories</td><td>Synthetic suite green (one fictional posting); independent human review planned</td></tr>
+                <tr><td>Truthfulness tests</td><td>Regression fixtures for unsupported claims and final-file content loss</td><td>Synthetic suite green (unconfirmed facts excluded; export validation); broader fixtures planned</td></tr>
                 <tr><td>Recruiter conversion</td><td>Consent-based cohorts, sample sizes, follow-up periods, uncertainty and important confounders</td><td>Not collected</td></tr>
               </tbody>
             </table>
           </div>
           <p className="marketing-footnote">
-            Any future benchmark results will be dated, scoped to the versions and tools tested, and
+            Published and future benchmark results are dated, scoped to the versions and tools tested, and
             distinguished from employer-controlled ATS configurations.
           </p>
         </section>

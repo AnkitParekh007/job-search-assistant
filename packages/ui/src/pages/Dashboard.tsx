@@ -1,10 +1,10 @@
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import clsx from "clsx";
 import { ArrowRight, BellRing, CalendarClock, CircleAlert, FileClock, Hand, ListOrdered, Radar, RotateCcw, Sparkles, Sun } from "lucide-react";
-import { canonical } from "@ai-job-search/runtime";
+import { api, canonical } from "@ai-job-search/runtime";
 import { useStore } from "../store";
-import { aiProviderBlockedReason, aiProviderReady, computeMetrics } from "@ai-job-search/core";
+import { aiProviderBlockedReason, aiProviderReady, computeMetrics, type LifecycleEvent } from "@ai-job-search/core";
 import { Actor, ScoreRing, Section } from "../components/ui";
 import { RunStatusPill } from "../components/RunConsole";
 
@@ -18,7 +18,14 @@ function greeting() {
 export default function Dashboard() {
   const { tracker, seen, go, runs, live, loading, startWorkflow, setFocusRun, deps } = useStore();
   const rows = tracker?.rows || [];
-  const m = useMemo(() => computeMetrics(rows, seen), [rows, seen]);
+  const [lifecycle, setLifecycle] = useState<LifecycleEvent[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(rows.map((r) => api.appFolder(r.fields.company, r.fields.role).then((f) => (f.events || []).filter((e) => e.type).map((e) => ({ type: e.type as string, app: `${r.fields.company}|${r.fields.role}`.toLowerCase() }))).catch(() => [] as LifecycleEvent[])))
+      .then((all) => { if (!cancelled) setLifecycle(all.flat()); });
+    return () => { cancelled = true; };
+  }, [tracker]);
+  const m = useMemo(() => computeMetrics(rows, seen, new Date(), lifecycle), [rows, seen, lifecycle]);
   const aiReady = aiProviderReady(deps);
   const aiBlock = aiProviderBlockedReason(deps);
   const open = (route: string, key?: string, val?: string) => { if (key && val != null) sessionStorage.setItem(key, val); go(route); };
@@ -60,8 +67,8 @@ export default function Dashboard() {
     { label: "Ranked", v: m.funnel[1].value, go: () => go("jobs") },
     { label: "Drafted", v: m.funnel[2].value, go: () => go("pipeline") },
     { label: "Submitted", v: m.funnel[3].value, go: () => go("pipeline") },
-    { label: "Interviewing", v: s("interview"), go: () => open("pipeline", "pipeFilter", "interview") },
-    { label: "Offers", v: s("offer") + s("hired"), go: () => open("pipeline", "pipeFilter", "offer") },
+    { label: "Interviewing", v: m.lifecycleSource === "events" ? m.funnel[4].value : s("interview"), go: () => open("pipeline", "pipeFilter", "interview") },
+    { label: "Offers", v: m.lifecycleSource === "events" ? m.funnel[5].value : s("offer") + s("hired"), go: () => open("pipeline", "pipeFilter", "offer") },
   ];
   const liveRuns = runs.filter((r) => live[r.id]);
 
@@ -123,7 +130,7 @@ export default function Dashboard() {
           </Section>
         </div>
 
-        <Section className="mt-4" title="Your journey" action={<span className="text-[11.5px] text-ink-3">{m.interviewRate != null ? `${Math.round(m.interviewRate * 100)}% of submissions reached interview` : journey.every((j) => j.v === 0) ? "Starts after your first discovery" : "Interview rate appears after your first submission"}</span>}>
+        <Section className="mt-4" title="Your journey" action={<span className="text-[11.5px] text-ink-3">{m.interviewRate != null ? `${Math.round(m.interviewRate * 100)}% of submissions reached interview` : journey.every((j) => j.v === 0) ? "Starts after your first discovery" : "Interview rate appears after your first submission"}{m.lifecycleSource === "events" && <span className="block text-right">Submitted from confirmed events</span>}</span>}>
           {journey.every((j) => j.v === 0) ? (
             <div className="flex flex-wrap items-center gap-3 py-2">
               <div className="text-ink-2 text-[13px] flex-1 min-w-[200px]">No applications in the funnel yet. Find roles, then evaluate one in Studio.</div>

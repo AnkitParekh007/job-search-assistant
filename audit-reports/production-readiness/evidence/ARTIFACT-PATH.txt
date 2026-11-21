@@ -1,4 +1,4 @@
-Artifact (2026-11-21 ~04:47 IST, Apple Silicon, this machine)
+Artifact (2026-11-21 ~05:45 IST, Apple Silicon, this machine)
 
 Path:
   apps/macos-apple-silicon/src-tauri/target/release/bundle/macos/AI Job Search.app
@@ -8,10 +8,12 @@ Also produced under sandbox cargo target (then copied + adhoc codesign):
 
 Size: ~6.2 MiB
 Arch: Mach-O 64-bit executable arm64
-Signing: adhoc — N/A for internal beta
+Signing: adhoc — N/A for wider beta (notarization not done)
 Auto-update: disabled
-Git: workspace v0.1.1-11-gebfc926 (pre-commit working tree includes verified label flip)
-Readiness label: verified (Gate A)
+Git: Gate B polish working tree on top of v0.1.1-13-g5882c35
+Readiness: Gate A verified · Gate B local ATS evidence-backed
 
 Binary:
   Contents/MacOS/ai-job-search-desktop
+
+Smoke: evidence/SMOKE-GATE-B-20261121.md

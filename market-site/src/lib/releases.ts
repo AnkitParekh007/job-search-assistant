@@ -35,7 +35,7 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     subtitle: "macOS 13+ · x86_64",
     badge: "Download",
     asset: `AI-Job-Search-${RELEASE_VERSION}-macos-x64.zip`,
-    note: "Intel client package — unzip and follow README",
+    note: "Unsigned, not yet smoke-verified — unzip and follow README",
   },
   {
     id: "windows",
@@ -43,7 +43,7 @@ export const PLATFORM_DOWNLOADS: PlatformDownload[] = [
     subtitle: "Windows 10/11 · x64",
     badge: "Download",
     asset: `AI-Job-Search-${RELEASE_VERSION}-windows-x64.zip`,
-    note: "Windows client package — unzip and follow README",
+    note: "Unsigned, not yet smoke-verified — unzip and follow README",
   },
 ];
 

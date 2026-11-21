@@ -186,8 +186,10 @@ function AppDrawer({ row, onClose }: { row: TrackerRow; onClose: () => void }) {
             <div>
               <div className="label mb-2">Timeline</div>
               <ol className="border-l border-line ml-1.5 space-y-2.5">
+                {folder?.events?.length ? folder.events.map((e, i) => <li key={i} className="pl-4 relative"><span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent" /><div className="text-[12.5px] selectable"><b>{e.ts || "—"}</b> · {(e.type || "event").replace(/_/g, " ")}{e.detail ? <span className="text-ink-2"> · {e.detail}</span> : null}</div></li>) : <>
                 <li className="pl-4 relative"><span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent" /><div className="text-[12.5px]"><b>{f.date}</b> · row {STATUS_META[canonical(f.status)]?.label || canonical(f.status)}{(f.notes || "").includes("user confirmed submitted") ? " · submission confirmed" : ""}</div></li>
                 {notes.map((n, i) => <li key={i} className="pl-4 relative"><span className="absolute -left-[4px] top-1.5 w-2 h-2 rounded-full bg-line-strong" /><div className="text-[12.5px] text-ink-2 selectable">{n}</div></li>)}
+                </>}
               </ol>
             </div>
             <div>

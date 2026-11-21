@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canTransition, computeMetrics, lastContact } from "./metrics";
+import { canTransition, computeMetrics, lastContact, type LifecycleEvent } from "./metrics";
 import { buildCodexPrompt, buildPrompt, buildPromptForProvider, WORKFLOWS } from "./workflows";
 import { PRODUCT_FEATURES, WORKFLOW_FEATURES } from "./features";
 import { providerSupportsWorkflow, unsupportedReason } from "./providers";
@@ -84,5 +84,46 @@ describe("workflow catalog", () => {
     expect(providerSupportsWorkflow("gemini", "interview")).toBe(true);
     expect(unsupportedReason("ollama", "scrape")).toMatch(/structured analysis/);
     expect(buildPromptForProvider(WORKFLOWS.find((w) => w.id === "rank")!, "", "openai_api")).toContain("structured inference");
+  });
+});
+
+describe("computeMetrics lifecycle events", () => {
+  const rows = [row(0, { status: "applied" }), row(1, { status: "interview" }), row(2, { status: "drafted" })];
+  const now = new Date("2026-11-19T12:00:00");
+  const val = (m: ReturnType<typeof computeMetrics>, l: string) => m.funnel.find((f) => f.label === l)!.value;
+
+  it("falls back to tracker CSV when no lifecycle events are given", () => {
+    const m = computeMetrics(rows, [], now, []);
+    expect(m.lifecycleSource).toBe("tracker");
+    expect(val(m, "Submitted")).toBe(2);
+  });
+  it("ignores events that are not submitted/interview/offer", () => {
+    const m = computeMetrics(rows, [], now, [{ type: "draft_created" }]);
+    expect(m.lifecycleSource).toBe("tracker");
+  });
+  it("uses events only once any funnel event exists, de-duplicating per application", () => {
+    const ev: LifecycleEvent[] = [
+      { type: "user_confirmed_submitted", app: "a" },
+      { type: "user_confirmed_submitted", app: "a" },
+      { type: "user_confirmed_submitted", app: "b" },
+      { type: "interview_scheduled", app: "b" },
+      { type: "recruiter_screen_scheduled", app: "b" },
+      { type: "offer_received", app: "b" },
+    ];
+    const m = computeMetrics(rows, [], now, ev);
+    expect(m.lifecycleSource).toBe("events");
+    expect(val(m, "Submitted")).toBe(2);
+    expect(val(m, "Interview")).toBe(1);
+    expect(val(m, "Offer")).toBe(1);
+    expect(m.interviewRate).toBe(0.5);
+  });
+  it("counts app-less events by raw count (interview = max of the two event types)", () => {
+    const m = computeMetrics(rows, [], now, [
+      { type: "user_confirmed_submitted" },
+      { type: "interview_scheduled" },
+      { type: "recruiter_screen_scheduled" },
+    ]);
+    expect(val(m, "Submitted")).toBe(1);
+    expect(val(m, "Interview")).toBe(1);
   });
 });
