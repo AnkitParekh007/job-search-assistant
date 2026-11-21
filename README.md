@@ -107,7 +107,7 @@ Deep dive: [Architecture](./docs/architecture.md) · [App architecture](./apps/m
 
 ## Quick start (build from source)
 
-**Download:** [GitHub Release `v0.1.4`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.4) (`Job-Search-Assistant-0.1.4-macos-arm64.zip`, ad-hoc signed, not notarized — right-click → Open). Until that tag’s zip is live, use the previous Apple Silicon release. Intel Mac and Windows: **build from source** (no native installer published).
+**Download:** prepared **v0.1.5**; until that tag’s zip is live, use [GitHub Release `v0.1.4`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.4) (`Job-Search-Assistant-0.1.4-macos-arm64.zip`, ad-hoc signed, not notarized — right-click → Open). Intel Mac and Windows: **build from source** (no native installer published).
 
 ### Prerequisites
 
@@ -242,14 +242,14 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 
 ### Release honesty (Gate A)
 
-- **v0.1.4** adds assisted updates (GitHub check + SHA-verified zip download; manual app replace). Packaging smoke for this version is re-run on release; it does not inherit v0.1.3 verification. Not notarized; not a wiped clean-device journey.
+- **v0.1.5** hardens assisted-update SHA verification (fail closed), selected-provider readiness before AI runs, and workspace symlink escape guards. **v0.1.4** added assisted updates. Packaging smoke is re-run per version; not notarized.
 - Updates are **assisted**, not silent. Notarized installers are **not** published.
 - Local resume parse, evidence-grounded match, and export validation are Gate B–backed via the synthetic corpus in [`packages/core/src/ats`](./packages/core/src/ats) — we still do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
 
 ### Key limitations
 
 - Primary support target is **macOS Apple Silicon**.
-- GitHub Release `v0.1.4` is the prepared Apple Silicon package with assisted updates (ad-hoc `.app`, not notarized). `v0.1.2` and `v0.1.3` were not replaced. Source archives are not packaged as native installers.
+- GitHub Release `v0.1.5` is the prepared Apple Silicon package (ad-hoc `.app`, not notarized). Until uploaded, downloads stay on `v0.1.4`. Earlier zips were not replaced. Source archives are not packaged as native installers.
 - Does **not** auto-submit applications or send follow-up email.
 - Gmail / Notion features need external connectors.
 
@@ -323,7 +323,7 @@ No. It prepares documents and tracks status. You submit applications yourself.
 Not for offline tracking and profile work. AI workflows need a configured provider (Claude Code, Codex, OpenAI API, Gemini, or Ollama — capability varies; see the [provider matrix](./docs/providers/01-provider-capability-matrix.md)). Some connector workflows (Gmail / Notion) still require Claude Code. Provider usage is not free by default.
 
 **Is there a downloadable installer?**  
-Yes for **macOS Apple Silicon**: GitHub Release [`v0.1.4`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.4) ships `Job-Search-Assistant-0.1.4-macos-arm64.zip` (ad-hoc signed `.app`, not notarized — right-click → Open on first launch). Settings can check for updates and download a verified zip; you replace the app yourself. No `.dmg`. Intel Mac and Windows: build from source.
+Yes for **macOS Apple Silicon**: prepared [`v0.1.5`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.5); live download may still be [`v0.1.4`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.4) until upload (ad-hoc signed `.app`, not notarized — right-click → Open on first launch). Settings can check for updates and download a verified zip; you replace the app yourself. No `.dmg`. Intel Mac and Windows: build from source.
 
 **Can I use Ollama / a local model?**  
 Not in the current architecture.

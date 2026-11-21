@@ -5,8 +5,8 @@
 | Version | Supported |
 |---------|-----------|
 | `0.1.x` on `main` (source builds) | Yes — best effort |
-| Published GitHub Release `v0.1.4` (Apple Silicon zip) | Yes — best effort |
-| Older published tags (`v0.1.2`, `v0.1.3`) | Best effort only; prefer latest |
+| Published GitHub Release `v0.1.5` (Apple Silicon zip) | Yes — best effort (when published) |
+| Older published tags (`v0.1.2`–`v0.1.4`) | Best effort only; prefer latest |
 | Notarized / Developer ID installers | Not published yet |
 
 ## Reporting a vulnerability
@@ -17,7 +17,7 @@ Prefer **GitHub Private Vulnerability Reporting** on this repository (Settings �
 
 If private reporting is not yet enabled, contact the maintainer via GitHub (@AnkitParekh007) using a private channel and include:
 
-- Affected commit or package version (`0.1.4` today)
+- Affected commit or package version (`0.1.5` today)
 - Platform (macOS version + CPU architecture)
 - Clear reproduction steps **without** secrets
 - Impact assessment (what an attacker could achieve)

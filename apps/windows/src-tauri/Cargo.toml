@@ -1,6 +1,6 @@
 [package]
 name = "ai-job-search-desktop"
-version = "0.1.4"
+version = "0.1.5"
 description = "Local Windows desktop shell for Job Search Assistant"
 authors = ["local"]
 edition = "2021"

@@ -14,6 +14,18 @@ for the application package version (`0.1.1` in `package.json` / `tauri.conf.jso
 ### Changed
 - Sidebar and desktop app icons use the market-site Ascend brand mark.
 
+## [0.1.5] — 2026-11-21
+
+### Security
+- Assisted update downloads fail closed unless `SHA256SUMS.txt` is present and the digest matches
+- Exact selected AI provider must be ready before any workflow starts (UI + Rust)
+- Workspace `safe_join` blocks symlink escapes outside the selected folder
+
+### Fixed
+- Windows `deps.rs` syntax error that broke cargo parse/fmt
+- Sidebar brand label uses **Job Search Assistant** (not “AI Job Search”)
+- Keychain / privacy disclosures for OpenAI and Gemini BYOK keys
+
 ## [Unreleased]
 
 ### Added
