@@ -10,8 +10,8 @@
 | Notarization | Not done — optional scripts ready for Phase B |
 | Auto-update | Disabled |
 | Native packaging | Source-archive fallbacks **removed**; incomplete artifacts refused |
-| GitHub asset publish | **Gated** — will not overwrite `v0.1.2` without approval |
-| Artifact (local) | `apps/macos-apple-silicon/.../AI Job Search.app` after preview build |
+| GitHub asset publish | **Live** — sole release [`v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2) (`AI-Job-Search-0.1.2-macos-arm64.zip` + `SHA256SUMS.txt`) |
+| Artifact (local) | `dist-release/AI-Job-Search-0.1.2-macos-arm64.zip` · SHA-256 `13750dc82ef9a6799cb675d3ca4c2fed80033bff6d7b95744f4294abac04e15e` |
 
 ## Claims allowed
 

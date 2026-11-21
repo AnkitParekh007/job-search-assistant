@@ -72,7 +72,7 @@ export function DocsOverview() {
         <div className="docs-card-grid">
           <Link className="docs-card" to="/docs/install">
             <strong>Install</strong>
-            <span>Download v{RELEASE_VERSION} for Apple Silicon, Intel, or Windows.</span>
+            <span>Download v{RELEASE_VERSION} for Apple Silicon, or build Intel/Windows from source.</span>
           </Link>
           <Link className="docs-card" to="/docs/providers">
             <strong>AI Providers</strong>
@@ -95,8 +95,8 @@ export function DocsOverview() {
             Apple Silicon, with provider badges in Agent Activity.
           </li>
           <li>
-            <strong>Platform packages</strong> — GitHub Release {RELEASE_TAG} assets for macOS arm64 / x64,
-            and Windows x64.
+            <strong>Platform packages</strong> — GitHub Release {RELEASE_TAG} ships a native Apple Silicon
+            zip; Intel Mac and Windows remain build-from-source until those hosts produce installers.
           </li>
           <li>
             <strong>Full workflow catalog</strong> — all 14 workflows from Automations, with Codex
@@ -130,12 +130,12 @@ export function DocsQuickstart() {
           <li>
             <div>
               <strong>Download the app</strong>
-              Grab the {RELEASE_TAG} package for your platform from{" "}
+              Grab the {RELEASE_TAG} Apple Silicon package from{" "}
               <Link to="/download">Download</Link> (or{" "}
               <a href={RELEASES_PAGE} rel="noopener">
                 GitHub Releases
               </a>
-              ). On macOS, first launch may need right-click → Open.
+              ). First launch may need right-click → Open.
             </div>
           </li>
           <li>
@@ -192,7 +192,7 @@ export function DocsInstall() {
       <article className="docs-article">
         <h1>Install</h1>
         <p className="lede">
-          Download {RELEASE_TAG} for your platform, or build the Apple Silicon app from source.
+          Download {RELEASE_TAG} for Apple Silicon, or build Intel/Windows (and Apple Silicon) from source.
         </p>
 
         <h2>Download packages ({RELEASE_TAG})</h2>

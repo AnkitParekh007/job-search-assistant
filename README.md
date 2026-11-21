@@ -243,7 +243,7 @@ More: [Privacy & security](./docs/privacy-and-security.md)
 ### Release honesty (Gate A)
 
 - macOS Apple Silicon builds are labeled **verified** for Gate A job-tracking ([checklist](./audit-reports/production-readiness/GATE-A-PACKAGING.md)).
-- Auto-update is **disabled**. Notarized installers are **not** claimed for the internal beta channel.
+- Auto-update is **disabled**. Notarized installers are **not** claimed for the developer-preview channel.
 - Local resume parse, evidence-grounded match, and export validation are Gate B–backed ([checklist](./audit-reports/production-readiness/GATE-B-ATS.md)) — we still do **not** claim universal ATS pass rates, guaranteed interviews, or named-employer ATS compatibility.
 
 ### Key limitations
@@ -322,8 +322,8 @@ No. It prepares documents and tracks status. You submit applications yourself.
 **Do I need Claude Code?**  
 Not for offline tracking and profile work. AI workflows need a configured provider (Claude Code, Codex, OpenAI API, Gemini, or Ollama — capability varies; see the [provider matrix](./docs/providers/01-provider-capability-matrix.md)). Some connector workflows (Gmail / Notion) still require Claude Code. Provider usage is not free by default.
 
-**Is there a downloadable `.dmg`?**  
-Not yet. Build from source. Releases will be announced when artifacts exist.
+**Is there a downloadable installer?**  
+Yes for **macOS Apple Silicon**: GitHub Release [`v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2) ships `AI-Job-Search-0.1.2-macos-arm64.zip` (ad-hoc signed `.app`, not notarized — right-click → Open on first launch). No `.dmg` yet. Intel Mac and Windows: build from source.
 
 **Can I use Ollama / a local model?**  
 Not in the current architecture.

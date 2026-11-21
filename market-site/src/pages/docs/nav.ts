@@ -72,7 +72,7 @@ export const DOCS_META: Record<
   install: {
     section: "get-started",
     title: "Install — Docs — AI Job Search Assistant",
-    description: "Download v0.1.1 for your platform or build from source; install AI providers and tools.",
+    description: "Download v0.1.2 for Apple Silicon or build Intel/Windows from source; install AI providers and tools.",
     path: "/docs/install",
   },
   "first-run": {

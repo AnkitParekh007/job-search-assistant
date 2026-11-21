@@ -2,7 +2,7 @@
 
 Primary path: **macOS Apple Silicon** (`apps/macos-apple-silicon`).
 
-Platform packages are on [GitHub Releases](https://github.com/AnkitParekh007/job-search-assistant/releases). The current channel is a **developer preview** (ad-hoc signed Apple Silicon `.app`, not notarized). Prefer `./scripts/build-macos-apple-silicon-preview.sh` for a validated local build. Do not disable Gatekeeper or strip quarantine to launch.
+Current release: **[`v0.1.2`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.2)** — download `AI-Job-Search-0.1.2-macos-arm64.zip` (ad-hoc signed Apple Silicon `.app`, not notarized). Intel/Windows: build from source. Prefer `./scripts/build-macos-apple-silicon-preview.sh` for a validated local build. Do not disable Gatekeeper or strip quarantine to launch.
 
 ## System requirements
 
