@@ -2,15 +2,14 @@
 
 Downloadable packages are published as GitHub Release assets and linked from the marketing `/download` page (`market-site/src/lib/releases.ts`).
 
-## Prepared release and last published package
+## Published release
 
 | Item | Value |
 |------|-------|
-| Prepared tag / version | `v0.1.3` / `0.1.3` (plain semver, not a prerelease) |
-| Published tag | `v0.1.2` — do not replace its assets |
-| Signing | Ad-hoc, **not notarized**. No Beta or Developer Preview channel label |
-| Next native asset name | `Job-Search-Assistant-0.1.3-macos-arm64.zip` (not built or uploaded) |
-| Published native asset | `AI-Job-Search-0.1.2-macos-arm64.zip` |
+| Tag / version | `v0.1.3` / `0.1.3` (regular release, not a prerelease) |
+| Signing | Ad-hoc, **not notarized**. No Developer ID on the build machine |
+| Native asset | `Job-Search-Assistant-0.1.3-macos-arm64.zip` |
+| Preserved previous asset | `AI-Job-Search-0.1.2-macos-arm64.zip` (not replaced) |
 | Site constants | `RELEASE_TAG` / `RELEASE_VERSION` in `market-site/src/lib/releases.ts` |
 | Auto-publish | **Off** — GitHub uploads require `workflow_dispatch` + `publish_assets=true` + `RELEASE_PUBLISH_APPROVED=1` |
 

@@ -38,7 +38,7 @@ export const PAGE_SEO = {
   download: {
     title: "Download — Job Search Assistant",
     description:
-      "Job Search Assistant for macOS Apple Silicon. The published package is v0.1.2 (ad-hoc signed, not notarized). v0.1.3 is prepared and not published. Intel and Windows: build from source.",
+      "Download Job Search Assistant v0.1.3 for macOS Apple Silicon. Ad-hoc signed, not notarized. Intel and Windows: build from source.",
     path: "/download",
   },
 } satisfies Record<string, SeoMeta>;

@@ -76,7 +76,7 @@ export function DownloadPage() {
             </div>
 
             <div className="stack wide reveal reveal-delay-1">
-              <p className="kicker">Prepared release {RELEASE_TAG} · not published</p>
+              <p className="kicker">Release {RELEASE_TAG}</p>
               <h1>Install Job Search Assistant</h1>
               <p className="lede">
                 The desktop app helps you discover roles, prepare documents, and track applications on your own
@@ -85,24 +85,23 @@ export function DownloadPage() {
               <div className="cta-row">
                 <a className="btn btn-primary btn-lg btn-icon" href={primaryUrl} rel="noopener">
                   <DownloadGlyph />
-                  Download Apple Silicon v0.1.2
+                  Download Apple Silicon {RELEASE_TAG}
                 </a>
                 <Link className="btn btn-soft btn-lg" to="/docs/install">
                   Install docs
                 </Link>
               </div>
               <p className="fine-print">
-                The last published package is{" "}
+                Published package{" "}
                 <a href={RELEASE_TAG_URL} rel="noopener">
-                  v0.1.2
+                  {RELEASE_TAG}
                 </a>{" "}
-                (<span className="font-mono">AI-Job-Search-0.1.2-macos-arm64.zip</span>). {RELEASE_TAG} is prepared
-                in source and is not on{" "}
+                (<span className="font-mono">Job-Search-Assistant-0.1.3-macos-arm64.zip</span>) on{" "}
                 <a href={RELEASES_PAGE} rel="noopener">
                   GitHub Releases
-                </a>{" "}
-                yet. The published app is ad-hoc signed and not notarized. First launch may need right-click → Open.
-                Do not disable Gatekeeper or strip quarantine.
+                </a>
+                . It is a regular release, ad-hoc signed and not notarized. First launch may need right-click → Open.
+                Do not disable Gatekeeper or strip quarantine. The earlier v0.1.2 zip is unchanged.
               </p>
               <p className="fine-print">
                 <strong>Platform:</strong> the published download is macOS Apple Silicon only. Intel Mac and Windows
@@ -245,7 +244,7 @@ export function DownloadPage() {
                   View repository
                 </a>
                 <a className="btn btn-soft btn-lg" href={RELEASE_TAG_URL} rel="noopener">
-                  Published v0.1.2
+                  {RELEASE_TAG}
                 </a>
                 <Link className="text-link" to="/features">
                   Explore features
