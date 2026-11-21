@@ -99,8 +99,9 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         },
         fix: "Use Connect in Settings to start ChatGPT sign-in for Codex.".into(),
     });
-    let openai_key =
-        crate::security::credentials::has_secret(crate::security::credentials::CredentialKind::OpenaiApi);
+    let openai_key = crate::security::credentials::has_secret(
+        crate::security::credentials::CredentialKind::OpenaiApi,
+    );
     v.push(Dep {
         id: "openai_api".into(),
         name: "OpenAI Platform API".into(),
@@ -113,8 +114,9 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         },
         fix: "Add an OpenAI Platform API key in Settings → AI Providers (separate from ChatGPT / Codex).".into(),
     });
-    let gemini_key =
-        crate::security::credentials::has_secret(crate::security::credentials::CredentialKind::GeminiApi);
+    let gemini_key = crate::security::credentials::has_secret(
+        crate::security::credentials::CredentialKind::GeminiApi,
+    );
     v.push(Dep {
         id: "gemini".into(),
         name: "Google Gemini API".into(),
@@ -143,7 +145,8 @@ pub fn check(ws: &Path) -> Vec<Dep> {
         } else {
             "not installed".into()
         },
-        fix: "Install from https://ollama.com, run `ollama serve`, then `ollama pull <model>`.".into(),
+        fix: "Install from https://ollama.com, run `ollama serve`, then `ollama pull <model>`."
+            .into(),
     });
     // Installed ≠ authenticated. Any configured provider that can actually run counts.
     let any_ready = (claude.is_some() && logged)

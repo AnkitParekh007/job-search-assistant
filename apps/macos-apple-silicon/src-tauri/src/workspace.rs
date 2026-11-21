@@ -71,7 +71,9 @@ pub fn canonical_header(raw: &str) -> Option<&'static str> {
     let key = key.trim_matches('_');
     match key {
         // Keep aliases conservative — avoid remapping short custom columns like org/job/score/state.
-        "date" | "date_added" | "date_applied" | "applied_date" | "application_date" => Some("date"),
+        "date" | "date_added" | "date_applied" | "applied_date" | "application_date" => {
+            Some("date")
+        }
         "company" | "employer" | "organization" => Some("company"),
         "sector" | "industry" => Some("sector"),
         "role" | "job_title" | "title" | "position" => Some("role"),
@@ -253,7 +255,11 @@ pub fn update_status(
     let bytes = wtr.into_inner().map_err(|e| e.to_string())?;
     atomic_write(&tracker_path(ws), &bytes)?;
 
-    let company = updated.fields.get("company").map(|s| s.as_str()).unwrap_or("");
+    let company = updated
+        .fields
+        .get("company")
+        .map(|s| s.as_str())
+        .unwrap_or("");
     let role = updated.fields.get("role").map(|s| s.as_str()).unwrap_or("");
     let event_type = match new_status.as_str() {
         "applied" => "user_confirmed_submitted",
@@ -269,7 +275,14 @@ pub fn update_status(
     let _ = append_application_event(ws, company, role, event_type, &note, today);
     // Funnel honesty: first interview step also records recruiter screen scheduled.
     if new_status == "interview" {
-        let _ = append_application_event(ws, company, role, "recruiter_screen_scheduled", &note, today);
+        let _ = append_application_event(
+            ws,
+            company,
+            role,
+            "recruiter_screen_scheduled",
+            &note,
+            today,
+        );
     }
 
     Ok(updated)
@@ -634,7 +647,11 @@ pub fn read_meta_schema_version(ws: &Path) -> Option<u64> {
     let meta = read_meta(ws).ok()?;
     meta.get("schema_version")
         .and_then(|v| v.as_u64())
-        .or_else(|| meta.get("schema_version").and_then(|v| v.as_i64()).map(|n| n as u64))
+        .or_else(|| {
+            meta.get("schema_version")
+                .and_then(|v| v.as_i64())
+                .map(|n| n as u64)
+        })
 }
 
 fn write_meta(ws: &Path, meta: &Value) -> Result<(), String> {
@@ -782,7 +799,11 @@ pub fn add_tracker_row(
         return Err(format!("'{}' is not a canonical tracker status", status));
     }
     fields.insert("status".into(), status.clone());
-    if fields.get("date").map(|s| s.trim().is_empty()).unwrap_or(true) {
+    if fields
+        .get("date")
+        .map(|s| s.trim().is_empty())
+        .unwrap_or(true)
+    {
         fields.insert("date".into(), today.to_string());
     }
 
@@ -802,10 +823,7 @@ pub fn add_tracker_row(
         fields: {
             let mut complete = BTreeMap::new();
             for h in &header {
-                complete.insert(
-                    h.clone(),
-                    fields.get(h).cloned().unwrap_or_default(),
-                );
+                complete.insert(h.clone(), fields.get(h).cloned().unwrap_or_default());
             }
             // Preserve any extra keys the caller passed that aren't in the header.
             for (k, v) in &fields {
@@ -937,7 +955,10 @@ pub fn upsert_seen_job(ws: &Path, job: Value) -> Result<Value, String> {
         .and_then(|e| e.get("first_seen"))
         .cloned();
 
-    let mut entry = seen_obj.get(&key).cloned().unwrap_or_else(|| serde_json::json!({}));
+    let mut entry = seen_obj
+        .get(&key)
+        .cloned()
+        .unwrap_or_else(|| serde_json::json!({}));
     let entry_obj = entry
         .as_object_mut()
         .ok_or("existing seen job entry is not an object")?;
@@ -1080,7 +1101,8 @@ pub fn ensure_posting_guard(ws: &Path) -> Result<bool, String> {
         return Err(format!("{} is not a folder", ws.display()));
     }
     fs::create_dir_all(ws.join("tools")).map_err(|e| format!("mkdir tools: {e}"))?;
-    fs::write(&script, SCAFFOLD_POSTING_GUARD).map_err(|e| format!("write posting_guard.py: {e}"))?;
+    fs::write(&script, SCAFFOLD_POSTING_GUARD)
+        .map_err(|e| format!("write posting_guard.py: {e}"))?;
     Ok(true)
 }
 
@@ -1139,7 +1161,11 @@ pub fn ensure_workspace(ws: &Path) -> Result<Vec<String>, String> {
     }
 
     write_new("meta.json", SCAFFOLD_META_JSON, &mut created)?;
-    write_new("tools/posting_guard.py", SCAFFOLD_POSTING_GUARD, &mut created)?;
+    write_new(
+        "tools/posting_guard.py",
+        SCAFFOLD_POSTING_GUARD,
+        &mut created,
+    )?;
     write_new("CLAUDE.md", SCAFFOLD_CLAUDE_MD, &mut created)?;
     write_new("AGENTS.md", SCAFFOLD_AGENTS_MD, &mut created)?;
     write_new(
@@ -1292,16 +1318,29 @@ mod tests {
         let body = "Date Added,Company,Job Title,Status,Notes\n2026-11-01,Nordlicht,Senior Frontend,drafted,seed\n";
         let d = ws_with_tracker(body);
         let t = read_tracker(d.path()).unwrap();
-        assert_eq!(t.rows[0].fields.get("status").map(String::as_str), Some("drafted"));
-        assert_eq!(t.rows[0].fields.get("company").map(String::as_str), Some("Nordlicht"));
-        assert_eq!(t.rows[0].fields.get("role").map(String::as_str), Some("Senior Frontend"));
-        assert_eq!(t.rows[0].fields.get("date").map(String::as_str), Some("2026-11-01"));
+        assert_eq!(
+            t.rows[0].fields.get("status").map(String::as_str),
+            Some("drafted")
+        );
+        assert_eq!(
+            t.rows[0].fields.get("company").map(String::as_str),
+            Some("Nordlicht")
+        );
+        assert_eq!(
+            t.rows[0].fields.get("role").map(String::as_str),
+            Some("Senior Frontend")
+        );
+        assert_eq!(
+            t.rows[0].fields.get("date").map(String::as_str),
+            Some("2026-11-01")
+        );
         assert!(t.header.iter().any(|h| h == "status"));
     }
 
     #[test]
     fn missing_status_column_is_rejected() {
-        let body = "Date Added,Company,Job Title,Notes\n2026-11-01,Nordlicht,Senior Frontend,seed\n";
+        let body =
+            "Date Added,Company,Job Title,Notes\n2026-11-01,Nordlicht,Senior Frontend,seed\n";
         let d = ws_with_tracker(body);
         let err = read_tracker(d.path()).unwrap_err();
         assert!(err.contains("no recognizable Status column"), "{err}");
@@ -1394,11 +1433,7 @@ mod tests {
     fn migrate_backs_up_and_is_idempotent() {
         let d = tempfile::tempdir().unwrap();
         ensure_workspace(d.path()).unwrap();
-        fs::write(
-            d.path().join("CLAUDE.md"),
-            "# custom profile\n",
-        )
-        .unwrap();
+        fs::write(d.path().join("CLAUDE.md"), "# custom profile\n").unwrap();
         let mut fields = BTreeMap::new();
         fields.insert("company".into(), "Beta".into());
         fields.insert("role".into(), "Eng".into());
@@ -1409,7 +1444,11 @@ mod tests {
         assert_eq!(first["schema_version"], 2);
         assert_eq!(first["applications_written"], 1);
         let backup = first["backup"].as_str().unwrap();
-        assert!(d.path().join(backup).join("job_search_tracker.csv").is_file());
+        assert!(d
+            .path()
+            .join(backup)
+            .join("job_search_tracker.csv")
+            .is_file());
         assert!(d.path().join(backup).join("CLAUDE.md").is_file());
         assert!(d
             .path()

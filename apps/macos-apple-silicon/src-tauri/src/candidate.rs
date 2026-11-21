@@ -46,10 +46,7 @@ pub fn write_candidate_profile(ws: &Path, profile: &Value) -> Result<Value, Stri
         if !obj.contains_key("schema_version") {
             obj.insert("schema_version".into(), json!(1));
         }
-        obj.insert(
-            "updatedAt".into(),
-            json!(chrono_like_now()),
-        );
+        obj.insert("updatedAt".into(), json!(chrono_like_now()));
     }
     let bytes = serde_json::to_vec_pretty(&out).map_err(|e| e.to_string())?;
     workspace::atomic_write(&profile_path(ws), &bytes)?;

@@ -248,7 +248,10 @@ fn migrate_workspace(state: State<AppState>) -> Result<Value, String> {
 }
 
 #[tauri::command]
-fn restore_workspace_backup(state: State<AppState>, backup_folder_name: String) -> Result<Value, String> {
+fn restore_workspace_backup(
+    state: State<AppState>,
+    backup_folder_name: String,
+) -> Result<Value, String> {
     workspace::restore_workspace_backup(&ws(&state), &backup_folder_name)
 }
 
