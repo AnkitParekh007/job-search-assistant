@@ -233,3 +233,4 @@ export const FILM3_SCENES = {kpi: Kpis, cons: Consolidated, parse: Parse, bad: B
 
 export const Film3: React.FC<FilmProps> = (p) => <FilmShell compId="Film3" scenes={FILM3_SCENES} {...p} />;
 export const Film3Short: React.FC<FilmProps> = (p) => <FilmShell compId="Film3Short" scenes={FILM3_SCENES} {...p} />;
+export const Film3Vertical: React.FC<FilmProps> = (p) => <FilmShell compId="Film3Vertical" scenes={FILM3_SCENES} {...p} />;

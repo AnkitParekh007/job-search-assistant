@@ -6,11 +6,7 @@ Scoped starter ideas grounded in real gaps. Prefer filing these as GitHub issues
 
 ### 1. Capture sanitized product screenshots
 
-**Problem:** README and docs lack real UI screenshots.  
-**Expected:** PNG/WebP captures for Today, Jobs, Ranking, Studio, Pipeline, Interview, Activity, Onboarding — no personal data.  
-**Acceptance:** Files under `docs/assets/screenshots/` with alt text listed in that folder’s README; root README embeds at least one.  
-**Files:** `docs/assets/screenshots/`, `README.md`  
-**Tests:** N/A (visual review)
+**Status:** Done 2026-11-22. Eight PNGs and `journey.gif` are in `docs/assets/screenshots/`, from the fictional `demo/` workspace. Recapture when the visible UI changes.
 
 ### 2. Docs link checker script
 

@@ -322,8 +322,9 @@ const GridToAscend: React.FC = () => {
   );
 };
 
-export const FILM1_SCENES = {grid: EmptyGrid, kitchen: Kitchen, stack: VersionStack, night: Night, decision: Decision, fit: FitAndGaps,
+export const FILM1_SCENES = {grid: EmptyGrid, vgrid: EmptyGrid, kitchen: Kitchen, stack: VersionStack, night: Night, decision: Decision, fit: FitAndGaps,
   words: HisWords, pipeline: Pipeline, send: Submit, end: GridToAscend};
 
 export const Film1: React.FC<FilmProps> = (p) => <FilmShell compId="Film1" scenes={FILM1_SCENES} {...p} />;
 export const Film1Short: React.FC<FilmProps> = (p) => <FilmShell compId="Film1Short" scenes={FILM1_SCENES} {...p} />;
+export const Film1Vertical: React.FC<FilmProps> = (p) => <FilmShell compId="Film1Vertical" scenes={FILM1_SCENES} {...p} />;

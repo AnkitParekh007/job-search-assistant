@@ -1,0 +1,54 @@
+[
+ {
+  "speechStart": 0.05,
+  "speechEnd": 1.092,
+  "text": "Then I took one.",
+  "lines": [
+   "Then I took one."
+  ],
+  "start": 0.0,
+  "end": 1.342
+ },
+ {
+  "speechStart": 1.85,
+  "speechEnd": 3.807,
+  "text": "But coming back was harder than leaving.",
+  "lines": [
+   "But coming back was",
+   "harder than leaving."
+  ],
+  "start": 1.8,
+  "end": 4.057
+ },
+ {
+  "speechStart": 4.8,
+  "speechEnd": 6.276,
+  "text": "My experience still fit.",
+  "lines": [
+   "My experience still fit."
+  ],
+  "start": 4.75,
+  "end": 6.436
+ },
+ {
+  "speechStart": 6.516,
+  "speechEnd": 8.682,
+  "text": "One gap was real, so I worked on it.",
+  "lines": [
+   "One gap was real,",
+   "so I worked on it."
+  ],
+  "start": 6.466,
+  "end": 8.932
+ },
+ {
+  "speechStart": 9.4,
+  "speechEnd": 10.96,
+  "text": "A pause isn't a full stop.",
+  "lines": [
+   "A pause isn't a full stop."
+  ],
+  "start": 9.35,
+  "end": 11.21
+ }
+]

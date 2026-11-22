@@ -272,7 +272,8 @@ const PauseToAscend: React.FC = () => {
   );
 };
 
-export const FILM2_SCENES = {advice: Advice, took: TookOne, months: Months, ret: TheReturn, note: StickyNote, fit: StillAFit, story: HerStory, prep: Prep, back: ImBack, end: PauseToAscend};
+export const FILM2_SCENES = {advice: Advice, hook: TookOne, took: TookOne, months: Months, ret: TheReturn, note: StickyNote, fit: StillAFit, story: HerStory, prep: Prep, back: ImBack, end: PauseToAscend};
 
 export const Film2: React.FC<FilmProps> = (p) => <FilmShell compId="Film2" scenes={FILM2_SCENES} {...p} />;
 export const Film2Short: React.FC<FilmProps> = (p) => <FilmShell compId="Film2Short" scenes={FILM2_SCENES} {...p} />;
+export const Film2Vertical: React.FC<FilmProps> = (p) => <FilmShell compId="Film2Vertical" scenes={FILM2_SCENES} {...p} />;

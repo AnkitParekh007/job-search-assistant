@@ -1,5 +1,8 @@
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
+import {
+  DEMO_DEPS, DEMO_EVENTS, DEMO_INTERVIEW_MD, DEMO_PROFILE, DEMO_RUNS, DEMO_SEEN, DEMO_TRACKER, DEMO_WORKSPACE, demoMode,
+} from "./demoFixture";
 export type {
   Workspace, Dep, TrackerRow, Tracker, SeenJob, RunSummary, RunEvent, Pending, AppFolder, ProfileFile, CandidateProfile,
 } from "@ai-job-search/core";
@@ -18,7 +21,7 @@ export type UpdateCheckResult = {
   message: string;
 };
 
-export const api = {
+const liveApi = {
   workspace: () => invoke<import("@ai-job-search/core").Workspace>("get_workspace"),
   setWorkspace: (path: string) => invoke<import("@ai-job-search/core").Workspace>("set_workspace", { path }),
   deps: () => invoke<import("@ai-job-search/core").Dep[]>("dependencies"),
@@ -81,6 +84,69 @@ export const api = {
   downloadUpdate: (tag: string, asset: string) =>
     invoke<UpdateCheckResult>("download_update", { tag, asset }),
 };
+
+const demoApi: Partial<typeof liveApi> = {
+  workspace: async () => DEMO_WORKSPACE,
+  deps: async () => DEMO_DEPS,
+  tracker: async () => DEMO_TRACKER,
+  seen: async () => DEMO_SEEN as import("@ai-job-search/core").SeenJob[],
+  appFolder: async (company: string) => ({
+    name: company,
+    files: [],
+    outcome: null,
+    posting: company === "Nordlicht"
+      ? "Nordlicht — Senior Frontend Engineer (fictional sample). TypeScript and React required."
+      : null,
+    events: [],
+  }),
+  profile: async () => [],
+  candidateProfile: async () => DEMO_PROFILE,
+  readText: async (rel: string) => {
+    if (rel.endsWith("07-interview-prep.md")) return DEMO_INTERVIEW_MD;
+    return "";
+  },
+  documents: async () => ({ cv: ["cv/nordlicht_cv.tex"], cover: [], cv_pdf: [], cover_pdf: [], reports: [] }),
+  exists: async () => false,
+  absPath: async (rel: string) => rel,
+  postingGuard: async (text: string) => ({
+    code: 0,
+    stdout: JSON.stringify({ instruction_like: [], invisible_flagged: false, chars: text.length, ok: true }),
+    stderr: "",
+  }),
+  runs: async () => DEMO_RUNS,
+  runEvents: async () => DEMO_EVENTS,
+  getSetting: async (key: string) => {
+    if (key === "theme") return "light";
+    if (key === "onboarded") return "1";
+    if (key === "ai_provider") return "claude";
+    if (key === "update_check_on_launch") return "0";
+    return null;
+  },
+  setSetting: async () => undefined,
+  providers: async () => [],
+  checkForUpdate: async () => ({
+    status: "current",
+    current: "0.1.5",
+    latest: "0.1.5",
+    tag: "v0.1.5",
+    asset: "",
+    url: null,
+    notes_url: "",
+    downloaded_path: null,
+    sha256_ok: null,
+    message: "demo",
+  }),
+};
+
+export const api: typeof liveApi = new Proxy(liveApi, {
+  get(target, prop, receiver) {
+    if (typeof prop === "string" && demoMode()) {
+      const stub = demoApi as Record<string, unknown>;
+      if (prop in stub && stub[prop]) return stub[prop];
+    }
+    return Reflect.get(target, prop, receiver);
+  },
+});
 
 export const fileUrl = (abs: string) => convertFileSrc(abs);
 export const on = <T,>(name: string, cb: (p: T) => void): Promise<UnlistenFn> => listen<T>(name, (e) => cb(e.payload));

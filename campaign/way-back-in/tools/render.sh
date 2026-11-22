@@ -3,7 +3,7 @@
 # Usage: sh tools/render.sh [CompositionId ...]   (default: all films, cutdowns and covers)
 set -e
 cd "$(dirname "$0")/.."
-COMPS=${*:-"Film2 Film1 Film3 Film2Short Film1Short Film3Short"}
+COMPS=${*:-"Film2 Film1 Film3 Film2Short Film1Short Film3Short Film2Vertical Film1Vertical Film3Vertical"}
 slug() { .venv/bin/python -c "import sys; sys.path.insert(0,'tools'); from lib import DATA; print(DATA['compositions']['$1']['slug'])"; }
 mkdir -p out/covers
 for c in $COMPS; do

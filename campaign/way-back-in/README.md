@@ -9,6 +9,9 @@ with [Remotion](https://www.remotion.dev).
 | `Film1` | Commit History | 37.5 s | Daniel | 0:11.3 (workspace setup) |
 | `Film3` | Parsed | 31.6 s | Tomás | 0:06.1 (ATS text check) |
 | `Film2Short` · `Film1Short` · `Film3Short` | cutdowns | 16–23 s | | first third |
+| `Film1Vertical` · `Film2Vertical` · `Film3Vertical` | 9:16 (1080×1920) | 13–17 s | | within 3 s |
+
+9:16 cuts are for Shorts, Reels, and TikTok. Voice, captions, and MP4s were rendered on 2026-11-22. They stay unpublished until `ACCEPTANCE.md` is signed.
 
 Every scene carries a top-left label: **In the app · sample data** for recreations of real, shipping screens
 (labels copied from `packages/ui`), or **Story / Dramatization** for everything else. No film shows an offer, a

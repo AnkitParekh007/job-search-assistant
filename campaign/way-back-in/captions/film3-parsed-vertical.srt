@@ -1,0 +1,33 @@
+1
+00:00:00,000 --> 00:00:01,755
+142 applications.
+
+2
+00:00:01,785 --> 00:00:03,020
+Zero replies.
+
+3
+00:00:03,050 --> 00:00:05,337
+So I ran a text
+check on my résumé.
+
+4
+00:00:05,367 --> 00:00:07,306
+The extracted text was noise.
+
+5
+00:00:08,150 --> 00:00:10,247
+One column. Real text.
+
+6
+00:00:10,277 --> 00:00:11,732
+Now it reads in order.
+
+7
+00:00:13,050 --> 00:00:14,570
+AI changed the market.
+
+8
+00:00:14,600 --> 00:00:16,293
+It didn't change what I'm worth.
+

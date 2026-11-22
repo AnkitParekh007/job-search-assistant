@@ -23,7 +23,14 @@ export const layout = (compId: CompKey) => {
     from += sc.frames;
     return out;
   });
-  return {slug: comp.slug, film: comp.film as FilmKey, presenter: film.presenter as keyof typeof AVATARS, scenes, frames: from};
+  return {
+    slug: comp.slug,
+    film: comp.film as FilmKey,
+    presenter: film.presenter as keyof typeof AVATARS,
+    aspect: (comp as {aspect?: string}).aspect || '4:5',
+    scenes,
+    frames: from,
+  };
 };
 
 export type FilmProps = {music: boolean; voice: boolean; captions: boolean; avatar: boolean};
@@ -31,12 +38,17 @@ export type FilmProps = {music: boolean; voice: boolean; captions: boolean; avat
 /** Runs a composition from films.json: scenes in order, the premixed audio, captions, mode tags and the presenter. */
 export const FilmShell: React.FC<FilmProps & {compId: CompKey; scenes: SceneMap}> = ({compId, scenes, music, voice, captions, avatar}) => {
   const L = layout(compId);
-  const cues = CUES[L.slug];
+  const cues = CUES[L.slug] ?? [];
   const end = L.scenes.find((s) => s.id === 'end');
-  const lastSpeech = Math.ceil((cues[cues.length - 1]?.speechEnd ?? 0) * FPS);
+  const lastSpeech = cues.length ? Math.ceil((cues[cues.length - 1]?.speechEnd ?? 0) * FPS) : 0;
   const audio = music && voice ? 'mix' : voice ? 'vo' : music ? 'score' : null;
+  const tall = L.aspect === '9:16';
+  const stage = (node: React.ReactNode) => tall ? (
+    <div style={{position: 'absolute', left: 0, top: (1920 - 1350) / 2, width: 1080, height: 1350, overflow: 'hidden'}}>{node}</div>
+  ) : node;
   return (
     <AbsoluteFill style={{background: C.ink}}>
+      {stage(<>
       {L.scenes.map((s) => {
         const Scene = scenes[s.id];
         if (!Scene) throw new Error(`No component for scene "${s.id}" in ${compId}`);
@@ -49,7 +61,8 @@ export const FilmShell: React.FC<FilmProps & {compId: CompKey; scenes: SceneMap}
       })}
       {audio && <Audio src={staticFile(`audio/${L.slug}-${audio}.wav`)} />}
       {captions && <Captions cues={cues} />}
-      {avatar && <CornerAvatar style={AVATARS[L.presenter]} visemes={VISEMES[L.slug]} fadeOutAt={Math.max(lastSpeech + 6, (end?.from ?? L.frames) + 20)} />}
+      {avatar && <CornerAvatar style={AVATARS[L.presenter]} visemes={VISEMES[L.slug] ?? []} fadeOutAt={Math.max(lastSpeech + 6, (end?.from ?? L.frames) + 20)} />}
+      </>)}
     </AbsoluteFill>
   );
 };

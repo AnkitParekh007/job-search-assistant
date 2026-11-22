@@ -25,6 +25,20 @@
             ]
           ]
         },
+        "vgrid": {
+          "frames": 84,
+          "tag": [
+            "story",
+            "Dramatization · fictional character"
+          ],
+          "vo": [
+            [
+              0.08,
+              "Fourteen months.",
+              "14 months."
+            ]
+          ]
+        },
         "kitchen": {
           "frames": 111,
           "tag": [
@@ -159,6 +173,19 @@
               0.15,
               "For eleven years, I said a career break isn't a red flag.",
               "For 11 years, I said a career break isn't a red flag."
+            ]
+          ]
+        },
+        "hook": {
+          "frames": 54,
+          "tag": [
+            "story",
+            "Dramatization · fictional character"
+          ],
+          "vo": [
+            [
+              0.05,
+              "Then I took one."
             ]
           ]
         },
@@ -478,13 +505,46 @@
         "clean",
         "end"
       ]
+    },
+    "Film1Vertical": {
+      "slug": "film1-commit-history-vertical",
+      "film": "film1",
+      "aspect": "9:16",
+      "scenes": [
+        "vgrid",
+        "decision",
+        "fit",
+        "end"
+      ]
+    },
+    "Film2Vertical": {
+      "slug": "film2-return-date-vertical",
+      "film": "film2",
+      "aspect": "9:16",
+      "scenes": [
+        "hook",
+        "ret",
+        "fit",
+        "end"
+      ]
+    },
+    "Film3Vertical": {
+      "slug": "film3-parsed-vertical",
+      "film": "film3",
+      "aspect": "9:16",
+      "scenes": [
+        "kpi",
+        "parse",
+        "clean",
+        "end"
+      ]
     }
   },
   "claims": {
     "_doc": "Every end-card claim. tools/verify_release.py checks these against the latest GitHub release before render.",
     "price": "Free and open source (MIT)",
     "availability": "Mac app for Apple Silicon · Windows and Intel Mac: build from source",
-    "requirement": "AI features use your own Claude Code or Codex setup",
+    "requirement": "AI features use your own Claude Code, Codex, OpenAI, Gemini, or Ollama setup",
     "url": "job-search-assistant.rebound-ops.org",
     "disclaimer": "Dramatization with fictional characters. App screens use sample data. You submit your own applications. No outcome is guaranteed."
   }

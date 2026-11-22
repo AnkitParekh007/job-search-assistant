@@ -2,7 +2,7 @@
 
 | File | Size | Use |
 |------|------|-----|
-| `github-social-preview.png` | 1280×640 | GitHub repository **Social preview** upload |
+| `github-social-preview.png` | 1280×640 | GitHub social preview: the shipping app icon, product name, and the local-first line. No sample metrics. |
 | `social-preview.svg` | vector | Lightweight README / docs fallback (Scout + full product name) |
 
 Re-export `github-social-preview.png` from `social-preview.svg` when the SVG changes, then re-upload in repo settings.

@@ -10,8 +10,8 @@
 - Name only shipped features: Jobs (found, ranked, gaps to address), Studio drafts behind an approval gate,
   the ATS text check (the text a parser extracts from your PDF), mock interview, the pipeline.
 - The app never submits applications or sends email. Say so where it fits.
-- Availability, as of release v0.1.1 (checked by `tools/verify_release.py`):
-  **Mac app for Apple Silicon. Windows and Intel Mac: build from source.** AI features use your own Claude Code or Codex setup.
+- Availability, as of release v0.1.5 (checked by `tools/verify_release.py`):
+  **Mac app for Apple Silicon. Windows and Intel Mac: build from source.** AI features use your own Claude Code, Codex, OpenAI, Gemini, or Ollama setup.
 - Free and open source (MIT). Site: job-search-assistant.rebound-ops.org
 
 ## Which file goes where
@@ -46,7 +46,7 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 >
 > It never submits applications or sends email for you. That part stays yours.
 >
-> Mac app for Apple Silicon. Windows and Intel Mac: build from source. AI features use your own Claude Code or Codex setup.
+> Mac app for Apple Silicon. Windows and Intel Mac: build from source. AI features use your own Claude Code, Codex, OpenAI, Gemini, or Ollama setup.
 > job-search-assistant.rebound-ops.org
 >
 > #CareerBreak #ReturnToWork #OpenSource
@@ -89,7 +89,7 @@ For everyone else, use **Learn more** and send them to `/download`, which explai
 >
 > It never submits an application. You hit submit.
 >
-> Mac app for Apple Silicon. Windows and Intel Mac: build from source. AI features use your own Claude Code or Codex setup.
+> Mac app for Apple Silicon. Windows and Intel Mac: build from source. AI features use your own Claude Code, Codex, OpenAI, Gemini, or Ollama setup.
 > job-search-assistant.rebound-ops.org
 >
 > #SoftwareEngineering #CareerGap #OpenSource

@@ -181,7 +181,13 @@ function Shell() {
     return () => window.removeEventListener("keydown", h);
   }, [go]);
   useEffect(() => {
-    if (!inTauri()) { setOnboard(false); return; }
+    if (!inTauri()) {
+      const q = new URLSearchParams(window.location.search);
+      const demo = q.get("demo") === "1";
+      if (demo) document.documentElement.dataset.theme = "light";
+      setOnboard(demo && q.get("shot") === "onboarding");
+      return;
+    }
     api.getSetting("theme").then((t) => { const v = t || "dark"; if (v === "system") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = v; });
     api.getSetting("onboarded").then((o) => setOnboard(o !== "1"));
   }, []);
@@ -213,6 +219,9 @@ function Shell() {
         <div className="h-[52px] shrink-0 drag flex items-center px-3 gap-1">
           <button className="no-drag btn btn-ghost h-7 w-7 p-0 justify-center text-ink-3" onClick={() => setCollapsed(!collapsed)} title="Toggle sidebar (⌘\)" aria-label="Toggle sidebar"><PanelLeft size={15} /></button>
           <div className="flex-1" />
+          {typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") === "1" && (
+            <span className="no-drag chip bg-sunken text-ink-2">Sample data</span>
+          )}
           <button className="no-drag btn h-8 text-ink-2 gap-2 px-3 border-line bg-surface shadow-sm" onClick={() => setPalette(true)}><Search size={13} className="text-ink-3" />Search or run…<Kbd>⌘K</Kbd></button>
         </div>
         <NeedsYou />

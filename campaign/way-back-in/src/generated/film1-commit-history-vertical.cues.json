@@ -1,0 +1,74 @@
+[
+ {
+  "speechStart": 0.08,
+  "speechEnd": 1.204,
+  "text": "14 months.",
+  "lines": [
+   "14 months."
+  ],
+  "start": 0.03,
+  "end": 1.454
+ },
+ {
+  "speechStart": 2.9,
+  "speechEnd": 3.911,
+  "text": "So I stopped.",
+  "lines": [
+   "So I stopped."
+  ],
+  "start": 2.85,
+  "end": 4.071
+ },
+ {
+  "speechStart": 4.151,
+  "speechEnd": 5.908,
+  "text": "And treated it like a project.",
+  "lines": [
+   "And treated it like a project."
+  ],
+  "start": 4.101,
+  "end": 6.02
+ },
+ {
+  "speechStart": 6.1,
+  "speechEnd": 7.816,
+  "text": "I looked at where I actually fit,",
+  "lines": [
+   "I looked at where",
+   "I actually fit,"
+  ],
+  "start": 6.05,
+  "end": 7.856
+ },
+ {
+  "speechStart": 7.936,
+  "speechEnd": 9.162,
+  "text": "and where I didn't yet.",
+  "lines": [
+   "and where I didn't yet."
+  ],
+  "start": 7.886,
+  "end": 9.412
+ },
+ {
+  "speechStart": 11.0,
+  "speechEnd": 12.737,
+  "text": "The gap's still on my résumé.",
+  "lines": [
+   "The gap's still on my résumé."
+  ],
+  "start": 10.95,
+  "end": 12.897
+ },
+ {
+  "speechStart": 12.977,
+  "speechEnd": 15.079,
+  "text": "It's just not the headline anymore.",
+  "lines": [
+   "It's just not the",
+   "headline anymore."
+  ],
+  "start": 12.927,
+  "end": 15.329
+ }
+]

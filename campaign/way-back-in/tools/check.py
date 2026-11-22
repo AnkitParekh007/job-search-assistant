@@ -88,6 +88,9 @@ def source_checks():
         first_app = next((s['from'] for s in L['scenes'] if s['tag'][0] == 'app'), None)
         rec(g, 'product visible in the first third', first_app is not None and first_app <= L['frames'] / 3,
             f'first app scene at {first_app / FPS if first_app is not None else None:.2f}s, third = {L["dur"] / 3:.2f}s')
+        if DATA['compositions'][cid].get('aspect') == '9:16':
+            rec(g, 'product on screen within 3 seconds', first_app is not None and first_app <= 3 * FPS,
+                f'first app scene at {first_app / FPS if first_app is not None else None:.2f}s')
         rec(g, 'opens with a dramatization label', 'Dramatization' in L['scenes'][0]['tag'][1], L['scenes'][0]['tag'][1])
 
         # 4 · captions
@@ -180,8 +183,9 @@ def render_checks(only):
         a = next((s for s in info['streams'] if s['codec_type'] == 'audio'), None)
         dur = float(info['format']['duration'])
         size = os.path.getsize(fn) / 1e6
-        rec(g, 'video H.264, yuv420p, 1080x1350, 30 fps', v['codec_name'] == 'h264' and v['pix_fmt'] == 'yuv420p'
-            and (v['width'], v['height']) == (1080, 1350) and v['r_frame_rate'] == '30/1',
+        expect = (1080, 1920) if DATA['compositions'][cid].get('aspect') == '9:16' else (1080, 1350)
+        rec(g, f'video H.264, yuv420p, {expect[0]}x{expect[1]}, 30 fps', v['codec_name'] == 'h264' and v['pix_fmt'] == 'yuv420p'
+            and (v['width'], v['height']) == expect and v['r_frame_rate'] == '30/1',
             f"{v['codec_name']} {v['pix_fmt']} {v['width']}x{v['height']} {v['r_frame_rate']}")
         rec(g, 'frame count matches script', int(v.get('nb_frames', 0)) == L['frames'], f"{v.get('nb_frames')} vs {L['frames']}")
         rec(g, 'audio AAC 48 kHz stereo', a is not None and a['codec_name'] == 'aac' and a['sample_rate'] == '48000' and a['channels'] == 2,

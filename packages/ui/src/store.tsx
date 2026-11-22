@@ -34,6 +34,22 @@ type Store = {
   setFocusRun: (id: string | null) => void;
 };
 
+function initialRoute() {
+  if (typeof window === "undefined") return "dashboard";
+  const q = new URLSearchParams(window.location.search);
+  if (q.get("demo") !== "1") return "dashboard";
+  const map: Record<string, string> = {
+    today: "dashboard",
+    jobs: "jobs",
+    ranking: "jobs",
+    studio: "studio",
+    pipeline: "pipeline",
+    interview: "interview",
+    activity: "activity",
+  };
+  return map[q.get("shot") || ""] || "dashboard";
+}
+
 const Ctx = createContext<Store | null>(null);
 export const useStore = () => {
   const c = useContext(Ctx);
@@ -53,7 +69,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<Record<string, RunEvent[]>>({});
   const [pending, setPending] = useState<Record<string, Pending[]>>({});
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [route, setRoute] = useState("dashboard");
+  const [route, setRoute] = useState(initialRoute);
   const [focusRun, setFocusRun] = useState<string | null>(null);
   const tid = useRef(0);
 

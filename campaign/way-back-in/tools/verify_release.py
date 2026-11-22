@@ -68,7 +68,10 @@ for path in ['', '/download']:
 readme = gh('api', f'repos/{REPO}/readme', '--jq', '.content')
 import base64
 text = base64.b64decode(readme).decode('utf-8', 'replace')
-check('requirement: Claude Code or Codex', 'Claude Code' in text and 'Codex' in text, 'README names Claude Code and Codex as the AI providers')
+need = ['Claude Code', 'Codex', 'OpenAI', 'Gemini', 'Ollama']
+missing = [n for n in need if n not in text]
+check('requirement: bring-your-own providers', not missing and all(n.split()[0] in claims['requirement'] for n in need),
+      f"README missing {missing or 'nothing'}; claim is {claims['requirement']!r}")
 check('disclaimer: you submit applications yourself', 'does not auto-submit' in text or 'submit applications yourself' in text, 'README states the app does not submit')
 
 os.makedirs(p('out', 'checks'), exist_ok=True)

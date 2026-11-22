@@ -2,9 +2,9 @@
 
 Date: 2026-11-21 · Branch `feat/way-back-in-hardening` · Release checked: v0.1.1
 
-**Status: NOT APPROVED FOR PUBLICATION.** Automated checks pass and the sampled frames have been reviewed.
-A person still has to watch every film at full speed with sound and sign the sign-off table at the end.
-Nothing has been posted or uploaded anywhere.
+**Status: NOT APPROVED FOR PUBLICATION.** Do not upload, post, or boost these films until the sign-off table at the bottom is filled in by someone who watched and listened to every cut, including the three 9:16 cuts.
+
+Claims refresh, 2026-11-22. End cards and `launch/copy.md` name Claude Code, Codex, OpenAI, Gemini, and Ollama, and the copy is pinned to release v0.1.5. Voice, captions, and MP4s were regenerated the same day (`npm run audio`, `npm run render`, `check.py render`: 99 checks, 0 failed). Nothing has been posted or uploaded anywhere. `npm run verify:release` still reads the README on the default branch, so run it again after that README is pushed.
 
 ## Deliverables
 
@@ -16,9 +16,12 @@ Nothing has been posted or uploaded anywhere.
 | Film2Short | film2-return-date-short.mp4 | 16.3 s | 5.0 s / 5.4 s | 7 | −16.0 LUFS | −1.8 dBTP | 16.4 dB | 1.8 MB |
 | Film1Short | film1-commit-history-short.mp4 | 23.2 s | 5.5 s / 7.7 s | 10 | −16.0 LUFS | −1.5 dBTP | 17.1 dB | 2.6 MB |
 | Film3Short | film3-parsed-short.mp4 | 17.4 s | 2.9 s / 5.8 s | 8 | −16.0 LUFS | −1.5 dBTP | 16.8 dB | 1.7 MB |
+| Film1Vertical | film1-commit-history-vertical.mp4 | 16.3 s | 2.8 s / 5.4 s | 7 | −16.1 LUFS | −1.5 dBTP | 17.1 dB | 1.7 MB |
+| Film2Vertical | film2-return-date-vertical.mp4 | 13.1 s | 1.8 s / 4.4 s | 5 | −16.0 LUFS | −1.7 dBTP | 16.4 dB | 1.5 MB |
+| Film3Vertical | film3-parsed-vertical.mp4 | 17.4 s | 2.9 s / 5.8 s | 8 | −16.0 LUFS | −1.5 dBTP | 16.8 dB | 1.7 MB |
 
-Also: `out/covers/cover-film{1,2,3}-4x5.png`, `captions/<slug>.srt` (6 files), `launch/copy.md`.
-Every video: H.264 High, yuv420p, 1080×1350, 30 fps CFR, AAC 48 kHz stereo 192 kb/s, faststart.
+Measured again on 2026-11-22 after the claims re-render. The 4:5 rows above match that run (Film 3 file size 3.3 MB). Vertical cuts are 1080×1920 with the 4:5 stage centered. Also: `out/covers/cover-film{1,2,3}-4x5.png`, `captions/<slug>.srt` (9 files), `launch/copy.md`.
+Every 4:5 video: H.264 High, yuv420p, 1080×1350, 30 fps CFR, AAC 48 kHz stereo 192 kb/s, faststart. Vertical cuts are the same except 1080×1920.
 
 ## Requirements
 
@@ -33,8 +36,8 @@ Every video: H.264 High, yuv420p, 1080×1350, 30 fps CFR, AAC 48 kHz stereo 192 
 | 7 | Captions, readability, VO timing, music balance, safe areas | **Done.** Each caption phrase is synthesised separately, so cue times come from the audio. Captions are 42 px semibold on an 84% scrim, at most 2 lines of 32 characters and 20 characters per second, and sit with their bottom edge 200 px above the frame bottom. Scene type ends above the caption band, with 90 px side margins. The score ducks 12 dB under speech with a 0.25 s lead; voice sits about 17 dB over music; master is −16 LUFS / −1.5 dBTP | Checks: caption layout and reading speed, voice under every caption, voice ≥ 12 dB over music, loudness, true peak |
 | 8 | Corrected SRT for all three films | **Done**, plus the three cutdowns. Written from the same cues as the burned-in captions | Check: SRT matches burned-in captions (timing to 2 ms, identical lines) |
 | 9 | Cutdowns, covers, platform copy | **Done.** Three cutdowns (16–23 s), three 4:5 covers, and LinkedIn organic, LinkedIn ad, X and Instagram copy with alt text in `launch/copy.md`. Ad fields are within LinkedIn's limits (intro ≤ 150, headline ≤ 70) | Character counts in `launch/copy.md`; claims lint covers the copy |
-| 10 | Automated render checks | **Done.** `tools/check.py` covers missing assets, black frames (true black), blank stretches, caption layout, timing and SRT parity, voice under captions, loudness, true peak, dead air, codec, pixel format, size, frame rate, frame count, duration, faststart and file size | Last run: 134 checks, 0 failed, 1 warning (one 0.99 s caption in Film 3, against a 1.0 s target) |
-| 11 | Download claims checked against GitHub releases | **Done, and the old claim was wrong.** v0.1.1 has a runnable `.app` only for Apple Silicon; the Windows and Intel Mac zips are source packages to build. "Free for Mac & Windows" became "Mac app for Apple Silicon · Windows and Intel Mac: build from source". The end card adds "AI features use your own Claude Code or Codex setup" | `tools/verify_release.py`: checksums, archive contents, MIT licence, site and /download return 200, README provider and no-submit statements. It fails if a Windows or Intel binary ships, so the claim gets updated |
+| 10 | Automated render checks | **Done.** `tools/check.py` covers missing assets, black frames (true black), blank stretches, caption layout, timing and SRT parity, voice under captions, loudness, true peak, dead air, codec, pixel format, size, frame rate, frame count, duration, faststart and file size | 2026-11-22: source 104 checks, 0 failed, 1 warning (one 0.99 s caption in Film 3, against a 1.0 s target). Render 99 checks, 0 failed |
+| 11 | Download claims checked against GitHub releases | **Done for v0.1.1, and the old claim was wrong.** v0.1.1 has a runnable `.app` only for Apple Silicon; the Windows and Intel Mac zips are source packages to build. "Free for Mac & Windows" became "Mac app for Apple Silicon · Windows and Intel Mac: build from source". The end card now says "AI features use your own Claude Code, Codex, OpenAI, Gemini, or Ollama setup" | `tools/verify_release.py`: checksums, archive contents, MIT licence, site and /download return 200, README provider and no-submit statements. It fails if a Windows or Intel binary ships, so the claim gets updated. Re-run it after the README on the default branch lists all five providers |
 | 12 | No invented testimonials or outcome statistics | **Done.** Characters are introduced as fictional on screen, on the covers and in every post. No quotes from users, no percentages | Claims lint |
 
 ## Story changes, film by film
@@ -66,10 +69,10 @@ tool can promise.
 
 ## Open items before publishing
 
-1. Watch and listen to all six videos, then fill in the sign-off below.
+1. Watch and listen to all six 4:5 videos and the three 9:16 cuts, then fill in the sign-off below. Publication stays blocked until that table is signed. The 9:16 cuts (`Film1Vertical`, `Film2Vertical`, `Film3Vertical`) are rendered at 1080×1920, open on a dramatization label, and put the product on screen within 3 seconds. Voice, captions, and MP4s exist. They are still unsigned.
 2. **Remotion licence:** free for individuals and companies of up to 3 people; a larger company needs a company licence.
 3. Run a trademark search on the sample company names before paid media.
-4. Reels, Stories and Shorts need 9:16 versions, which were not made.
+4. 9:16 cuts are rendered for Reels, Stories, and Shorts. They stay unpublished until the sign-off table includes them.
 5. If a release ships a Windows or Intel Mac binary, `npm run verify:release` will fail. Update `claims.availability`
    in `src/films.json`, re-render, and update `launch/copy.md`.
 6. The 3D presenters still go against the campaign doc's "no 3D characters" note. They were kept because you chose them.
@@ -82,3 +85,6 @@ tool can promise.
 | Film2 / Film2Short | | | |
 | Film1 / Film1Short | | | |
 | Film3 / Film3Short | | | |
+| Film1Vertical | | | |
+| Film2Vertical | | | |
+| Film3Vertical | | | |

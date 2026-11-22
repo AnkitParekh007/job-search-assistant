@@ -25,6 +25,26 @@
 
 ---
 
+## See the desktop workspace
+
+Sample data from the fictional [`demo/`](./demo/) workspace (Alex Morgan, invented employers, `example.com` only). These are captures of the shipping UI, not concept art. Statuses on the board are records in that folder, not results the app produced. The “50% of submissions reached interview” line is that sample tracker’s own rows.
+
+<p align="center">
+  <img src="./docs/assets/screenshots/journey.gif" width="100%" alt="Silent 16 second tour of the sample workspace: Today, a ranked Nordlicht role with a gap, the write-approval card, and the pipeline." />
+</p>
+
+| Today | Ranking |
+|:---:|:---:|
+| <img src="./docs/assets/screenshots/01-today.png" alt="Today dashboard on sample data: a write approval waiting, a drafted Nordlicht application, and three unranked postings." /> | <img src="./docs/assets/screenshots/03-ranking.png" alt="Jobs list with a Nordlicht role scored 82 of 100, strengths, and a design-systems gap. Sample data." /> |
+
+| Studio | Pipeline |
+|:---:|:---:|
+| <img src="./docs/assets/screenshots/04-studio.png" alt="Application Studio with the Nordlicht sample posting, a clean local integrity check, and the document pane still empty until a draft is approved." /> | <img src="./docs/assets/screenshots/05-pipeline.png" alt="Pipeline board with sample drafted, applied, and interview cards. The offer column is empty. Statuses are records, not outcomes." /> |
+
+More shots: [Jobs](./docs/assets/screenshots/02-jobs.png) · [Interview prep](./docs/assets/screenshots/06-interview.png) · [Approvals](./docs/assets/screenshots/07-activity.png) · [Onboarding](./docs/assets/screenshots/08-onboarding.png)
+
+---
+
 ## One workspace. Three big steps.
 
 <p align="center">
@@ -33,7 +53,7 @@
 
 Discover aligned roles, prepare tailored documents through the upstream workflows, then review and track the results from the desktop UI. **You approve actions and submit applications yourself** — the app does not auto-submit or send emails.
 
-**The pictures above are original concept illustrations, not screenshots.** Real screenshots will be added after capturing a sanitized running desktop build. [Help with screenshots](./docs/assets/screenshots/README.md) · [Explore features](./docs/features.md).
+The triptych above is a concept illustration. The captures in [See the desktop workspace](#see-the-desktop-workspace) are the app on sample data. [Screenshot notes](./docs/assets/screenshots/README.md) · [Explore features](./docs/features.md).
 
 ---
 
@@ -262,7 +282,7 @@ Help wanted in concrete areas:
 - **Tauri / Rust** host and packaging  
 - **Accessibility** and UI polish  
 - **Provider integrations** (additional engines beyond Claude Code / Codex)  
-- **Testing**, docs, and sanitized screenshots  
+- **Testing**, docs, and keeping the sample screenshots current  
 
 Starter ideas: [contributor backlog](./docs/contributor-backlog.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
 
@@ -326,7 +346,7 @@ Not for offline tracking and profile work. AI workflows need a configured provid
 Yes for **macOS Apple Silicon**: GitHub Release [`v0.1.5`](https://github.com/AnkitParekh007/job-search-assistant/releases/tag/v0.1.5) ships `Job-Search-Assistant-0.1.5-macos-arm64.zip` (ad-hoc signed `.app`, not notarized — right-click → Open on first launch). Settings can check for updates and download a verified zip; you replace the app yourself. No `.dmg`. Intel Mac and Windows: build from source.
 
 **Can I use Ollama / a local model?**  
-Not in the current architecture.
+Yes, for workflows the provider matrix marks as supported. Ollama stays on your machine unless you point it at a remote endpoint. Offline tracking still needs no provider.
 
 More: [FAQ](./docs/faq.md)
 

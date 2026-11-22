@@ -1,0 +1,4 @@
+date,company,sector,role,role_type,channel,status,contact_person,fit_rating,notes,cv_file,cover_letter_file,source,deadline
+2026-11-20,Nordlicht,Climate software,Senior Frontend Engineer,frontend,careers site,drafted,,high,sample draft waiting for you to submit,cv/nordlicht_cv.tex,cover_letters/nordlicht_cover.tex,https://jobs.example.com/nordlicht/senior-frontend,2026-11-28
+2026-11-18,Larkspur Labs,Developer tools,Product Engineer,product,careers site,applied,,medium,user confirmed submitted,cv/larkspur_cv.tex,,https://jobs.example.com/larkspur/product-engineer,
+2026-11-20,Meridian Health,Health records,Design Systems Engineer,frontend,careers site,interview,,medium,sample stage recorded by hand,,,https://jobs.example.com/meridian/design-systems,
