@@ -38,6 +38,9 @@ impl Db {
              CREATE TABLE IF NOT EXISTS run_events(
                run_id TEXT NOT NULL, seq INTEGER NOT NULL, ts INTEGER NOT NULL, kind TEXT NOT NULL,
                payload TEXT NOT NULL, PRIMARY KEY(run_id, seq));
+             CREATE TABLE IF NOT EXISTS provider_preflight(
+               attempt_id TEXT PRIMARY KEY, ts INTEGER NOT NULL, snapshot TEXT NOT NULL,
+               outcome TEXT NOT NULL, run_id TEXT);
              CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT NOT NULL);",
         )?;
         // Additive migrations for multi-provider metadata (safe on existing DBs).
@@ -51,6 +54,36 @@ impl Db {
             let _ = std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600));
         }
         Ok(Db(Mutex::new(c)))
+    }
+
+    pub fn record_preflight(&self, id: &str, ts: i64, snapshot: &str) -> rusqlite::Result<()> {
+        let c = self.0.lock().unwrap();
+        c.execute("INSERT INTO provider_preflight(attempt_id,ts,snapshot,outcome) VALUES(?1,?2,?3,'pending')", params![id, ts, snapshot])?;
+        Ok(())
+    }
+
+    pub fn finish_preflight(
+        &self,
+        id: &str,
+        outcome: &str,
+        run_id: Option<&str>,
+    ) -> rusqlite::Result<()> {
+        let c = self.0.lock().unwrap();
+        c.execute(
+            "UPDATE provider_preflight SET outcome=?2,run_id=?3 WHERE attempt_id=?1",
+            params![id, outcome, run_id],
+        )?;
+        Ok(())
+    }
+
+    pub fn preflight_history(&self) -> rusqlite::Result<Vec<serde_json::Value>> {
+        let c = self.0.lock().unwrap();
+        let mut st = c.prepare("SELECT p.attempt_id,p.ts,p.snapshot,p.outcome,p.run_id,r.status FROM provider_preflight p LEFT JOIN runs r ON p.run_id=r.id ORDER BY p.ts DESC LIMIT 200")?;
+        let rows = st.query_map([], |r| {
+            let raw: String = r.get(2)?;
+            Ok(serde_json::json!({"attempt_id": r.get::<_, String>(0)?, "ts": r.get::<_, i64>(1)?, "snapshot": serde_json::from_str::<serde_json::Value>(&raw).unwrap_or(serde_json::Value::Null), "outcome": r.get::<_, String>(3)?, "run_id": r.get::<_, Option<String>>(4)?, "run_status": r.get::<_, Option<String>>(5)?}))
+        })?;
+        rows.collect()
     }
 
     pub fn get_setting(&self, k: &str) -> Option<String> {

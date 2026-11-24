@@ -492,16 +492,44 @@ fn start_run(
     }
 
     // Exact selected-provider readiness — never start because a different provider is ready.
-    providers::registry::ensure_ready(
-        provider,
-        state.db.get_setting("ollama_endpoint").as_deref(),
-    )?;
-
-    state.runtime.start(
+    let endpoint = state.db.get_setting("ollama_endpoint");
+    let status = providers::registry::selected_status(provider, endpoint.as_deref());
+    let snapshot =
+        providers::audit::snapshot(provider, &status, model.as_deref(), resume.is_some());
+    let attempt = uuid::Uuid::new_v4().to_string();
+    state
+        .db
+        .record_preflight(&attempt, bridge::now_ms(), &snapshot.to_string())
+        .map_err(|_| "Could not persist provider preflight evidence".to_string())?;
+    if let Err(e) = providers::registry::check_ready(provider, &status) {
+        state
+            .db
+            .finish_preflight(&attempt, "readiness_blocked", None)
+            .map_err(|_| "Could not update provider preflight evidence".to_string())?;
+        return Err(e);
+    }
+    let result = state.runtime.start(
         app,
         state.db.clone(),
         providers::start_opts(workspace, workflow, prompt, model, resume, provider),
-    )
+    );
+    match &result {
+        Ok(run) => {
+            // Execution may already be active; do not report a false start failure.
+            let _ = state
+                .db
+                .finish_preflight(&attempt, "started", Some(&run.id));
+        }
+        Err(_) => {
+            let _ = state.db.finish_preflight(&attempt, "start_failed", None);
+        }
+    }
+    result
+}
+
+#[tauri::command]
+fn provider_preflight_history(state: State<AppState>) -> Result<Vec<Value>, String> {
+    state.db.preflight_history().map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -829,6 +857,7 @@ pub fn run() {
             verify_pdf,
             posting_guard,
             start_run,
+            provider_preflight_history,
             respond_permission,
             send_message,
             finish_run,

@@ -3,6 +3,7 @@
 //! Routes workflow execution to Claude Code, OpenAI Codex, OpenAI API,
 //! Gemini, or Ollama while preserving a single invoke/event surface.
 
+pub mod audit;
 pub mod codex;
 pub mod gemini;
 pub mod inference;
