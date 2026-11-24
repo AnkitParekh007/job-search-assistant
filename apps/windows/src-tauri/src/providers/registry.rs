@@ -156,14 +156,21 @@ pub fn resolve_default(setting: Option<&str>) -> ProviderId {
 }
 
 /// Fail closed: the exact selected provider must be ready before any AI run starts.
-pub fn ensure_ready(id: ProviderId, ollama_endpoint: Option<&str>) -> Result<(), String> {
-    let status = match id {
+pub fn selected_status(id: ProviderId, ollama_endpoint: Option<&str>) -> ProviderStatus {
+    match id {
         ProviderId::Claude => claude_status(),
         ProviderId::Codex => codex_status(),
         ProviderId::OpenaiApi => super::openai_api::status(),
         ProviderId::Gemini => super::gemini::status(),
         ProviderId::Ollama => super::ollama::status(ollama_endpoint),
-    };
+    }
+}
+
+pub fn ensure_ready(id: ProviderId, ollama_endpoint: Option<&str>) -> Result<(), String> {
+    check_ready(id, &selected_status(id, ollama_endpoint))
+}
+
+pub fn check_ready(id: ProviderId, status: &ProviderStatus) -> Result<(), String> {
     let ready = match id {
         ProviderId::Claude | ProviderId::Codex => status.available && status.authenticated,
         ProviderId::OpenaiApi | ProviderId::Gemini | ProviderId::Ollama => status.authenticated,

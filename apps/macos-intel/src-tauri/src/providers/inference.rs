@@ -311,7 +311,7 @@ impl InferenceBridge {
                     let safe = crate::security::credentials::redact(&e);
                     db.set_run_error(&run_id_t, &safe);
                     bridge.set_status(&app, &db, &run_id_t, "failed");
-                    bridge.emit(&app, &db, &run_id_t, kind::FAILED, json!({"error": safe}));
+                    bridge.emit(&app, &db, &run_id_t, kind::FAILED, json!({"error": safe, "failure_class": super::audit::classify(&e)}));
                 }
             }
             bridge.runs.lock().unwrap().remove(&run_id_t);
