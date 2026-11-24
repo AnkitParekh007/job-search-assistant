@@ -2,7 +2,12 @@
 use super::types::{ProviderId, ProviderStatus};
 use serde_json::{json, Value};
 
-pub fn snapshot(id: ProviderId, status: &ProviderStatus, model: Option<&str>, resume: bool) -> Value {
+pub fn snapshot(
+    id: ProviderId,
+    status: &ProviderStatus,
+    model: Option<&str>,
+    resume: bool,
+) -> Value {
     let auth = match id {
         ProviderId::Claude if status.authenticated => "reported_signed_in",
         ProviderId::Claude => "not_signed_in_or_probe_failed",
@@ -36,11 +41,20 @@ pub fn snapshot(id: ProviderId, status: &ProviderStatus, model: Option<&str>, re
 // Only classify known transport/auth signals. Unknown is not an application defect.
 pub fn classify(error: &str) -> &'static str {
     let e = error.to_ascii_lowercase();
-    if e.contains("auth error (401") || e.contains("auth error (403") || e.contains("rejected the api key") {
+    if e.contains("auth error (401")
+        || e.contains("auth error (403")
+        || e.contains("rejected the api key")
+    {
         "authentication_or_permission"
-    } else if e.contains("rate limit (429)") || e.contains("quota/rate limit (429)") || e.contains("quota exceeded (429)") {
+    } else if e.contains("rate limit (429)")
+        || e.contains("quota/rate limit (429)")
+        || e.contains("quota exceeded (429)")
+    {
         "quota_or_rate_limit"
-    } else if e.contains("not reachable") || e.contains("connection refused") || e.contains("timed out") {
+    } else if e.contains("not reachable")
+        || e.contains("connection refused")
+        || e.contains("timed out")
+    {
         "connectivity_or_timeout"
     } else {
         "unknown"
@@ -53,9 +67,15 @@ mod tests {
     #[test]
     fn snapshot_excludes_raw_provider_fields() {
         let status = ProviderStatus {
-            id: "codex".into(), name: "private-name".into(), available: true,
-            authenticated: true, detail: "secret-token".into(), fix: "private-path".into(),
-            planned: false, capabilities: vec![], models: vec!["private-model".into()],
+            id: "codex".into(),
+            name: "private-name".into(),
+            available: true,
+            authenticated: true,
+            detail: "secret-token".into(),
+            fix: "private-path".into(),
+            planned: false,
+            capabilities: vec![],
+            models: vec!["private-model".into()],
             default_model: None,
         };
         let v = snapshot(ProviderId::Codex, &status, Some("secret-model"), true);
@@ -66,8 +86,14 @@ mod tests {
     }
     #[test]
     fn classifies_known_failures_without_copying_error() {
-        assert_eq!(classify("OpenAI auth error (401)."), "authentication_or_permission");
-        assert_eq!(classify("Gemini quota/rate limit (429)."), "quota_or_rate_limit");
+        assert_eq!(
+            classify("OpenAI auth error (401)."),
+            "authentication_or_permission"
+        );
+        assert_eq!(
+            classify("Gemini quota/rate limit (429)."),
+            "quota_or_rate_limit"
+        );
         assert_eq!(classify("connection refused"), "connectivity_or_timeout");
         assert_eq!(classify("unexpected output"), "unknown");
     }

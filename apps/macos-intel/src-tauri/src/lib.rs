@@ -494,12 +494,17 @@ fn start_run(
     // Exact selected-provider readiness — never start because a different provider is ready.
     let endpoint = state.db.get_setting("ollama_endpoint");
     let status = providers::registry::selected_status(provider, endpoint.as_deref());
-    let snapshot = providers::audit::snapshot(provider, &status, model.as_deref(), resume.is_some());
+    let snapshot =
+        providers::audit::snapshot(provider, &status, model.as_deref(), resume.is_some());
     let attempt = uuid::Uuid::new_v4().to_string();
-    state.db.record_preflight(&attempt, bridge::now_ms(), &snapshot.to_string())
+    state
+        .db
+        .record_preflight(&attempt, bridge::now_ms(), &snapshot.to_string())
         .map_err(|_| "Could not persist provider preflight evidence".to_string())?;
     if let Err(e) = providers::registry::check_ready(provider, &status) {
-        state.db.finish_preflight(&attempt, "readiness_blocked", None)
+        state
+            .db
+            .finish_preflight(&attempt, "readiness_blocked", None)
             .map_err(|_| "Could not update provider preflight evidence".to_string())?;
         return Err(e);
     }
@@ -511,7 +516,9 @@ fn start_run(
     match &result {
         Ok(run) => {
             // Execution may already be active; do not report a false start failure.
-            let _ = state.db.finish_preflight(&attempt, "started", Some(&run.id));
+            let _ = state
+                .db
+                .finish_preflight(&attempt, "started", Some(&run.id));
         }
         Err(_) => {
             let _ = state.db.finish_preflight(&attempt, "start_failed", None);

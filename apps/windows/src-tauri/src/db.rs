@@ -62,9 +62,17 @@ impl Db {
         Ok(())
     }
 
-    pub fn finish_preflight(&self, id: &str, outcome: &str, run_id: Option<&str>) -> rusqlite::Result<()> {
+    pub fn finish_preflight(
+        &self,
+        id: &str,
+        outcome: &str,
+        run_id: Option<&str>,
+    ) -> rusqlite::Result<()> {
         let c = self.0.lock().unwrap();
-        c.execute("UPDATE provider_preflight SET outcome=?2,run_id=?3 WHERE attempt_id=?1", params![id, outcome, run_id])?;
+        c.execute(
+            "UPDATE provider_preflight SET outcome=?2,run_id=?3 WHERE attempt_id=?1",
+            params![id, outcome, run_id],
+        )?;
         Ok(())
     }
 
